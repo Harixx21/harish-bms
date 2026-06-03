@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harish Building Materials</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --primary: #e67e22;
+  --primary-dark: #ca6f1e;
+  --secondary: #2c3e50;
+  --accent: #f39c12;
+  --bg: #f8f6f0;
+  --card-bg: #ffffff;
+  --text: #2c3e50;
+  --text-light: #7f8c8d;
+  --border: #e8e0d0;
+  --success: #27ae60;
+  --danger: #e74c3c;
+  --shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --radius: 16px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, var(--secondary) 0%, #1a252f 100%);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 40px; height: 40px;
+  background: var(--primary);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.logo-text h1 { color: #fff; font-size: 16px; font-weight: 700; }
+.logo-text p { color: var(--accent); font-size: 11px; }
+.cart-btn {
+  position: relative;
+  background: var(--primary);
+  border: none;
+  color: white;
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.cart-badge {
+  position: absolute;
+  top: -6px; right: -6px;
+  background: var(--accent);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  display: none;
+}
+.search-bar {
+  padding: 0 16px 14px;
+  display: flex; gap: 8px;
+}
+.search-bar input {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.12);
+  color: white;
+  font-size: 14px;
+  outline: none;
+}
+.search-bar input::placeholder { color: rgba(255,255,255,0.5); }
+.track-btn {
+  background: var(--accent);
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #e67e22 0%, #f39c12 50%, #e67e22 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+  padding: 28px 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 1;
+}
+.hero h2 { color: white; font-size: 22px; font-weight: 800; position: relative; }
+.hero p { color: rgba(255,255,255,0.9); font-size: 13px; margin-top: 4px; position: relative; }
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 16px;
+  position: relative;
+}
+.hero-stat { text-align: center; }
+.hero-stat .num { color: white; font-size: 20px; font-weight: 800; }
+.hero-stat .lbl { color: rgba(255,255,255,0.8); font-size: 11px; }
+
+/* CATEGORIES */
+.categories {
+  padding: 16px;
+  overflow-x: auto;
+  display: flex;
+  gap: 8px;
+  scrollbar-width: none;
+}
+.categories::-webkit-scrollbar { display: none; }
+.cat-chip {
+  background: white;
+  border: 2px solid var(--border);
+  color: var(--text);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.cat-chip.active, .cat-chip:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* MATERIALS GRID */
+.section-title {
+  padding: 4px 16px 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--secondary);
+}
+.materials-grid {
+  padding: 0 12px 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media(min-width: 600px) { .materials-grid { grid-template-columns: repeat(3, 1fr); } }
+@media(min-width: 900px) { .materials-grid { grid-template-columns: repeat(4, 1fr); } }
+
+.mat-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+.mat-card:active { transform: scale(0.97); }
+.mat-img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  background: #ddd;
+}
+.mat-img-placeholder {
+  width: 100%; height: 130px;
+  background: linear-gradient(135deg, #e8e0d0, #d5c9b5);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+}
+.mat-body { padding: 10px; }
+.mat-cat {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.mat-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 2px 0;
+  line-height: 1.3;
+}
+.mat-price {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--primary);
+}
+.mat-unit { font-size: 11px; color: var(--text-light); font-weight: 400; }
+.mat-stock {
+  font-size: 11px;
+  margin: 4px 0 8px;
+}
+.in-stock { color: var(--success); }
+.low-stock-warn { color: var(--accent); }
+.out-stock { color: var(--danger); }
+.add-btn {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  transition: background 0.2s;
+}
+.add-btn:hover { background: var(--primary-dark); }
+.add-btn:disabled { background: #ccc; cursor: not-allowed; }
+.qty-ctrl {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--primary);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.qty-ctrl button {
+  background: none;
+  border: none;
+  color: white;
+  width: 34px; height: 34px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.qty-ctrl span {
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* CART DRAWER */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  display: none;
+  backdrop-filter: blur(2px);
+}
+.overlay.open { display: block; }
+.cart-drawer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: white;
+  border-radius: 24px 24px 0 0;
+  max-height: 85vh;
+  overflow-y: auto;
+  z-index: 201;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.cart-drawer.open { transform: translateY(0); }
+.drawer-handle {
+  width: 40px; height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+  margin: 12px auto 0;
+}
+.drawer-header {
+  padding: 12px 16px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.drawer-header h3 { font-size: 18px; font-weight: 700; }
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-light);
+  width: 32px; height: 32px;
+}
+.cart-items { padding: 12px 16px; }
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.cart-item-info { flex: 1; }
+.cart-item-name { font-size: 14px; font-weight: 600; }
+.cart-item-price { font-size: 13px; color: var(--primary); font-weight: 700; }
+.cart-item-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+.cart-item-ctrl button {
+  background: none; border: none;
+  font-size: 16px; cursor: pointer;
+  color: var(--primary); font-weight: 700;
+  width: 24px; height: 24px;
+}
+.cart-item-ctrl span { font-size: 14px; font-weight: 700; min-width: 20px; text-align: center; }
+.cart-summary {
+  padding: 16px;
+  border-top: 2px solid var(--border);
+  background: var(--bg);
+  margin: 0 -0px;
+}
+.cart-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; }
+.cart-total { font-size: 18px; font-weight: 800; color: var(--primary); }
+.checkout-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+
+/* CHECKOUT MODAL */
+.modal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 300;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+}
+.modal.open { display: flex; }
+.modal-box {
+  background: white;
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px 16px 32px;
+}
+.modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 8px;
+}
+.form-group { margin-bottom: 14px; }
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.form-group input, .form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+.form-group input:focus, .form-group textarea:focus {
+  border-color: var(--primary);
+}
+.form-group textarea { height: 80px; resize: none; }
+.map-container {
+  width: 100%;
+  height: 200px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 8px;
+  border: 2px solid var(--border);
+  position: relative;
+}
+.map-hint {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+.order-summary-mini {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+.order-summary-mini h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.order-summary-mini .item-row {
+  display: flex; justify-content: space-between;
+  font-size: 13px; padding: 3px 0;
+}
+.place-order-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--success), #2ecc71);
+  color: white; border: none;
+  padding: 16px; border-radius: 14px;
+  font-size: 16px; font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.place-order-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+/* SUCCESS */
+.success-screen {
+  text-align: center;
+  padding: 32px 16px;
+  display: none;
+}
+.success-icon {
+  font-size: 64px;
+  color: var(--success);
+  margin-bottom: 16px;
+  animation: popIn 0.4s ease;
+}
+@keyframes popIn {
+  0% { transform: scale(0); }
+  80% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.success-screen h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+.success-screen p { color: var(--text-light); font-size: 14px; }
+.order-num-badge {
+  background: var(--bg);
+  border: 2px dashed var(--primary);
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin: 16px 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 2px;
+}
+
+/* TRACK MODAL */
+.track-result {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 12px;
+}
+.status-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 12px;
+}
+.status-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+}
+.step-dot {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #ddd;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  margin-top: 2px;
+}
+.step-dot.done { background: var(--success); color: white; }
+.step-dot.active { background: var(--primary); color: white; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(230,126,34,0.4)} 50%{box-shadow:0 0 0 8px rgba(230,126,34,0)} }
+.step-info {}
+.step-label { font-size: 13px; font-weight: 600; }
+.step-desc { font-size: 11px; color: var(--text-light); }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 80px; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--secondary);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 500;
+  transition: transform 0.3s;
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* LOADING */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-light);
+}
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* EMPTY CART */
+.empty-cart {
+  text-align: center; padding: 40px 20px;
+  color: var(--text-light);
+}
+.empty-cart i { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo">
+      <div class="logo-icon">🏗️</div>
+      <div class="logo-text">
+        <h1>Harish BMS</h1>
+        <p>Building Materials Supply</p>
+      </div>
+    </div>
+    <button class="cart-btn" onclick="openCart()">
+      <i class="fa fa-shopping-cart"></i>
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+  </div>
+  <div class="search-bar">
+    <input type="text" placeholder="Search materials..." id="searchInput" oninput="handleSearch()">
+    <button class="track-btn" onclick="openTrack()"><i class="fa fa-map-marker"></i> Track</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <h2>🏗️ Quality Materials, Fast Delivery</h2>
+  <p>Cement • Sand • Bricks • Steel • Aggregates</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">500+</div><div class="lbl">Products</div></div>
+    <div class="hero-stat"><div class="num">24hr</div><div class="lbl">Delivery</div></div>
+    <div class="hero-stat"><div class="num">100%</div><div class="lbl">Quality</div></div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="categories" id="categories">
+  <div class="cat-chip active" onclick="filterCat('')">All</div>
+</div>
+
+<!-- MATERIALS -->
+<div class="section-title">Available Materials</div>
+<div class="materials-grid" id="materialsGrid">
+  <div class="loading"><div class="spinner"></div>Loading materials...</div>
+</div>
+
+<!-- CART OVERLAY + DRAWER -->
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-header">
+    <h3>🛒 Your Cart</h3>
+    <button class="close-btn" onclick="closeAll()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-summary" id="cartSummary" style="display:none">
+    <div class="cart-row"><span>Subtotal</span><span id="cartSubtotal">₹0</span></div>
+    <div class="cart-row" style="font-weight:700"><span>Total</span><span class="cart-total" id="cartTotal">₹0</span></div>
+    <button class="checkout-btn" onclick="openCheckout()">
+      <i class="fa fa-arrow-right"></i> Proceed to Order
+    </button>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal" id="checkoutModal">
+  <div class="modal-box">
+    <div id="checkoutForm">
+      <div class="modal-title">📦 Place Order</div>
+      <div class="order-summary-mini">
+        <h4>Order Summary</h4>
+        <div id="orderSummaryItems"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;font-weight:700;font-size:15px;border-top:1px solid #ddd;padding-top:6px">
+          <span>Total</span><span style="color:var(--primary)" id="orderSummaryTotal"></span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="custName" placeholder="Your full name">
+      </div>
+      <div class="form-group">
+        <label>Phone Number *</label>
+        <input type="tel" id="custPhone" placeholder="+91 9999999999">
+      </div>
+      <div class="form-group">
+        <label>Email (Optional)</label>
+        <input type="email" id="custEmail" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label>Delivery Address *</label>
+        <textarea id="custAddress" placeholder="House/Plot No, Street, Area, City, Pincode"></textarea>
+        <div class="map-hint"><i class="fa fa-info-circle"></i> Enter address to see on map</div>
+      </div>
+      <div class="form-group">
+        <label>Delivery Location (Map)</label>
+        <div class="map-container" id="mapContainer">
+          <iframe id="mapFrame" width="100%" height="100%" frameborder="0" style="border:0"
+            src="https://maps.google.com/maps?q=Dindigul,Tamil+Nadu&z=13&output=embed" allowfullscreen></iframe>
+        </div>
+        <button type="button" onclick="updateMap()" style="margin-top:8px;padding:8px 16px;background:var(--secondary);color:white;border:none;border-radius:8px;font-size:13px;cursor:pointer">
+          <i class="fa fa-map"></i> Show on Map
+        </button>
+      </div>
+      <div class="form-group">
+        <label>Special Notes</label>
+        <textarea id="custNotes" placeholder="Any delivery instructions..."></textarea>
+      </div>
+      <button class="place-order-btn" id="placeOrderBtn" onclick="placeOrder()">
+        <i class="fa fa-check-circle"></i> Place Order
+      </button>
+      <button onclick="closeModal()" style="width:100%;margin-top:10px;padding:12px;background:none;border:2px solid var(--border);border-radius:14px;font-size:14px;cursor:pointer;color:var(--text-light)">Cancel</button>
+    </div>
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✅</div>
+      <h2>Order Placed!</h2>
+      <p>Your order has been received. We'll confirm shortly.</p>
+      <div class="order-num-badge" id="orderNumDisplay"></div>
+      <p style="font-size:13px;color:var(--text-light)">Save this order number to track your delivery</p>
+      <button onclick="closeModal();resetAfterOrder()" style="margin-top:20px;width:100%;padding:14px;background:var(--primary);color:white;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer">
+        Done 🎉
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TRACK MODAL -->
+<div class="modal" id="trackModal">
+  <div class="modal-box">
+    <div class="modal-title">📍 Track Your Order</div>
+    <div class="form-group">
+      <label>Order Number</label>
+      <input type="text" id="trackOrderNum" placeholder="e.g. BMS20240101120000">
+    </div>
+    <div style="text-align:center;color:var(--text-light);margin:8px 0;font-size:13px">— or —</div>
+    <div class="form-group">
+      <label>Phone Number</label>
+      <input type="tel" id="trackPhone" placeholder="+91 9999999999">
+    </div>
+    <button onclick="trackOrder()" style="width:100%;padding:14px;background:var(--primary);color:white;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px">
+      <i class="fa fa-search"></i> Track Order
+    </button>
+    <div id="trackResults"></div>
+    <button onclick="closeTrack()" style="width:100%;margin-top:10px;padding:12px;background:none;border:2px solid var(--border);border-radius:14px;font-size:14px;cursor:pointer;color:var(--text-light)">Close</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+let cart = JSON.parse(localStorage.getItem('bms_cart') || '[]');
+let allMaterials = [];
+let currentCat = '';
+let mapLat = 10.3673, mapLng = 77.9803; // Dindigul default
+
+// ── INIT ───────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadCategories();
+  loadMaterials();
+  updateCartBadge();
+});
+
+// ── LOAD ───────────────────────────────────────────────
+async function loadCategories() {
+  try {
+    const res = await fetch('/api/categories');
+    const data = await res.json();
+    if (!data.success) return;
+    const container = document.getElementById('categories');
+    data.data.forEach(cat => {
+      const chip = document.createElement('div');
+      chip.className = 'cat-chip';
+      chip.textContent = cat;
+      chip.onclick = () => filterCat(cat);
+      container.appendChild(chip);
+    });
+  } catch(e) { console.error(e); }
+}
+
+async function loadMaterials(cat='', search='') {
+  const grid = document.getElementById('materialsGrid');
+  grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+  try {
+    let url = `/api/materials?category=${encodeURIComponent(cat)}&search=${encodeURIComponent(search)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!data.success) { grid.innerHTML = '<div class="loading">Failed to load</div>'; return; }
+    allMaterials = data.data;
+    renderMaterials(allMaterials);
+  } catch(e) {
+    grid.innerHTML = '<div class="loading"><i class="fa fa-wifi" style="font-size:32px;margin-bottom:8px"></i><br>Connection error. Is Flask running?</div>';
+  }
+}
+
+function renderMaterials(materials) {
+  const grid = document.getElementById('materialsGrid');
+  if (!materials.length) {
+    grid.innerHTML = '<div class="loading" style="grid-column:1/-1">No materials found</div>';
+    return;
+  }
+  const icons = { 'Cement':'🏗️','Sand':'🏝️','Bricks':'🧱','Steel':'⚙️','Aggregate':'🪨','Finishing':'🎨' };
+  grid.innerHTML = materials.map(m => {
+    const cartItem = cart.find(c => c.id === m.id);
+    const qty = cartItem ? cartItem.qty : 0;
+    const stockClass = m.stock > 50 ? 'in-stock' : m.stock > 0 ? 'low-stock-warn' : 'out-stock';
+    const stockText = m.stock > 50 ? `✓ In Stock` : m.stock > 0 ? `⚠ Only ${m.stock} left` : '✗ Out of Stock';
+    const imgEl = m.image_url
+      ? `<img class="mat-img" src="${m.image_url}" alt="${m.name}" onerror="this.parentElement.querySelector('.mat-img-placeholder').style.display='flex';this.style.display='none'">`
+      : '';
+    const icon = icons[m.category] || '📦';
+    return `<div class="mat-card">
+      ${imgEl}
+      <div class="mat-img-placeholder" style="display:${m.image_url?'none':'flex'}">${icon}</div>
+      <div class="mat-body">
+        <div class="mat-cat">${m.category}</div>
+        <div class="mat-name">${m.name}</div>
+        <div class="mat-price">₹${parseFloat(m.price).toFixed(0)} <span class="mat-unit">/ ${m.unit}</span></div>
+        <div class="mat-stock ${stockClass}">${stockText}</div>
+        ${qty > 0
+          ? `<div class="qty-ctrl">
+              <button onclick="changeQty(${m.id},-1)">−</button>
+              <span>${qty}</span>
+              <button onclick="changeQty(${m.id},1)">+</button>
+             </div>`
+          : `<button class="add-btn" onclick="addToCart(${m.id})" ${m.stock===0?'disabled':''}>
+              <i class="fa fa-plus"></i> Add
+             </button>`
+        }
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── CART ───────────────────────────────────────────────
+function addToCart(id) {
+  const mat = allMaterials.find(m => m.id === id);
+  if (!mat) return;
+  const existing = cart.find(c => c.id === id);
+  if (existing) { existing.qty++; }
+  else { cart.push({ id: mat.id, name: mat.name, price: parseFloat(mat.price), unit: mat.unit, qty: 1 }); }
+  saveCart();
+  renderMaterials(allMaterials);
+  updateCartBadge();
+  showToast(`${mat.name} added to cart`);
+}
+
+function changeQty(id, delta) {
+  const idx = cart.findIndex(c => c.id === id);
+  if (idx === -1) return;
+  cart[idx].qty += delta;
+  if (cart[idx].qty <= 0) cart.splice(idx, 1);
+  saveCart();
+  renderMaterials(allMaterials);
+  updateCartBadge();
+  renderCartItems();
+}
+
+function saveCart() { localStorage.setItem('bms_cart', JSON.stringify(cart)); }
+
+function updateCartBadge() {
+  const total = cart.reduce((s,c) => s+c.qty, 0);
+  const badge = document.getElementById('cartBadge');
+  badge.textContent = total;
+  badge.style.display = total > 0 ? 'flex' : 'none';
+}
+
+function openCart() {
+  if (cart.length === 0) { showToast('Cart is empty!'); return; }
+  renderCartItems();
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('cartDrawer').classList.add('open');
+}
+
+function renderCartItems() {
+  const container = document.getElementById('cartItems');
+  const summary = document.getElementById('cartSummary');
+  if (cart.length === 0) {
+    container.innerHTML = '<div class="empty-cart"><i class="fa fa-shopping-cart"></i><p>Your cart is empty</p></div>';
+    summary.style.display = 'none';
+    return;
+  }
+  const total = cart.reduce((s,c) => s + c.price*c.qty, 0);
+  container.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">₹${item.price} × ${item.qty} ${item.unit} = ₹${(item.price*item.qty).toFixed(0)}</div>
+      </div>
+      <div class="cart-item-ctrl">
+        <button onclick="changeQty(${item.id},-1)">−</button>
+        <span>${item.qty}</span>
+        <button onclick="changeQty(${item.id},1)">+</button>
+      </div>
+    </div>`).join('');
+  document.getElementById('cartSubtotal').textContent = `₹${total.toFixed(0)}`;
+  document.getElementById('cartTotal').textContent = `₹${total.toFixed(0)}`;
+  summary.style.display = 'block';
+}
+
+// ── CHECKOUT ───────────────────────────────────────────
+function openCheckout() {
+  closeAll();
+  const total = cart.reduce((s,c) => s+c.price*c.qty, 0);
+  document.getElementById('orderSummaryItems').innerHTML = cart.map(c =>
+    `<div class="item-row"><span>${c.name} ×${c.qty}</span><span>₹${(c.price*c.qty).toFixed(0)}</span></div>`
+  ).join('');
+  document.getElementById('orderSummaryTotal').textContent = `₹${total.toFixed(0)}`;
+  document.getElementById('checkoutForm').style.display = 'block';
+  document.getElementById('successScreen').style.display = 'none';
+  document.getElementById('checkoutModal').classList.add('open');
+}
+
+function updateMap() {
+  const addr = document.getElementById('custAddress').value.trim();
+  if (!addr) { showToast('Enter address first'); return; }
+  const query = encodeURIComponent(addr + ', Tamil Nadu, India');
+  document.getElementById('mapFrame').src =
+    `https://maps.google.com/maps?q=${query}&z=15&output=embed`;
+}
+
+async function placeOrder() {
+  const name = document.getElementById('custName').value.trim();
+  const phone = document.getElementById('custPhone').value.trim();
+  const address = document.getElementById('custAddress').value.trim();
+  if (!name) { showToast('Enter your name'); return; }
+  if (!phone || phone.length < 10) { showToast('Enter valid phone number'); return; }
+  if (!address) { showToast('Enter delivery address'); return; }
+  if (cart.length === 0) { showToast('Cart is empty'); return; }
+
+  const btn = document.getElementById('placeOrderBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Placing Order...';
+
+  try {
+    const res = await fetch('/api/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name, phone,
+        email: document.getElementById('custEmail').value,
+        address,
+        lat: mapLat, lng: mapLng,
+        notes: document.getElementById('custNotes').value,
+        items: cart.map(c => ({ id: c.id, name: c.name, price: c.price, qty: c.qty, unit: c.unit }))
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('orderNumDisplay').textContent = data.order_number;
+      document.getElementById('checkoutForm').style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+    } else {
+      showToast('Error: ' + data.error);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa fa-check-circle"></i> Place Order';
+    }
+  } catch(e) {
+    showToast('Connection error. Try again.');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa fa-check-circle"></i> Place Order';
+  }
+}
+
+function resetAfterOrder() {
+  cart = []; saveCart(); updateCartBadge(); renderMaterials(allMaterials);
+}
+
+// ── TRACK ──────────────────────────────────────────────
+function openTrack() {
+  document.getElementById('trackModal').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+function closeTrack() {
+  document.getElementById('trackModal').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+const STATUS_STEPS = [
+  { key: 'pending',          label: 'Order Placed',       desc: 'We received your order' },
+  { key: 'confirmed',        label: 'Confirmed',           desc: 'Order confirmed by owner' },
+  { key: 'processing',       label: 'Processing',          desc: 'Materials being prepared' },
+  { key: 'out_for_delivery', label: 'Out for Delivery',    desc: 'On the way to you' },
+  { key: 'delivered',        label: 'Delivered',           desc: 'Order delivered ✓' },
+];
+
+async function trackOrder() {
+  const orderNum = document.getElementById('trackOrderNum').value.trim();
+  const phone = document.getElementById('trackPhone').value.trim();
+  if (!orderNum && !phone) { showToast('Enter order number or phone'); return; }
+
+  document.getElementById('trackResults').innerHTML = '<div class="loading"><div class="spinner"></div>Searching...</div>';
+  try {
+    const res = await fetch('/api/order/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order_number: orderNum, phone })
+    });
+    const data = await res.json();
+    if (!data.success || !data.data.length) {
+      document.getElementById('trackResults').innerHTML = '<div class="track-result" style="text-align:center;color:var(--text-light)">No orders found</div>';
+      return;
+    }
+    document.getElementById('trackResults').innerHTML = data.data.map(order => {
+      const currentIdx = STATUS_STEPS.findIndex(s => s.key === order.status);
+      const isCancelled = order.status === 'cancelled';
+      const stepsHtml = isCancelled
+        ? `<div style="color:var(--danger);font-weight:700;padding:8px 0"><i class="fa fa-times-circle"></i> Order Cancelled</div>`
+        : STATUS_STEPS.map((step, i) => {
+            const done = i < currentIdx;
+            const active = i === currentIdx;
+            return `<div class="status-step">
+              <div class="step-dot ${done?'done':active?'active':''}">
+                ${done ? '✓' : active ? '●' : '○'}
+              </div>
+              <div class="step-info">
+                <div class="step-label" style="color:${active?'var(--primary)':done?'var(--success)':'var(--text-light)'}">${step.label}</div>
+                <div class="step-desc">${step.desc}</div>
+              </div>
+            </div>`;
+          }).join('');
+
+      const mapHtml = order.lat ? `
+        <div style="margin-top:12px">
+          <div style="font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:6px">DELIVERY ADDRESS</div>
+          <div class="map-container" style="height:160px">
+            <iframe width="100%" height="100%" frameborder="0" style="border:0"
+              src="https://maps.google.com/maps?q=${order.lat},${order.lng}&z=15&output=embed" allowfullscreen></iframe>
+          </div>
+        </div>` : '';
+
+      return `<div class="track-result">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:800;font-size:15px">${order.order_number}</div>
+          <div style="font-size:12px;background:var(--primary);color:white;padding:3px 10px;border-radius:20px">${order.status.replace(/_/g,' ')}</div>
+        </div>
+        <div style="font-size:13px;color:var(--text-light);margin-bottom:4px">📅 ${new Date(order.created_at).toLocaleDateString('en-IN')}</div>
+        <div style="font-size:14px;font-weight:700;color:var(--primary);margin-bottom:12px">Total: ₹${parseFloat(order.total_amount).toFixed(0)}</div>
+        <div class="status-timeline">${stepsHtml}</div>
+        ${mapHtml}
+      </div>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('trackResults').innerHTML = '<div class="track-result" style="color:var(--danger)">Connection error</div>';
+  }
+}
+
+// ── UTILS ──────────────────────────────────────────────
+function filterCat(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-chip').forEach(c => {
+    c.classList.toggle('active', c.textContent === (cat || 'All'));
+  });
+  loadMaterials(cat, document.getElementById('searchInput').value);
+}
+
+let searchTimeout;
+function handleSearch() {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    loadMaterials(currentCat, document.getElementById('searchInput').value);
+  }, 400);
+}
+
+function closeAll() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('cartDrawer').classList.remove('open');
+  document.getElementById('trackModal').classList.remove('open');
+}
+
+function closeModal() {
+  document.getElementById('checkoutModal').classList.remove('open');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
