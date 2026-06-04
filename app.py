@@ -13,7 +13,7 @@ CORS(app)
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "root",   # change this
+    "password": "your_password",   # change this
     "database": "harish_bms"
 }
 

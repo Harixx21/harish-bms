@@ -72,76 +72,104 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
   display: flex; align-items: center; justify-content: center;
   display: none;
 }
-.search-bar { padding: 0 16px 14px; display: flex; gap: 8px; }
+.search-bar {
+  padding: 0 16px 14px;
+  display: flex; gap: 8px;
+}
 .search-bar input {
-  flex: 1; padding: 10px 16px; border: none; border-radius: 12px;
-  background: rgba(255,255,255,0.12); color: white; font-size: 14px; outline: none;
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.12);
+  color: white;
+  font-size: 14px;
+  outline: none;
 }
 .search-bar input::placeholder { color: rgba(255,255,255,0.5); }
 .track-btn {
-  background: var(--accent); border: none; color: white;
-  padding: 10px 16px; border-radius: 12px; font-size: 13px;
-  font-weight: 600; cursor: pointer; white-space: nowrap;
+  background: var(--accent);
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
-/* HERO - FULL BACKGROUND IMAGE */
+/* HERO */
 .hero {
-  position: relative;
-  min-height: 220px;
-  display: flex; align-items: center; justify-content: center;
-  overflow: hidden;
-  background: var(--secondary);
-}
-.hero-bg {
-  position: absolute; inset: 0;
-  background-image: url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&q=80');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: brightness(0.4);
-}
-.hero-content {
-  position: relative;
-  z-index: 2;
+  background: linear-gradient(135deg, #e67e22 0%, #f39c12 50%, #e67e22 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+  padding: 28px 16px;
   text-align: center;
-  padding: 32px 20px;
-  width: 100%;
+  position: relative;
+  overflow: hidden;
 }
-.hero-content h2 {
-  color: white; font-size: 24px; font-weight: 800;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
-.hero-content p {
-  color: rgba(255,255,255,0.9); font-size: 14px; margin-top: 6px;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 1;
 }
+.hero h2 { color: white; font-size: 22px; font-weight: 800; position: relative; }
+.hero p { color: rgba(255,255,255,0.9); font-size: 13px; margin-top: 4px; position: relative; }
 .hero-stats {
-  display: flex; justify-content: center; gap: 28px; margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 16px;
+  position: relative;
 }
 .hero-stat { text-align: center; }
-.hero-stat .num {
-  color: var(--accent); font-size: 22px; font-weight: 800;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-}
-.hero-stat .lbl { color: rgba(255,255,255,0.85); font-size: 11px; }
+.hero-stat .num { color: white; font-size: 20px; font-weight: 800; }
+.hero-stat .lbl { color: rgba(255,255,255,0.8); font-size: 11px; }
 
 /* CATEGORIES */
 .categories {
-  padding: 16px; overflow-x: auto; display: flex;
-  gap: 8px; scrollbar-width: none;
+  padding: 16px;
+  overflow-x: auto;
+  display: flex;
+  gap: 8px;
+  scrollbar-width: none;
 }
 .categories::-webkit-scrollbar { display: none; }
 .cat-chip {
-  background: white; border: 2px solid var(--border); color: var(--text);
-  padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
-  cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0;
+  background: white;
+  border: 2px solid var(--border);
+  color: var(--text);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  flex-shrink: 0;
 }
 .cat-chip.active, .cat-chip:hover {
-  background: var(--primary); border-color: var(--primary); color: white;
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
 }
 
 /* MATERIALS GRID */
-.section-title { padding: 4px 16px 8px; font-size: 16px; font-weight: 700; color: var(--secondary); }
+.section-title {
+  padding: 4px 16px 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--secondary);
+}
 .materials-grid {
   padding: 0 12px 12px;
   display: grid;
@@ -152,197 +180,373 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 @media(min-width: 900px) { .materials-grid { grid-template-columns: repeat(4, 1fr); } }
 
 .mat-card {
-  background: var(--card-bg); border-radius: var(--radius);
-  overflow: hidden; box-shadow: var(--shadow); transition: transform 0.2s;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
 }
 .mat-card:active { transform: scale(0.97); }
-.mat-img { width: 100%; height: 130px; object-fit: cover; background: #ddd; display: block; }
+.mat-img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  background: #ddd;
+}
 .mat-img-placeholder {
   width: 100%; height: 130px;
   background: linear-gradient(135deg, #e8e0d0, #d5c9b5);
-  display: flex; align-items: center; justify-content: center; font-size: 36px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
 }
 .mat-body { padding: 10px; }
-.mat-cat { font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
-.mat-name { font-size: 13px; font-weight: 700; color: var(--text); margin: 2px 0; line-height: 1.3; }
-.mat-price { font-size: 15px; font-weight: 800; color: var(--primary); }
+.mat-cat {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.mat-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 2px 0;
+  line-height: 1.3;
+}
+.mat-price {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--primary);
+}
 .mat-unit { font-size: 11px; color: var(--text-light); font-weight: 400; }
-.mat-stock { font-size: 11px; margin: 4px 0 8px; }
+.mat-stock {
+  font-size: 11px;
+  margin: 4px 0 8px;
+}
 .in-stock { color: var(--success); }
 .low-stock-warn { color: var(--accent); }
 .out-stock { color: var(--danger); }
 .add-btn {
-  width: 100%; background: var(--primary); color: white; border: none;
-  padding: 8px; border-radius: 10px; font-size: 13px; font-weight: 600;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
   transition: background 0.2s;
 }
 .add-btn:hover { background: var(--primary-dark); }
 .add-btn:disabled { background: #ccc; cursor: not-allowed; }
 .qty-ctrl {
-  display: flex; align-items: center; justify-content: space-between;
-  background: var(--primary); border-radius: 10px; overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--primary);
+  border-radius: 10px;
+  overflow: hidden;
 }
 .qty-ctrl button {
-  background: none; border: none; color: white;
-  width: 34px; height: 34px; font-size: 18px; cursor: pointer; font-weight: 700; flex-shrink: 0;
+  background: none;
+  border: none;
+  color: white;
+  width: 34px; height: 34px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 700;
 }
-.qty-ctrl input {
-  background: none; border: none; color: white; font-weight: 700;
-  font-size: 14px; width: 50px; text-align: center; outline: none; font-family: inherit;
+.qty-ctrl span {
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
 }
-.qty-ctrl input::-webkit-outer-spin-button,
-.qty-ctrl input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.qty-ctrl input[type=number] { -moz-appearance: textfield; }
 
 /* CART DRAWER */
 .overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200;
-  display: none; backdrop-filter: blur(2px);
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  display: none;
+  backdrop-filter: blur(2px);
 }
 .overlay.open { display: block; }
 .cart-drawer {
-  position: fixed; bottom: 0; left: 0; right: 0; background: white;
-  border-radius: 24px 24px 0 0; max-height: 85vh; overflow-y: auto;
-  z-index: 201; transform: translateY(100%); transition: transform 0.3s ease;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: white;
+  border-radius: 24px 24px 0 0;
+  max-height: 85vh;
+  overflow-y: auto;
+  z-index: 201;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
   padding-bottom: env(safe-area-inset-bottom);
 }
 .cart-drawer.open { transform: translateY(0); }
-.drawer-handle { width: 40px; height: 4px; background: #ddd; border-radius: 2px; margin: 12px auto 0; }
+.drawer-handle {
+  width: 40px; height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+  margin: 12px auto 0;
+}
 .drawer-header {
-  padding: 12px 16px 16px; display: flex; justify-content: space-between;
-  align-items: center; border-bottom: 1px solid var(--border);
+  padding: 12px 16px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
 }
 .drawer-header h3 { font-size: 18px; font-weight: 700; }
-.close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-light); }
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-light);
+  width: 32px; height: 32px;
+}
 .cart-items { padding: 12px 16px; }
 .cart-item {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 0; border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
 }
 .cart-item-info { flex: 1; }
 .cart-item-name { font-size: 14px; font-weight: 600; }
 .cart-item-price { font-size: 13px; color: var(--primary); font-weight: 700; }
 .cart-item-ctrl {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--bg); border-radius: 8px; padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 4px 8px;
 }
 .cart-item-ctrl button {
-  background: none; border: none; font-size: 16px; cursor: pointer;
-  color: var(--primary); font-weight: 700; width: 24px; height: 24px;
+  background: none; border: none;
+  font-size: 16px; cursor: pointer;
+  color: var(--primary); font-weight: 700;
+  width: 24px; height: 24px;
 }
 .cart-item-ctrl span { font-size: 14px; font-weight: 700; min-width: 20px; text-align: center; }
 .cart-summary {
-  padding: 16px; border-top: 2px solid var(--border); background: var(--bg);
+  padding: 16px;
+  border-top: 2px solid var(--border);
+  background: var(--bg);
+  margin: 0 -0px;
 }
 .cart-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; }
 .cart-total { font-size: 18px; font-weight: 800; color: var(--primary); }
 .checkout-btn {
-  width: 100%; background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: white; border: none; padding: 14px; border-radius: 14px;
-  font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 12px;
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 12px;
   display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 
 /* CHECKOUT MODAL */
 .modal {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300;
-  display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(3px);
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 300;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  backdrop-filter: blur(3px);
 }
 .modal.open { display: flex; }
 .modal-box {
-  background: white; border-radius: 24px 24px 0 0; width: 100%;
-  max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 20px 16px 32px;
+  background: white;
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px 16px 32px;
 }
-.modal-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 8px;
+}
 .form-group { margin-bottom: 14px; }
 .form-group label {
-  display: block; font-size: 12px; font-weight: 700; color: var(--text-light);
-  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
 }
 .form-group input, .form-group textarea {
-  width: 100%; padding: 12px 14px; border: 2px solid var(--border);
-  border-radius: 12px; font-size: 15px; outline: none; transition: border-color 0.2s; font-family: inherit;
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: inherit;
 }
-.form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
+.form-group input:focus, .form-group textarea:focus {
+  border-color: var(--primary);
+}
 .form-group textarea { height: 80px; resize: none; }
 .map-container {
-  width: 100%; height: 200px; border-radius: 12px; overflow: hidden;
-  margin-top: 8px; border: 2px solid var(--border); position: relative;
+  width: 100%;
+  height: 200px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 8px;
+  border: 2px solid var(--border);
+  position: relative;
 }
-.map-hint { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+.map-hint {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
 .order-summary-mini {
-  background: var(--bg); border-radius: 12px; padding: 12px; margin-bottom: 16px;
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
 }
 .order-summary-mini h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-.order-summary-mini .item-row { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; }
-
-/* PLACE ORDER BUTTON - BIG & BOLD */
+.order-summary-mini .item-row {
+  display: flex; justify-content: space-between;
+  font-size: 13px; padding: 3px 0;
+}
 .place-order-btn {
   width: 100%;
-  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  background: linear-gradient(135deg, var(--success), #2ecc71);
   color: white; border: none;
-  padding: 18px;
-  border-radius: 16px;
-  font-size: 18px;
-  font-weight: 800;
+  padding: 16px; border-radius: 14px;
+  font-size: 16px; font-weight: 700;
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  box-shadow: 0 6px 20px rgba(39,174,96,0.4);
-  letter-spacing: 0.5px;
-  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-.place-order-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(39,174,96,0.5); }
-.place-order-btn:disabled {
-  background: #ccc; cursor: not-allowed;
-  box-shadow: none; transform: none;
-}
+.place-order-btn:disabled { background: #ccc; cursor: not-allowed; }
 
 /* SUCCESS */
-.success-screen { text-align: center; padding: 32px 16px; display: none; }
-.success-icon { font-size: 64px; color: var(--success); margin-bottom: 16px; animation: popIn 0.4s ease; }
-@keyframes popIn { 0%{transform:scale(0)} 80%{transform:scale(1.1)} 100%{transform:scale(1)} }
+.success-screen {
+  text-align: center;
+  padding: 32px 16px;
+  display: none;
+}
+.success-icon {
+  font-size: 64px;
+  color: var(--success);
+  margin-bottom: 16px;
+  animation: popIn 0.4s ease;
+}
+@keyframes popIn {
+  0% { transform: scale(0); }
+  80% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
 .success-screen h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
 .success-screen p { color: var(--text-light); font-size: 14px; }
 .order-num-badge {
-  background: var(--bg); border: 2px dashed var(--primary);
-  border-radius: 12px; padding: 12px 20px; margin: 16px 0;
-  font-size: 20px; font-weight: 800; color: var(--primary); letter-spacing: 2px;
+  background: var(--bg);
+  border: 2px dashed var(--primary);
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin: 16px 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 2px;
 }
 
-/* TRACK */
-.track-result { background: var(--bg); border-radius: 12px; padding: 14px; margin-top: 12px; }
-.status-timeline { display: flex; flex-direction: column; gap: 0; margin-top: 12px; }
-.status-step { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; }
+/* TRACK MODAL */
+.track-result {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 12px;
+}
+.status-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 12px;
+}
+.status-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+}
 .step-dot {
-  width: 20px; height: 20px; border-radius: 50%; background: #ddd; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: 10px; margin-top: 2px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #ddd;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  margin-top: 2px;
 }
 .step-dot.done { background: var(--success); color: white; }
 .step-dot.active { background: var(--primary); color: white; animation: pulse 1.5s infinite; }
 @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(230,126,34,0.4)} 50%{box-shadow:0 0 0 8px rgba(230,126,34,0)} }
+.step-info {}
 .step-label { font-size: 13px; font-weight: 600; }
 .step-desc { font-size: 11px; color: var(--text-light); }
 
 /* TOAST */
 .toast {
-  position: fixed; bottom: 80px; left: 50%;
+  position: fixed;
+  bottom: 80px; left: 50%;
   transform: translateX(-50%) translateY(100px);
-  background: var(--secondary); color: white;
-  padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 600;
-  z-index: 500; transition: transform 0.3s; white-space: nowrap;
+  background: var(--secondary);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 500;
+  transition: transform 0.3s;
+  white-space: nowrap;
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
 
 /* LOADING */
-.loading { text-align: center; padding: 40px; color: var(--text-light); }
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-light);
+}
 .spinner {
-  width: 32px; height: 32px; border: 3px solid var(--border);
-  border-top-color: var(--primary); border-radius: 50%;
-  animation: spin 0.8s linear infinite; margin: 0 auto 12px;
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.empty-cart { text-align: center; padding: 40px 20px; color: var(--text-light); }
+
+/* EMPTY CART */
+.empty-cart {
+  text-align: center; padding: 40px 20px;
+  color: var(--text-light);
+}
 .empty-cart i { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
 </style>
 </head>
@@ -369,17 +573,14 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
   </div>
 </div>
 
-<!-- HERO WITH FULL BG IMAGE -->
+<!-- HERO -->
 <div class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-content">
-    <h2>🏗️ Quality Materials, Fast Delivery</h2>
-    <p>Cement &bull; Sand &bull; Bricks &bull; Steel &bull; Aggregates</p>
-    <div class="hero-stats">
-      <div class="hero-stat"><div class="num">500+</div><div class="lbl">Products</div></div>
-      <div class="hero-stat"><div class="num">24hr</div><div class="lbl">Delivery</div></div>
-      <div class="hero-stat"><div class="num">100%</div><div class="lbl">Quality</div></div>
-    </div>
+  <h2>🏗️ Quality Materials, Fast Delivery</h2>
+  <p>Cement • Sand • Bricks • Steel • Aggregates</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">500+</div><div class="lbl">Products</div></div>
+    <div class="hero-stat"><div class="num">24hr</div><div class="lbl">Delivery</div></div>
+    <div class="hero-stat"><div class="num">100%</div><div class="lbl">Quality</div></div>
   </div>
 </div>
 
@@ -439,6 +640,7 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
       <div class="form-group">
         <label>Delivery Address *</label>
         <textarea id="custAddress" placeholder="House/Plot No, Street, Area, City, Pincode"></textarea>
+        <div class="map-hint"><i class="fa fa-info-circle"></i> Enter address to see on map</div>
       </div>
       <div class="form-group">
         <label>Delivery Location (Map)</label>
@@ -455,7 +657,7 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
         <textarea id="custNotes" placeholder="Any delivery instructions..."></textarea>
       </div>
       <button class="place-order-btn" id="placeOrderBtn" onclick="placeOrder()">
-        <i class="fa fa-check-circle"></i> PLACE ORDER
+        <i class="fa fa-check-circle"></i> Place Order
       </button>
       <button onclick="closeModal()" style="width:100%;margin-top:10px;padding:12px;background:none;border:2px solid var(--border);border-radius:14px;font-size:14px;cursor:pointer;color:var(--text-light)">Cancel</button>
     </div>
@@ -464,8 +666,8 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
       <h2>Order Placed!</h2>
       <p>Your order has been received. We'll confirm shortly.</p>
       <div class="order-num-badge" id="orderNumDisplay"></div>
-      <p style="font-size:13px;color:var(--text-light)">Save this number to track your order</p>
-      <button onclick="doneOrder()" style="margin-top:20px;width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer">
+      <p style="font-size:13px;color:var(--text-light)">Save this order number to track your delivery</p>
+      <button onclick="closeModal();resetAfterOrder()" style="margin-top:20px;width:100%;padding:14px;background:var(--primary);color:white;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer">
         Done 🎉
       </button>
     </div>
@@ -500,14 +702,16 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 let cart = JSON.parse(localStorage.getItem('bms_cart') || '[]');
 let allMaterials = [];
 let currentCat = '';
-let isOrdering = false; // FIX: prevent double submit
+let mapLat = 10.3673, mapLng = 77.9803; // Dindigul default
 
+// ── INIT ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   loadCategories();
   loadMaterials();
   updateCartBadge();
 });
 
+// ── LOAD ───────────────────────────────────────────────
 async function loadCategories() {
   try {
     const res = await fetch('/api/categories');
@@ -528,13 +732,14 @@ async function loadMaterials(cat='', search='') {
   const grid = document.getElementById('materialsGrid');
   grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
   try {
-    const res = await fetch(`/api/materials?category=${encodeURIComponent(cat)}&search=${encodeURIComponent(search)}`);
+    let url = `/api/materials?category=${encodeURIComponent(cat)}&search=${encodeURIComponent(search)}`;
+    const res = await fetch(url);
     const data = await res.json();
     if (!data.success) { grid.innerHTML = '<div class="loading">Failed to load</div>'; return; }
     allMaterials = data.data;
     renderMaterials(allMaterials);
   } catch(e) {
-    grid.innerHTML = '<div class="loading"><i class="fa fa-wifi" style="font-size:32px;margin-bottom:8px;display:block"></i>Connection error. Is Flask running?</div>';
+    grid.innerHTML = '<div class="loading"><i class="fa fa-wifi" style="font-size:32px;margin-bottom:8px"></i><br>Connection error. Is Flask running?</div>';
   }
 }
 
@@ -544,16 +749,18 @@ function renderMaterials(materials) {
     grid.innerHTML = '<div class="loading" style="grid-column:1/-1">No materials found</div>';
     return;
   }
-  const icons = {'Cement':'🏗️','Sand':'🏝️','Bricks':'🧱','Steel':'⚙️','Aggregate':'🪨','Finishing':'🎨'};
+  const icons = { 'Cement':'🏗️','Sand':'🏝️','Bricks':'🧱','Steel':'⚙️','Aggregate':'🪨','Finishing':'🎨' };
   grid.innerHTML = materials.map(m => {
     const cartItem = cart.find(c => c.id === m.id);
     const qty = cartItem ? cartItem.qty : 0;
     const stockClass = m.stock > 50 ? 'in-stock' : m.stock > 0 ? 'low-stock-warn' : 'out-stock';
-    const stockText = m.stock > 50 ? '✓ In Stock' : m.stock > 0 ? `⚠ Only ${m.stock} left` : '✗ Out of Stock';
+    const stockText = m.stock > 50 ? `✓ In Stock` : m.stock > 0 ? `⚠ Only ${m.stock} left` : '✗ Out of Stock';
+    const imgEl = m.image_url
+      ? `<img class="mat-img" src="${m.image_url}" alt="${m.name}" onerror="this.parentElement.querySelector('.mat-img-placeholder').style.display='flex';this.style.display='none'">`
+      : '';
     const icon = icons[m.category] || '📦';
     return `<div class="mat-card">
-      <img class="mat-img" src="${m.image_url||''}" alt="${m.name}"
-        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      ${imgEl}
       <div class="mat-img-placeholder" style="display:${m.image_url?'none':'flex'}">${icon}</div>
       <div class="mat-body">
         <div class="mat-cat">${m.category}</div>
@@ -563,7 +770,7 @@ function renderMaterials(materials) {
         ${qty > 0
           ? `<div class="qty-ctrl">
               <button onclick="changeQty(${m.id},-1)">−</button>
-              <input type="number" min="1" value="${qty}" onchange="setQty(${m.id},this.value)" onblur="setQty(${m.id},this.value)">
+              <span>${qty}</span>
               <button onclick="changeQty(${m.id},1)">+</button>
              </div>`
           : `<button class="add-btn" onclick="addToCart(${m.id})" ${m.stock===0?'disabled':''}>
@@ -575,15 +782,17 @@ function renderMaterials(materials) {
   }).join('');
 }
 
-// CART
+// ── CART ───────────────────────────────────────────────
 function addToCart(id) {
   const mat = allMaterials.find(m => m.id === id);
   if (!mat) return;
   const existing = cart.find(c => c.id === id);
   if (existing) { existing.qty++; }
-  else { cart.push({id: mat.id, name: mat.name, price: parseFloat(mat.price), unit: mat.unit, qty: 1}); }
-  saveCart(); renderMaterials(allMaterials); updateCartBadge();
-  showToast(`${mat.name} added!`);
+  else { cart.push({ id: mat.id, name: mat.name, price: parseFloat(mat.price), unit: mat.unit, qty: 1 }); }
+  saveCart();
+  renderMaterials(allMaterials);
+  updateCartBadge();
+  showToast(`${mat.name} added to cart`);
 }
 
 function changeQty(id, delta) {
@@ -591,19 +800,10 @@ function changeQty(id, delta) {
   if (idx === -1) return;
   cart[idx].qty += delta;
   if (cart[idx].qty <= 0) cart.splice(idx, 1);
-  saveCart(); renderMaterials(allMaterials); updateCartBadge(); renderCartItems();
-}
-
-function setQty(id, val) {
-  const qty = parseInt(val);
-  if (isNaN(qty) || qty <= 0) {
-    const idx = cart.findIndex(c => c.id === id);
-    if (idx !== -1) cart.splice(idx, 1);
-  } else {
-    const idx = cart.findIndex(c => c.id === id);
-    if (idx !== -1) cart[idx].qty = qty;
-  }
-  saveCart(); renderMaterials(allMaterials); updateCartBadge(); renderCartItems();
+  saveCart();
+  renderMaterials(allMaterials);
+  updateCartBadge();
+  renderCartItems();
 }
 
 function saveCart() { localStorage.setItem('bms_cart', JSON.stringify(cart)); }
@@ -626,15 +826,16 @@ function renderCartItems() {
   const container = document.getElementById('cartItems');
   const summary = document.getElementById('cartSummary');
   if (cart.length === 0) {
-    container.innerHTML = '<div class="empty-cart"><i class="fa fa-shopping-cart"></i><p>Cart is empty</p></div>';
-    summary.style.display = 'none'; return;
+    container.innerHTML = '<div class="empty-cart"><i class="fa fa-shopping-cart"></i><p>Your cart is empty</p></div>';
+    summary.style.display = 'none';
+    return;
   }
-  const total = cart.reduce((s,c) => s+c.price*c.qty, 0);
+  const total = cart.reduce((s,c) => s + c.price*c.qty, 0);
   container.innerHTML = cart.map(item => `
     <div class="cart-item">
       <div class="cart-item-info">
         <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-price">₹${item.price} × ${item.qty} = ₹${(item.price*item.qty).toFixed(0)}</div>
+        <div class="cart-item-price">₹${item.price} × ${item.qty} ${item.unit} = ₹${(item.price*item.qty).toFixed(0)}</div>
       </div>
       <div class="cart-item-ctrl">
         <button onclick="changeQty(${item.id},-1)">−</button>
@@ -647,7 +848,7 @@ function renderCartItems() {
   summary.style.display = 'block';
 }
 
-// CHECKOUT
+// ── CHECKOUT ───────────────────────────────────────────
 function openCheckout() {
   closeAll();
   const total = cart.reduce((s,c) => s+c.price*c.qty, 0);
@@ -657,11 +858,6 @@ function openCheckout() {
   document.getElementById('orderSummaryTotal').textContent = `₹${total.toFixed(0)}`;
   document.getElementById('checkoutForm').style.display = 'block';
   document.getElementById('successScreen').style.display = 'none';
-  // RESET button state
-  const btn = document.getElementById('placeOrderBtn');
-  btn.disabled = false;
-  btn.innerHTML = '<i class="fa fa-check-circle"></i> PLACE ORDER';
-  isOrdering = false;
   document.getElementById('checkoutModal').classList.add('open');
 }
 
@@ -669,23 +865,19 @@ function updateMap() {
   const addr = document.getElementById('custAddress').value.trim();
   if (!addr) { showToast('Enter address first'); return; }
   const query = encodeURIComponent(addr + ', Tamil Nadu, India');
-  document.getElementById('mapFrame').src = `https://maps.google.com/maps?q=${query}&z=15&output=embed`;
+  document.getElementById('mapFrame').src =
+    `https://maps.google.com/maps?q=${query}&z=15&output=embed`;
 }
 
 async function placeOrder() {
-  // FIX: prevent double click / re-submit
-  if (isOrdering) return;
-
   const name = document.getElementById('custName').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
   const address = document.getElementById('custAddress').value.trim();
-
   if (!name) { showToast('Enter your name'); return; }
   if (!phone || phone.length < 10) { showToast('Enter valid phone number'); return; }
   if (!address) { showToast('Enter delivery address'); return; }
   if (cart.length === 0) { showToast('Cart is empty'); return; }
 
-  isOrdering = true;
   const btn = document.getElementById('placeOrderBtn');
   btn.disabled = true;
   btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Placing Order...';
@@ -693,14 +885,14 @@ async function placeOrder() {
   try {
     const res = await fetch('/api/order', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name, phone,
         email: document.getElementById('custEmail').value,
         address,
-        lat: null, lng: null,
+        lat: mapLat, lng: mapLng,
         notes: document.getElementById('custNotes').value,
-        items: cart.map(c => ({id: c.id, name: c.name, price: c.price, qty: c.qty, unit: c.unit}))
+        items: cart.map(c => ({ id: c.id, name: c.name, price: c.price, qty: c.qty, unit: c.unit }))
       })
     });
     const data = await res.json();
@@ -709,35 +901,22 @@ async function placeOrder() {
       document.getElementById('checkoutForm').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
     } else {
-      showToast('Error: ' + (data.error || 'Try again'));
+      showToast('Error: ' + data.error);
       btn.disabled = false;
-      btn.innerHTML = '<i class="fa fa-check-circle"></i> PLACE ORDER';
-      isOrdering = false;
+      btn.innerHTML = '<i class="fa fa-check-circle"></i> Place Order';
     }
   } catch(e) {
     showToast('Connection error. Try again.');
     btn.disabled = false;
-    btn.innerHTML = '<i class="fa fa-check-circle"></i> PLACE ORDER';
-    isOrdering = false;
+    btn.innerHTML = '<i class="fa fa-check-circle"></i> Place Order';
   }
 }
 
-// FIX: Done button — clear cart, close modal, reset everything
-function doneOrder() {
-  cart = [];
-  saveCart();
-  updateCartBadge();
-  isOrdering = false;
-  closeModal();
-  // Reset form fields
-  ['custName','custPhone','custEmail','custAddress','custNotes'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
-  renderMaterials(allMaterials);
-  showToast('Order placed successfully! 🎉');
+function resetAfterOrder() {
+  cart = []; saveCart(); updateCartBadge(); renderMaterials(allMaterials);
 }
 
-// TRACK
+// ── TRACK ──────────────────────────────────────────────
 function openTrack() {
   document.getElementById('trackModal').classList.add('open');
   document.getElementById('overlay').classList.add('open');
@@ -748,22 +927,24 @@ function closeTrack() {
 }
 
 const STATUS_STEPS = [
-  {key:'pending',         label:'Order Placed',      desc:'We received your order'},
-  {key:'confirmed',       label:'Confirmed',          desc:'Order confirmed by owner'},
-  {key:'processing',      label:'Processing',         desc:'Materials being prepared'},
-  {key:'out_for_delivery',label:'Out for Delivery',   desc:'On the way to you'},
-  {key:'delivered',       label:'Delivered ✓',        desc:'Order delivered successfully'},
+  { key: 'pending',          label: 'Order Placed',       desc: 'We received your order' },
+  { key: 'confirmed',        label: 'Confirmed',           desc: 'Order confirmed by owner' },
+  { key: 'processing',       label: 'Processing',          desc: 'Materials being prepared' },
+  { key: 'out_for_delivery', label: 'Out for Delivery',    desc: 'On the way to you' },
+  { key: 'delivered',        label: 'Delivered',           desc: 'Order delivered ✓' },
 ];
 
 async function trackOrder() {
   const orderNum = document.getElementById('trackOrderNum').value.trim();
   const phone = document.getElementById('trackPhone').value.trim();
   if (!orderNum && !phone) { showToast('Enter order number or phone'); return; }
+
   document.getElementById('trackResults').innerHTML = '<div class="loading"><div class="spinner"></div>Searching...</div>';
   try {
     const res = await fetch('/api/order/track', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({order_number: orderNum, phone})
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order_number: orderNum, phone })
     });
     const data = await res.json();
     if (!data.success || !data.data.length) {
@@ -780,7 +961,7 @@ async function trackOrder() {
             const active = i === currentIdx;
             return `<div class="status-step">
               <div class="step-dot ${done?'done':active?'active':''}">
-                ${done?'✓':active?'●':'○'}
+                ${done ? '✓' : active ? '●' : '○'}
               </div>
               <div class="step-info">
                 <div class="step-label" style="color:${active?'var(--primary)':done?'var(--success)':'var(--text-light)'}">${step.label}</div>
@@ -788,6 +969,16 @@ async function trackOrder() {
               </div>
             </div>`;
           }).join('');
+
+      const mapHtml = order.lat ? `
+        <div style="margin-top:12px">
+          <div style="font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:6px">DELIVERY ADDRESS</div>
+          <div class="map-container" style="height:160px">
+            <iframe width="100%" height="100%" frameborder="0" style="border:0"
+              src="https://maps.google.com/maps?q=${order.lat},${order.lng}&z=15&output=embed" allowfullscreen></iframe>
+          </div>
+        </div>` : '';
+
       return `<div class="track-result">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           <div style="font-weight:800;font-size:15px">${order.order_number}</div>
@@ -796,6 +987,7 @@ async function trackOrder() {
         <div style="font-size:13px;color:var(--text-light);margin-bottom:4px">📅 ${new Date(order.created_at).toLocaleDateString('en-IN')}</div>
         <div style="font-size:14px;font-weight:700;color:var(--primary);margin-bottom:12px">Total: ₹${parseFloat(order.total_amount).toFixed(0)}</div>
         <div class="status-timeline">${stepsHtml}</div>
+        ${mapHtml}
       </div>`;
     }).join('');
   } catch(e) {
@@ -803,11 +995,11 @@ async function trackOrder() {
   }
 }
 
-// UTILS
+// ── UTILS ──────────────────────────────────────────────
 function filterCat(cat) {
   currentCat = cat;
   document.querySelectorAll('.cat-chip').forEach(c => {
-    c.classList.toggle('active', c.textContent === (cat||'All'));
+    c.classList.toggle('active', c.textContent === (cat || 'All'));
   });
   loadMaterials(cat, document.getElementById('searchInput').value);
 }
@@ -832,7 +1024,8 @@ function closeModal() {
 
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
+  t.textContent = msg;
+  t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 </script>
