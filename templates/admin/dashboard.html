@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Harish BMS</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --primary:#e67e22; --primary-dark:#ca6f1e; --secondary:#2c3e50;
+  --accent:#f39c12; --bg:#f0f2f5; --card:#fff;
+  --text:#2c3e50; --muted:#7f8c8d; --border:#e8ecf0;
+  --success:#27ae60; --danger:#e74c3c; --info:#3498db; --warning:#f39c12;
+  --shadow:0 2px 12px rgba(0,0,0,0.06); --radius:16px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text); }
+
+/* SIDEBAR */
+.sidebar {
+  position:fixed; left:0; top:0; bottom:0; width:240px;
+  background:linear-gradient(180deg,#1a252f 0%,#2c3e50 100%);
+  z-index:100; padding:0 0 20px;
+  overflow-y:auto;
+  transition:transform 0.3s;
+}
+.sidebar-logo {
+  padding:20px 20px 16px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  display:flex; align-items:center; gap:10px;
+}
+.sidebar-logo .icon {
+  width:40px;height:40px;background:var(--primary);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.sidebar-logo h2 { color:white;font-size:15px;font-weight:700; }
+.sidebar-logo p { color:rgba(255,255,255,0.5);font-size:11px; }
+.nav-section { padding:16px 12px 4px; }
+.nav-label { color:rgba(255,255,255,0.35);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:0 8px;margin-bottom:6px; }
+.nav-item {
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;
+  color:rgba(255,255,255,0.7);font-size:14px;font-weight:500;
+  cursor:pointer;transition:all 0.2s;margin-bottom:2px;
+}
+.nav-item:hover,.nav-item.active { background:rgba(255,255,255,0.1);color:white; }
+.nav-item.active { background:var(--primary);color:white; }
+.nav-item i { width:18px;text-align:center;font-size:15px; }
+.nav-badge {
+  margin-left:auto;background:var(--danger);color:white;
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;
+  display:none;
+}
+
+/* MAIN */
+.main { margin-left:240px; min-height:100vh; }
+.topbar {
+  background:white;padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:50;
+}
+.topbar h1 { font-size:20px;font-weight:800;color:var(--text); }
+.topbar-right { display:flex;align-items:center;gap:12px; }
+.admin-tag {
+  background:var(--bg);border-radius:8px;
+  padding:6px 12px;font-size:13px;color:var(--muted);
+}
+.logout-btn {
+  background:none;border:2px solid var(--border);
+  color:var(--muted);padding:6px 14px;border-radius:8px;
+  font-size:13px;cursor:pointer;
+}
+.logout-btn:hover { border-color:var(--danger);color:var(--danger); }
+
+/* PAGE CONTENT */
+.page { padding:24px; display:none; }
+.page.active { display:block; }
+
+/* STAT CARDS */
+.stats-grid {
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:24px;
+}
+.stat-card {
+  background:var(--card);border-radius:var(--radius);
+  padding:20px;box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:14px;
+}
+.stat-icon {
+  width:52px;height:52px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
+}
+.stat-icon.orange { background:#fff3e0;color:var(--primary); }
+.stat-icon.green  { background:#e8f5e9;color:var(--success); }
+.stat-icon.blue   { background:#e3f2fd;color:var(--info); }
+.stat-icon.red    { background:#fde8e8;color:var(--danger); }
+.stat-icon.yellow { background:#fffde7;color:var(--warning); }
+.stat-info {}
+.stat-num { font-size:24px;font-weight:800;color:var(--text); }
+.stat-label { font-size:12px;color:var(--muted);font-weight:500; }
+
+/* TABLE */
+.card { background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px; }
+.card-header {
+  padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.card-header h3 { font-size:16px;font-weight:700; }
+.filter-tabs { display:flex;gap:6px; }
+.filter-tab {
+  background:var(--bg);border:1px solid var(--border);
+  color:var(--muted);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;
+}
+.filter-tab.active,.filter-tab:hover { background:var(--primary);border-color:var(--primary);color:white; }
+
+.table-wrap { overflow-x:auto; }
+table { width:100%;border-collapse:collapse; }
+th {
+  background:var(--bg);padding:10px 16px;
+  text-align:left;font-size:11px;font-weight:700;
+  color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;
+  white-space:nowrap;
+}
+td { padding:12px 16px;border-top:1px solid var(--border);font-size:14px;vertical-align:middle; }
+tr:hover td { background:#fafafa; }
+
+/* STATUS BADGES */
+.badge {
+  display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:11px;font-weight:700;white-space:nowrap;
+}
+.badge-pending    { background:#fff3e0;color:#e67e22; }
+.badge-confirmed  { background:#e3f2fd;color:#1976d2; }
+.badge-processing { background:#f3e5f5;color:#7b1fa2; }
+.badge-delivery   { background:#e8f5e9;color:#2e7d32; }
+.badge-delivered  { background:#e8f5e9;color:#27ae60; }
+.badge-cancelled  { background:#fde8e8;color:#e74c3c; }
+.badge-instock    { background:#e8f5e9;color:#27ae60; }
+.badge-lowstock   { background:#fffde7;color:#f57f17; }
+.badge-outstock   { background:#fde8e8;color:#e74c3c; }
+
+/* BUTTONS */
+.btn {
+  padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;
+  cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px;
+}
+.btn-primary  { background:var(--primary);color:white; }
+.btn-success  { background:var(--success);color:white; }
+.btn-danger   { background:var(--danger);color:white; }
+.btn-outline  { background:none;border:1px solid var(--border);color:var(--muted); }
+.btn-sm { padding:4px 10px;font-size:12px; }
+
+/* MODAL */
+.modal {
+  position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal.open { display:flex; }
+.modal-box {
+  background:white;border-radius:20px;
+  width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:28px;
+}
+.modal-title { font-size:20px;font-weight:800;margin-bottom:20px; }
+.form-group { margin-bottom:14px; }
+.form-group label { display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px; }
+.form-group input,.form-group select,.form-group textarea {
+  width:100%;padding:10px 14px;border:2px solid var(--border);
+  border-radius:10px;font-size:14px;outline:none;font-family:inherit;transition:border-color 0.2s;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus { border-color:var(--primary); }
+.form-row { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+.modal-actions { display:flex;gap:10px;justify-content:flex-end;margin-top:20px; }
+
+/* TOAST */
+.toast {
+  position:fixed;bottom:24px;right:24px;
+  background:var(--secondary);color:white;
+  padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;
+  z-index:500;transform:translateY(80px);opacity:0;transition:all 0.3s;
+}
+.toast.show { transform:translateY(0);opacity:1; }
+
+/* LOADING */
+.loading { text-align:center;padding:40px;color:var(--muted); }
+.spinner { width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* MOBILE */
+.menu-btn { display:none;background:none;border:none;font-size:20px;cursor:pointer; }
+@media(max-width:768px) {
+  .sidebar { transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); }
+  .main { margin-left:0; }
+  .menu-btn { display:block; }
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .form-row { grid-template-columns:1fr; }
+}
+
+/* CHART */
+.chart-bars { display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 8px; }
+.chart-bar-wrap { flex:1;display:flex;flex-direction:column;align-items:center;gap:4px; }
+.chart-bar { width:100%;background:var(--primary);border-radius:4px 4px 0 0;min-height:4px;transition:height 0.5s; }
+.chart-bar-label { font-size:10px;color:var(--muted);white-space:nowrap; }
+.chart-val { font-size:10px;color:var(--muted); }
+
+/* MAP in orders */
+.order-map { width:100%;height:180px;border-radius:10px;overflow:hidden;margin-top:8px;border:1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="icon">🏗️</div>
+    <div>
+      <h2>Harish BMS</h2>
+      <p>Admin Panel</p>
+    </div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Main</div>
+    <div class="nav-item active" onclick="showPage('dashboard')"><i class="fa fa-chart-line"></i> Dashboard</div>
+    <div class="nav-item" onclick="showPage('orders')">
+      <i class="fa fa-box"></i> Orders
+      <span class="nav-badge" id="pendingBadge">0</span>
+    </div>
+    <div class="nav-item" onclick="showPage('materials')"><i class="fa fa-cubes"></i> Materials</div>
+    <div class="nav-item" onclick="showPage('customers')"><i class="fa fa-users"></i> Customers</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Store</div>
+    <div class="nav-item" onclick="window.open('/')"><i class="fa fa-store"></i> View Store</div>
+    <div class="nav-item" onclick="window.location='/admin/logout'"><i class="fa fa-sign-out-alt"></i> Logout</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <h1 id="pageTitle">Dashboard</h1>
+    </div>
+    <div class="topbar-right">
+      <span class="admin-tag">👤 Admin</span>
+      <button class="logout-btn" onclick="window.location='/admin/logout'">Logout</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div class="page active" id="page-dashboard">
+    <div class="stats-grid" id="statsGrid">
+      <div class="loading"><div class="spinner"></div></div>
+    </div>
+    <!-- Chart -->
+    <div class="card">
+      <div class="card-header"><h3>📈 Revenue (Last 7 Days)</h3></div>
+      <div style="padding:16px 20px 20px">
+        <div class="chart-bars" id="chartBars"></div>
+      </div>
+    </div>
+    <!-- Recent orders preview -->
+    <div class="card">
+      <div class="card-header">
+        <h3>🕐 Recent Orders</h3>
+        <button class="btn btn-outline btn-sm" onclick="showPage('orders')">View All</button>
+      </div>
+      <div class="table-wrap">
+        <table id="recentOrdersTable">
+          <thead><tr><th>Order #</th><th>Customer</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="recentOrdersBody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDERS PAGE -->
+  <div class="page" id="page-orders">
+    <div class="card">
+      <div class="card-header">
+        <h3>📦 All Orders</h3>
+        <div class="filter-tabs">
+          <div class="filter-tab active" onclick="filterOrders('')">All</div>
+          <div class="filter-tab" onclick="filterOrders('pending')">Pending</div>
+          <div class="filter-tab" onclick="filterOrders('confirmed')">Confirmed</div>
+          <div class="filter-tab" onclick="filterOrders('out_for_delivery')">Delivery</div>
+          <div class="filter-tab" onclick="filterOrders('delivered')">Done</div>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Order #</th><th>Customer</th><th>Phone</th><th>Items</th><th>Amount</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="ordersBody"><tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted)">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MATERIALS PAGE -->
+  <div class="page" id="page-materials">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+      <button class="btn btn-primary" onclick="openMaterialModal()"><i class="fa fa-plus"></i> Add Material</button>
+    </div>
+    <div class="card">
+      <div class="card-header"><h3>🧱 Materials Inventory</h3></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Unit</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="materialsBody"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOMERS PAGE -->
+  <div class="page" id="page-customers">
+    <div class="card">
+      <div class="card-header"><h3>👥 All Customers</h3></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th>Orders</th><th>Total Spent</th><th>Joined</th></tr></thead>
+          <tbody id="customersBody"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MATERIAL MODAL -->
+<div class="modal" id="materialModal">
+  <div class="modal-box">
+    <div class="modal-title" id="matModalTitle">Add Material</div>
+    <input type="hidden" id="matId">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Material Name *</label>
+        <input type="text" id="matName" placeholder="e.g. OPC 53 Cement">
+      </div>
+      <div class="form-group">
+        <label>Category *</label>
+        <select id="matCategory">
+          <option>Cement</option><option>Sand</option><option>Bricks</option>
+          <option>Steel</option><option>Aggregate</option><option>Finishing</option><option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Price (₹) *</label>
+        <input type="number" id="matPrice" placeholder="0.00" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Unit *</label>
+        <select id="matUnit">
+          <option>bag</option><option>kg</option><option>cft</option>
+          <option>piece</option><option>ton</option><option>litre</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Stock Quantity *</label>
+      <input type="number" id="matStock" placeholder="0">
+    </div>
+    <div class="form-group">
+      <label>Image URL (Optional)</label>
+      <input type="url" id="matImage" placeholder="https://...">
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="matDesc" placeholder="Brief description..." rows="3"></textarea>
+    </div>
+    <div class="form-group" id="matActiveGroup" style="display:none">
+      <label>Status</label>
+      <select id="matActive"><option value="1">Active</option><option value="0">Hidden</option></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeMaterialModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMaterial()" id="saveMaterialBtn">Save Material</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER DETAIL MODAL -->
+<div class="modal" id="orderModal">
+  <div class="modal-box">
+    <div class="modal-title">Order Details</div>
+    <div id="orderDetailContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeOrderModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let ordersData = [];
+let materialsData = [];
+
+// ── NAVIGATION ──────────────────────────────────────────
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelector(`[onclick="showPage('${page}')"]`).classList.add('active');
+  document.getElementById('pageTitle').textContent =
+    {dashboard:'Dashboard',orders:'Orders',materials:'Materials',customers:'Customers'}[page];
+  document.getElementById('sidebar').classList.remove('open');
+  if(page==='orders') loadOrders();
+  else if(page==='materials') loadMaterials();
+  else if(page==='customers') loadCustomers();
+}
+
+// ── DASHBOARD ───────────────────────────────────────────
+async function loadDashboard() {
+  try {
+    const res = await fetch('/api/admin/stats');
+    const d = await res.json();
+    if(!d.success) return;
+    // Update pending badge
+    if(d.pending_orders > 0) {
+      const b = document.getElementById('pendingBadge');
+      b.textContent = d.pending_orders; b.style.display = 'inline-block';
+    }
+    document.getElementById('statsGrid').innerHTML = `
+      <div class="stat-card"><div class="stat-icon orange"><i class="fa fa-box"></i></div><div class="stat-info"><div class="stat-num">${d.total_orders}</div><div class="stat-label">Total Orders</div></div></div>
+      <div class="stat-card"><div class="stat-icon green"><i class="fa fa-rupee-sign"></i></div><div class="stat-info"><div class="stat-num">₹${Math.round(d.revenue).toLocaleString('en-IN')}</div><div class="stat-label">Total Revenue</div></div></div>
+      <div class="stat-card"><div class="stat-icon blue"><i class="fa fa-users"></i></div><div class="stat-info"><div class="stat-num">${d.total_customers}</div><div class="stat-label">Customers</div></div></div>
+      <div class="stat-card"><div class="stat-icon yellow"><i class="fa fa-clock"></i></div><div class="stat-info"><div class="stat-num">${d.pending_orders}</div><div class="stat-label">Pending Orders</div></div></div>
+      <div class="stat-card"><div class="stat-icon red"><i class="fa fa-exclamation-triangle"></i></div><div class="stat-info"><div class="stat-num">${d.low_stock}</div><div class="stat-label">Low Stock Items</div></div></div>
+      <div class="stat-card"><div class="stat-icon orange"><i class="fa fa-cubes"></i></div><div class="stat-info"><div class="stat-num">${d.total_materials}</div><div class="stat-label">Materials</div></div></div>`;
+    // Chart
+    if(d.chart && d.chart.length) {
+      const max = Math.max(...d.chart.map(r=>r.revenue), 1);
+      document.getElementById('chartBars').innerHTML = d.chart.map(r => {
+        const h = Math.max(8, Math.round((r.revenue/max)*100));
+        const date = r.date.slice(5);
+        return `<div class="chart-bar-wrap">
+          <div class="chart-val">₹${Math.round(r.revenue/1000)}k</div>
+          <div class="chart-bar" style="height:${h}px"></div>
+          <div class="chart-bar-label">${date}</div>
+        </div>`;
+      }).join('');
+    }
+    // Recent orders
+    const res2 = await fetch('/api/admin/orders');
+    const d2 = await res2.json();
+    if(d2.success) {
+      const recent = d2.data.slice(0,5);
+      document.getElementById('recentOrdersBody').innerHTML = recent.map(o => `
+        <tr>
+          <td><strong>${o.order_number}</strong></td>
+          <td>${o.customer_name}</td>
+          <td>₹${parseFloat(o.total_amount).toFixed(0)}</td>
+          <td>${statusBadge(o.status)}</td>
+          <td><button class="btn btn-outline btn-sm" onclick="openOrderDetail(${o.id})"><i class="fa fa-eye"></i></button></td>
+        </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">No orders yet</td></tr>';
+      ordersData = d2.data;
+    }
+  } catch(e) { console.error(e); }
+}
+
+// ── ORDERS ──────────────────────────────────────────────
+async function loadOrders(status='') {
+  try {
+    const res = await fetch(`/api/admin/orders${status?'?status='+status:''}`);
+    const d = await res.json();
+    if(!d.success) return;
+    ordersData = d.data;
+    renderOrders(ordersData);
+  } catch(e) { console.error(e); }
+}
+
+function renderOrders(orders) {
+  document.getElementById('ordersBody').innerHTML = orders.length
+    ? orders.map(o => `<tr>
+        <td><strong>${o.order_number}</strong></td>
+        <td>${o.customer_name}</td>
+        <td>${o.customer_phone}</td>
+        <td style="max-width:200px;font-size:12px">${(o.items||[]).map(i=>`${i.name}×${i.qty}`).join(', ').slice(0,60)}${(o.items||[]).length>2?'...':''}</td>
+        <td><strong>₹${parseFloat(o.total_amount).toFixed(0)}</strong></td>
+        <td style="font-size:12px;color:var(--muted)">${new Date(o.created_at).toLocaleDateString('en-IN')}</td>
+        <td>${statusBadge(o.status)}</td>
+        <td>
+          <select onchange="updateStatus(${o.id},this.value)" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer">
+            ${['pending','confirmed','processing','out_for_delivery','delivered','cancelled'].map(s=>
+              `<option value="${s}" ${s===o.status?'selected':''}>${s.replace(/_/g,' ')}</option>`
+            ).join('')}
+          </select>
+          <button class="btn btn-outline btn-sm" style="margin-left:4px" onclick="openOrderDetail(${o.id})"><i class="fa fa-eye"></i></button>
+        </td>
+      </tr>`).join('')
+    : '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--muted)">No orders found</td></tr>';
+}
+
+function filterOrders(status) {
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  loadOrders(status);
+}
+
+async function updateStatus(orderId, status) {
+  try {
+    const res = await fetch('/api/admin/order/status', {
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({order_id:orderId, status})
+    });
+    const d = await res.json();
+    if(d.success) showToast('Status updated ✓');
+    else showToast('Error: '+d.error);
+  } catch(e) { showToast('Error updating status'); }
+}
+
+function openOrderDetail(orderId) {
+  const order = ordersData.find(o => o.id === orderId);
+  if(!order) return;
+  const mapHtml = order.lat
+    ? `<div class="order-map"><iframe width="100%" height="100%" frameborder="0" style="border:0"
+        src="https://maps.google.com/maps?q=${order.lat},${order.lng}&z=15&output=embed" allowfullscreen></iframe></div>`
+    : `<div style="background:var(--bg);border-radius:8px;padding:10px;font-size:13px;color:var(--muted)">${order.delivery_address}</div>`;
+
+  document.getElementById('orderDetailContent').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div><div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Order Number</div><div style="font-weight:800;font-size:16px">${order.order_number}</div></div>
+      <div><div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Status</div><div>${statusBadge(order.status)}</div></div>
+      <div><div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Customer</div><div style="font-weight:600">${order.customer_name}</div></div>
+      <div><div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Phone</div><div>${order.customer_phone}</div></div>
+      <div><div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Date</div><div style="font-size:13px">${new Date(order.created_at).toLocaleString('en-IN')}</div></div>
+      <div><div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Total</div><div style="font-weight:800;font-size:18px;color:var(--primary)">₹${parseFloat(order.total_amount).toFixed(0)}</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:8px">Order Items</div>
+    <div style="background:var(--bg);border-radius:10px;padding:12px;margin-bottom:12px">
+      ${(order.items||[]).map(i=>`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:14px;border-bottom:1px solid var(--border)">
+        <span>${i.name} × ${i.qty} ${i.unit}</span>
+        <span style="font-weight:700">₹${(parseFloat(i.price)*parseInt(i.qty)).toFixed(0)}</span>
+      </div>`).join('') || '<div style="color:var(--muted);font-size:13px">No items data</div>'}
+    </div>
+    <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-bottom:6px">Delivery Location</div>
+    ${mapHtml}
+    ${order.notes ? `<div style="margin-top:12px;background:#fff3e0;border-radius:8px;padding:10px;font-size:13px"><strong>Note:</strong> ${order.notes}</div>` : ''}
+  `;
+  document.getElementById('orderModal').classList.add('open');
+}
+function closeOrderModal() { document.getElementById('orderModal').classList.remove('open'); }
+
+// ── MATERIALS ───────────────────────────────────────────
+async function loadMaterials() {
+  try {
+    const res = await fetch('/api/admin/materials');
+    const d = await res.json();
+    if(!d.success) return;
+    materialsData = d.data;
+    document.getElementById('materialsBody').innerHTML = d.data.map(m => {
+      const stockClass = m.stock > 50 ? 'instock' : m.stock > 0 ? 'lowstock' : 'outstock';
+      const stockText = m.stock > 50 ? 'In Stock' : m.stock > 0 ? 'Low Stock' : 'Out of Stock';
+      return `<tr>
+        <td><strong>${m.name}</strong></td>
+        <td>${m.category}</td>
+        <td>₹${parseFloat(m.price).toFixed(0)}</td>
+        <td>${m.unit}</td>
+        <td>${m.stock}</td>
+        <td><span class="badge badge-${stockClass}">${stockText}</span></td>
+        <td>
+          <button class="btn btn-outline btn-sm" onclick="editMaterial(${m.id})"><i class="fa fa-edit"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="deleteMaterial(${m.id})" style="margin-left:4px"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">No materials</td></tr>';
+  } catch(e) { console.error(e); }
+}
+
+function openMaterialModal(id=null) {
+  document.getElementById('matModalTitle').textContent = id ? 'Edit Material' : 'Add Material';
+  document.getElementById('matId').value = id || '';
+  document.getElementById('matActiveGroup').style.display = id ? 'block' : 'none';
+  if(!id) {
+    ['matName','matPrice','matStock','matImage','matDesc'].forEach(f => document.getElementById(f).value='');
+    document.getElementById('matCategory').value='Cement';
+    document.getElementById('matUnit').value='bag';
+  }
+  document.getElementById('materialModal').classList.add('open');
+}
+
+function editMaterial(id) {
+  const m = materialsData.find(x => x.id===id);
+  if(!m) return;
+  openMaterialModal(id);
+  document.getElementById('matName').value = m.name;
+  document.getElementById('matCategory').value = m.category;
+  document.getElementById('matPrice').value = m.price;
+  document.getElementById('matUnit').value = m.unit;
+  document.getElementById('matStock').value = m.stock;
+  document.getElementById('matImage').value = m.image_url||'';
+  document.getElementById('matDesc').value = m.description||'';
+  document.getElementById('matActive').value = m.active;
+}
+
+function closeMaterialModal() { document.getElementById('materialModal').classList.remove('open'); }
+
+async function saveMaterial() {
+  const id = document.getElementById('matId').value;
+  const name = document.getElementById('matName').value.trim();
+  const price = document.getElementById('matPrice').value;
+  const stock = document.getElementById('matStock').value;
+  if(!name||!price||stock==='') { showToast('Fill required fields'); return; }
+
+  const btn = document.getElementById('saveMaterialBtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  const body = {
+    name, price: parseFloat(price), stock: parseInt(stock),
+    category: document.getElementById('matCategory').value,
+    unit: document.getElementById('matUnit').value,
+    image_url: document.getElementById('matImage').value,
+    description: document.getElementById('matDesc').value,
+    active: parseInt(document.getElementById('matActive').value||1)
+  };
+
+  try {
+    const url = id ? `/api/admin/material/${id}` : '/api/admin/material';
+    const method = id ? 'PUT' : 'POST';
+    const res = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const d = await res.json();
+    if(d.success) {
+      showToast(id ? 'Material updated ✓' : 'Material added ✓');
+      closeMaterialModal();
+      loadMaterials();
+    } else { showToast('Error: '+d.error); }
+  } catch(e) { showToast('Error saving'); }
+  btn.disabled=false; btn.textContent='Save Material';
+}
+
+async function deleteMaterial(id) {
+  if(!confirm('Hide this material from store?')) return;
+  try {
+    const res = await fetch(`/api/admin/material/${id}`, {method:'DELETE'});
+    const d = await res.json();
+    if(d.success) { showToast('Material removed'); loadMaterials(); }
+  } catch(e) { showToast('Error'); }
+}
+
+// ── CUSTOMERS ───────────────────────────────────────────
+async function loadCustomers() {
+  try {
+    const res = await fetch('/api/admin/customers');
+    const d = await res.json();
+    if(!d.success) return;
+    document.getElementById('customersBody').innerHTML = d.data.map(c => `<tr>
+      <td><strong>${c.name}</strong></td>
+      <td>${c.phone}</td>
+      <td style="color:var(--muted);font-size:13px">${c.email||'-'}</td>
+      <td style="max-width:200px;font-size:12px;color:var(--muted)">${(c.address||'-').slice(0,60)}</td>
+      <td><strong>${c.order_count}</strong></td>
+      <td style="color:var(--success);font-weight:700">₹${parseFloat(c.total_spent||0).toFixed(0)}</td>
+      <td style="font-size:12px;color:var(--muted)">${new Date(c.created_at).toLocaleDateString('en-IN')}</td>
+    </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">No customers yet</td></tr>';
+  } catch(e) { console.error(e); }
+}
+
+// ── UTILS ───────────────────────────────────────────────
+function statusBadge(s) {
+  const map = {
+    pending:'badge-pending',confirmed:'badge-confirmed',processing:'badge-processing',
+    out_for_delivery:'badge-delivery',delivered:'badge-delivered',cancelled:'badge-cancelled'
+  };
+  return `<span class="badge ${map[s]||''}">${s.replace(/_/g,' ')}</span>`;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── INIT ────────────────────────────────────────────────
+loadDashboard();
+</script>
+</body>
+</html>
