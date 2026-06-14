@@ -5,9 +5,12 @@ import os
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = "bms_secret_key_2024"
+app.secret_key = os.environ.get("SECRET_KEY", "bms_secret_key_2024")
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "harish_bms.db")
+if os.environ.get("VERCEL"):
+    DB_PATH = os.path.join("/tmp", "harish_bms.db")
+else:
+    DB_PATH = os.path.join(os.path.dirname(__file__), "harish_bms.db")
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -99,7 +102,6 @@ def init_db():
 
     conn.commit()
     conn.close()
-    print("✅ DB initialized")
 
 # ── CUSTOMER ROUTES ──────────────────────────────────────
 @app.route("/")
@@ -358,7 +360,8 @@ def admin_customers():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
+init_db()
+
 if __name__ == "__main__":
-    init_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(debug=False, host="0.0.0.0", port=port)
