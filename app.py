@@ -1,42 +1,32 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from flask_cors import CORS
-import mysql.connector
+import psycopg2
 import hashlib
 import os
 from datetime import datetime
+from psycopg2.extras import RealDictCursor
 
 app = Flask(__name__)
 app.secret_key = "bms_secret_key_2024"
 CORS(app)
 
 # ─── DB CONFIG ───────────────────────────────────────────
-DB_CONFIG = {
-    "host": "localhost",
-    "user": "root",
-    "password": "your_password",   # change this
-    "database": "harish_bms"
-}
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 def get_db():
-    return mysql.connector.connect(**DB_CONFIG)
+    return psycopg2.connect(DATABASE_URL)
 
 def hash_pw(pw):
     return hashlib.sha256(pw.encode()).hexdigest()
 
 # ─── INIT DB ─────────────────────────────────────────────
 def init_db():
-    conn = mysql.connector.connect(
-        host=DB_CONFIG["host"],
-        user=DB_CONFIG["user"],
-        password=DB_CONFIG["password"]
-    )
+    conn = get_db()
     cur = conn.cursor()
-    cur.execute("CREATE DATABASE IF NOT EXISTS harish_bms")
-    cur.execute("USE harish_bms")
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS materials (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             name VARCHAR(100) NOT NULL,
             category VARCHAR(50),
             price DECIMAL(10,2) NOT NULL,
@@ -44,14 +34,14 @@ def init_db():
             stock INT DEFAULT 0,
             image_url VARCHAR(255),
             description TEXT,
-            active TINYINT DEFAULT 1,
+            active SMALLINT DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS customers (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             name VARCHAR(100) NOT NULL,
             phone VARCHAR(15) UNIQUE NOT NULL,
             email VARCHAR(100),
@@ -64,7 +54,7 @@ def init_db():
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS orders (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             order_number VARCHAR(20) UNIQUE NOT NULL,
             customer_id INT,
             customer_name VARCHAR(100),
@@ -73,17 +63,17 @@ def init_db():
             lat DECIMAL(10,8),
             lng DECIMAL(11,8),
             total_amount DECIMAL(10,2),
-            status ENUM('pending','confirmed','processing','out_for_delivery','delivered','cancelled') DEFAULT 'pending',
+            status VARCHAR(20) DEFAULT 'pending',
             notes TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE SET NULL
         )
     """)
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS order_items (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             order_id INT NOT NULL,
             material_id INT,
             material_name VARCHAR(100),
@@ -97,7 +87,7 @@ def init_db():
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS admin (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id SERIAL PRIMARY KEY,
             username VARCHAR(50) UNIQUE NOT NULL,
             password VARCHAR(64) NOT NULL
         )
@@ -143,7 +133,7 @@ def index():
 def get_materials():
     try:
         conn = get_db()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         category = request.args.get("category", "")
         search = request.args.get("search", "")
         query = "SELECT * FROM materials WHERE active=1"
@@ -179,7 +169,7 @@ def place_order():
     try:
         data = request.json
         conn = get_db()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
 
         # Save/update customer
         cur.execute("SELECT id FROM customers WHERE phone=%s", (data["phone"],))
@@ -231,7 +221,7 @@ def track_order():
     try:
         data = request.json
         conn = get_db()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("""SELECT o.*, GROUP_CONCAT(
                         CONCAT(oi.material_name,'|',oi.quantity,'|',oi.unit,'|',oi.price)
                         SEPARATOR ';;') as items_raw
@@ -269,7 +259,7 @@ def admin_login():
     try:
         data = request.json
         conn = get_db()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("SELECT * FROM admin WHERE username=%s AND password=%s",
                     (data["username"], hash_pw(data["password"])))
         admin = cur.fetchone()
@@ -299,7 +289,7 @@ def admin_stats():
         return jsonify({"error": "Unauthorized"}), 401
     try:
         conn = get_db()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("SELECT COUNT(*) as total, SUM(total_amount) as revenue FROM orders WHERE status!='cancelled'")
         orders_stat = cur.fetchone()
         cur.execute("SELECT COUNT(*) as total FROM customers")
@@ -339,7 +329,7 @@ def admin_orders():
         return jsonify({"error": "Unauthorized"}), 401
     try:
         conn = get_db()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         status = request.args.get("status", "")
         query = """SELECT o.*, GROUP_CONCAT(
                     CONCAT(oi.material_name,'|',oi.quantity,'|',oi.unit,'|',oi.price)
@@ -391,7 +381,7 @@ def admin_materials():
         return jsonify({"error": "Unauthorized"}), 401
     try:
         conn = get_db()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("SELECT * FROM materials ORDER BY category, name")
         mats = cur.fetchall()
         for m in mats:
@@ -460,7 +450,7 @@ def admin_customers():
         return jsonify({"error": "Unauthorized"}), 401
     try:
         conn = get_db()
-        cur = conn.cursor(dictionary=True)
+        cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute("""SELECT c.*, COUNT(o.id) as order_count,
                       SUM(o.total_amount) as total_spent
                       FROM customers c
