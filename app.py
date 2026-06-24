@@ -418,7 +418,7 @@ def delete_material(mid):
     try:
         conn = get_db()
         cur = conn.cursor()
-        cur.execute("UPDATE materials SET active=0 WHERE id=%s", (mid,))
+        cur.execute("DELETE FROM materials WHERE id=%s", (mid,))
         conn.commit()
         cur.close(); conn.close()
         return jsonify({"success": True})
