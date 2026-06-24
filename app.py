@@ -7,13 +7,22 @@ from datetime import datetime
 from psycopg2.extras import RealDictCursor
 
 app = Flask(__name__)
-app.secret_key = "bms_secret_key_2024"
+app.secret_key = os.getenv("SECRET_KEY", "change-this-secret-key")
 CORS(app)
+
+@app.after_request
+def add_no_cache_headers(response):
+    if request.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+    return response
 
 # ─── DB CONFIG ───────────────────────────────────────────
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 def get_db():
+    if not DATABASE_URL:
+        raise RuntimeError("DATABASE_URL environment variable is missing")
     return psycopg2.connect(DATABASE_URL)
 
 def hash_pw(pw):
@@ -37,6 +46,10 @@ def init_db():
             active SMALLINT DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
+    """)
+
+    cur.execute("""
+        ALTER TABLE materials ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     """)
 
     cur.execute("""
@@ -99,26 +112,9 @@ def init_db():
         cur.execute("INSERT INTO admin (username, password) VALUES ('admin', %s)",
                     (hash_pw("admin123"),))
 
-    # Sample materials
-    cur.execute("SELECT COUNT(*) FROM materials")
-    if cur.fetchone()[0] == 0:
-        materials = [
-            ("Cement (OPC 53 Grade)", "Cement", 380.00, "bag", 500, "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400", "Premium quality OPC 53 Grade cement"),
-            ("River Sand", "Sand", 55.00, "cft", 1000, "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400", "Clean river sand for construction"),
-            ("M-Sand (Manufactured)", "Sand", 42.00, "cft", 800, "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400", "Eco-friendly manufactured sand"),
-            ("Red Bricks", "Bricks", 8.50, "piece", 5000, "https://images.unsplash.com/photo-1587582423116-ec07293f0395?w=400", "Standard red clay bricks"),
-            ("Fly Ash Bricks", "Bricks", 7.00, "piece", 3000, "https://images.unsplash.com/photo-1587582423116-ec07293f0395?w=400", "Lightweight fly ash bricks"),
-            ("TMT Steel Bar (8mm)", "Steel", 68.00, "kg", 2000, "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400", "Fe500D grade TMT bars"),
-            ("TMT Steel Bar (12mm)", "Steel", 72.00, "kg", 1500, "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400", "Fe500D grade TMT bars"),
-            ("20mm Blue Metal", "Aggregate", 48.00, "cft", 600, "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400", "Crushed granite aggregate"),
-            ("40mm Blue Metal", "Aggregate", 44.00, "cft", 600, "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400", "Crushed granite aggregate"),
-            ("Wall Putty", "Finishing", 320.00, "bag", 200, "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=400", "Smooth finish wall putty"),
-        ]
-        cur.executemany(
-            "INSERT INTO materials (name, category, price, unit, stock, image_url, description) VALUES (%s,%s,%s,%s,%s,%s,%s)",
-            materials
-        )
-
+    # IMPORTANT:
+    # Do NOT insert sample/default materials on every app start.
+    # Admin add/edit/delete changes must remain exactly as saved in PostgreSQL.
     conn.commit()
     cur.close()
     conn.close()
@@ -142,7 +138,7 @@ def get_materials():
             query += " AND category=%s"
             params.append(category)
         if search:
-            query += " AND name LIKE %s"
+            query += " AND name ILIKE %s"
             params.append(f"%{search}%")
         query += " ORDER BY category, name"
         cur.execute(query, params)
@@ -181,10 +177,11 @@ def place_order():
             customer_id = existing["id"]
         else:
             cur.execute("""INSERT INTO customers (name, phone, email, address, lat, lng)
-                          VALUES (%s,%s,%s,%s,%s,%s)""",
+                          VALUES (%s,%s,%s,%s,%s,%s)
+                          RETURNING id""",
                         (data["name"], data["phone"], data.get("email",""), data["address"],
                          data.get("lat"), data.get("lng")))
-            customer_id = cur.lastrowid
+            customer_id = cur.fetchone()["id"]
 
         # Generate order number
         order_num = f"BMS{datetime.now().strftime('%Y%m%d%H%M%S')}"
@@ -195,10 +192,11 @@ def place_order():
         cur.execute("""INSERT INTO orders
                       (order_number, customer_id, customer_name, customer_phone,
                        delivery_address, lat, lng, total_amount, notes)
-                      VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+                      VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                      RETURNING id""",
                     (order_num, customer_id, data["name"], data["phone"],
                      data["address"], data.get("lat"), data.get("lng"), total, data.get("notes","")))
-        order_id = cur.lastrowid
+        order_id = cur.fetchone()["id"]
 
         # Order items
         for item in data["items"]:
@@ -222,12 +220,11 @@ def track_order():
         data = request.json
         conn = get_db()
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("""SELECT o.*, GROUP_CONCAT(
-                        CONCAT(oi.material_name,'|',oi.quantity,'|',oi.unit,'|',oi.price)
-                        SEPARATOR ';;') as items_raw
+        cur.execute("""SELECT o.*,
+                        STRING_AGG(CONCAT(oi.material_name,'|',oi.quantity,'|',oi.unit,'|',oi.price), ';;') as items_raw
                       FROM orders o
                       LEFT JOIN order_items oi ON o.id=oi.order_id
-                      WHERE o.order_number=%s OR (o.customer_phone=%s)
+                      WHERE o.order_number=%s OR o.customer_phone=%s
                       GROUP BY o.id ORDER BY o.created_at DESC LIMIT 10""",
                     (data.get("order_number","__"), data.get("phone","__")))
         orders = cur.fetchall()
@@ -303,7 +300,7 @@ def admin_stats():
         low_stock = cur.fetchone()
         cur.execute("""SELECT DATE(created_at) as date, SUM(total_amount) as revenue,
                       COUNT(*) as orders FROM orders
-                      WHERE status!='cancelled' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                      WHERE status!='cancelled' AND created_at >= (NOW() - INTERVAL '7 days')
                       GROUP BY DATE(created_at) ORDER BY date""")
         chart_data = cur.fetchall()
         for row in chart_data:
@@ -331,9 +328,8 @@ def admin_orders():
         conn = get_db()
         cur = conn.cursor(cursor_factory=RealDictCursor)
         status = request.args.get("status", "")
-        query = """SELECT o.*, GROUP_CONCAT(
-                    CONCAT(oi.material_name,'|',oi.quantity,'|',oi.unit,'|',oi.price)
-                    SEPARATOR ';;') as items_raw
+        query = """SELECT o.*,
+                    STRING_AGG(CONCAT(oi.material_name,'|',oi.quantity,'|',oi.unit,'|',oi.price), ';;') as items_raw
                   FROM orders o
                   LEFT JOIN order_items oi ON o.id=oi.order_id"""
         params = []
@@ -367,7 +363,7 @@ def update_order_status():
         data = request.json
         conn = get_db()
         cur = conn.cursor()
-        cur.execute("UPDATE orders SET status=%s WHERE id=%s",
+        cur.execute("UPDATE orders SET status=%s, updated_at=CURRENT_TIMESTAMP WHERE id=%s",
                     (data["status"], data["order_id"]))
         conn.commit()
         cur.close(); conn.close()
@@ -399,12 +395,13 @@ def add_material():
         data = request.json
         conn = get_db()
         cur = conn.cursor()
-        cur.execute("""INSERT INTO materials (name, category, price, unit, stock, image_url, description)
-                      VALUES (%s,%s,%s,%s,%s,%s,%s)""",
+        cur.execute("""INSERT INTO materials (name, category, price, unit, stock, image_url, description, active)
+                      VALUES (%s,%s,%s,%s,%s,%s,%s,1)
+                      RETURNING id""",
                     (data["name"], data["category"], data["price"], data["unit"],
                      data["stock"], data.get("image_url",""), data.get("description","")))
+        new_id = cur.fetchone()[0]
         conn.commit()
-        new_id = cur.lastrowid
         cur.close(); conn.close()
         return jsonify({"success": True, "id": new_id})
     except Exception as e:
@@ -419,7 +416,8 @@ def update_material(mid):
         conn = get_db()
         cur = conn.cursor()
         cur.execute("""UPDATE materials SET name=%s, category=%s, price=%s,
-                      unit=%s, stock=%s, image_url=%s, description=%s, active=%s
+                      unit=%s, stock=%s, image_url=%s, description=%s, active=%s,
+                      updated_at=CURRENT_TIMESTAMP
                       WHERE id=%s""",
                     (data["name"], data["category"], data["price"], data["unit"],
                      data["stock"], data.get("image_url",""), data.get("description",""),
@@ -437,7 +435,7 @@ def delete_material(mid):
     try:
         conn = get_db()
         cur = conn.cursor()
-        cur.execute("UPDATE materials SET active=0 WHERE id=%s", (mid,))
+        cur.execute("UPDATE materials SET active=0, updated_at=CURRENT_TIMESTAMP WHERE id=%s", (mid,))
         conn.commit()
         cur.close(); conn.close()
         return jsonify({"success": True})
@@ -467,4 +465,4 @@ def admin_customers():
 
 if __name__ == "__main__":
     init_db()
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=os.getenv("FLASK_DEBUG") == "1", host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
