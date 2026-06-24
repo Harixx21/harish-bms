@@ -205,14 +205,17 @@ def track_order():
         data = request.json
         conn = get_db()
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("""SELECT o.*, GROUP_CONCAT(
-                        CONCAT(oi.material_name,'|',oi.quantity,'|',oi.unit,'|',oi.price)
-                        SEPARATOR ';;') as items_raw
-                      FROM orders o
-                      LEFT JOIN order_items oi ON o.id=oi.order_id
-                      WHERE o.order_number=%s OR (o.customer_phone=%s)
-                      GROUP BY o.id ORDER BY o.created_at DESC LIMIT 10""",
-                    (data.get("order_number","__"), data.get("phone","__")))
+        cur.execute("""SELECT o.*, STRING_AGG(
+                oi.material_name || '|' || oi.quantity::text || '|' || oi.unit || '|' || oi.price::text,
+                ';;'
+              ) as items_raw
+              FROM orders o
+              LEFT JOIN order_items oi ON o.id=oi.order_id
+              WHERE o.order_number=%s OR (o.customer_phone=%s)
+              GROUP BY o.id
+              ORDER BY o.created_at DESC
+              LIMIT 10""",
+            (data.get("order_number","__"), data.get("phone","__")))
         orders = cur.fetchall()
         for o in orders:
             o["created_at"] = str(o["created_at"])
@@ -314,11 +317,12 @@ def admin_orders():
         conn = get_db()
         cur = conn.cursor(cursor_factory=RealDictCursor)
         status = request.args.get("status", "")
-        query = """SELECT o.*, GROUP_CONCAT(
-                    CONCAT(oi.material_name,'|',oi.quantity,'|',oi.unit,'|',oi.price)
-                    SEPARATOR ';;') as items_raw
-                  FROM orders o
-                  LEFT JOIN order_items oi ON o.id=oi.order_id"""
+        query = """SELECT o.*, STRING_AGG(
+            oi.material_name || '|' || oi.quantity::text || '|' || oi.unit || '|' || oi.price::text,
+            ';;'
+          ) as items_raw
+          FROM orders o
+          LEFT JOIN order_items oi ON o.id=oi.order_id"""
         params = []
         if status:
             query += " WHERE o.status=%s"
