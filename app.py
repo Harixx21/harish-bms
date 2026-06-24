@@ -188,22 +188,23 @@ def place_order():
 
             cur.execute("""
             INSERT INTO order_items
-          (order_id, material_id, material_name, quantity, unit, price)
+            (order_id, material_id, material_name, quantity, unit, price)
             VALUES (%s,%s,%s,%s,%s,%s)
-            """,
+             """,
             (order_id, item["id"], item["name"], item["qty"], item["unit"], item["price"]))
 
-          # Reduce stock
-         cur.execute(
-             "UPDATE materials SET stock=stock-%s WHERE id=%s AND stock>=%s",
-                (item["qty"], item["id"], item["qty"])
+            # Reduce stock
+            cur.execute(
+                "UPDATE materials SET stock=stock-%s WHERE id=%s AND stock>=%s",
+                 (item["qty"], item["id"], item["qty"])
             )
-    
-        if cur.rowcount == 0:
-            raise Exception(f"Insufficient stock for material ID {item['id']}")
+
+            if cur.rowcount == 0:
+                raise Exception(f"Insufficient stock for material ID {item['id']}")
 
         conn.commit()
-        cur.close(); conn.close()
+        cur.close()
+        conn.close()
         return jsonify({"success": True, "order_number": order_num, "total": float(total)})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
