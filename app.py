@@ -185,13 +185,22 @@ def place_order():
 
         # Order items
         for item in data["items"]:
-            cur.execute("""INSERT INTO order_items
-                          (order_id, material_id, material_name, quantity, unit, price)
-                          VALUES (%s,%s,%s,%s,%s,%s)""",
-                        (order_id, item["id"], item["name"], item["qty"], item["unit"], item["price"]))
-            # Reduce stock
-            cur.execute("UPDATE materials SET stock=stock-%s WHERE id=%s AND stock>=%s",
-                        (item["qty"], item["id"], item["qty"]))
+
+            cur.execute("""
+            INSERT INTO order_items
+          (order_id, material_id, material_name, quantity, unit, price)
+            VALUES (%s,%s,%s,%s,%s,%s)
+            """,
+            (order_id, item["id"], item["name"], item["qty"], item["unit"], item["price"]))
+
+          # Reduce stock
+         cur.execute(
+             "UPDATE materials SET stock=stock-%s WHERE id=%s AND stock>=%s",
+                (item["qty"], item["id"], item["qty"])
+            )
+    
+        if cur.rowcount == 0:
+            raise Exception(f"Insufficient stock for material ID {item['id']}")
 
         conn.commit()
         cur.close(); conn.close()
