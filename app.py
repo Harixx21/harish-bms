@@ -161,12 +161,11 @@ def place_order():
             customer_id = existing["id"]
         else:
             cur.execute("""INSERT INTO customers (name, phone, email, address, lat, lng)
-                VALUES (%s,%s,%s,%s,%s,%s)
-                    RETURNING id""",
+                          VALUES (%s,%s,%s,%s,%s,%s)
+                          RETURNING id""",
                         (data["name"], data["phone"], data.get("email",""),
-                            data["address"], data.get("lat"), data.get("lng")))
-
-customer_id = cur.fetchone()[0]
+                         data["address"], data.get("lat"), data.get("lng")))
+            customer_id = cur.fetchone()[0]
         # Generate order number
         order_num = f"BMS{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
