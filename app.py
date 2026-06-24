@@ -283,7 +283,7 @@ def admin_stats():
         low_stock = cur.fetchone()
         cur.execute("""SELECT DATE(created_at) as date, SUM(total_amount) as revenue,
                       COUNT(*) as orders FROM orders
-                      WHERE status!='cancelled' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                      WHERE status!='cancelled' AND created_at >= NOW() - INTERVAL '7 days'
                       GROUP BY DATE(created_at) ORDER BY date""")
         chart_data = cur.fetchall()
         for row in chart_data:
