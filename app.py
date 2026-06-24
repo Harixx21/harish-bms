@@ -165,7 +165,7 @@ def place_order():
                           RETURNING id""",
                         (data["name"], data["phone"], data.get("email",""),
                          data["address"], data.get("lat"), data.get("lng")))
-            customer_id = cur.fetchone()[0]
+            customer_id = cur.fetchone()["id"]
         # Generate order number
         order_num = f"BMS{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
@@ -181,7 +181,7 @@ def place_order():
                                  data["address"], data.get("lat"), data.get("lng"),
                                      total, data.get("notes","")))
 
-        order_id = cur.fetchone()[0]
+        order_id = cur.fetchone()["id"]
 
         # Order items
         for item in data["items"]:
