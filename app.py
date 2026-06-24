@@ -362,7 +362,7 @@ def admin_materials():
     try:
         conn = get_db()
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("SELECT * FROM materials ORDER BY category, name")
+        cur.execute("SELECT * FROM materials WHERE active=1 ORDER BY category, name")
         mats = cur.fetchall()
         for m in mats:
             m["price"] = float(m["price"])
