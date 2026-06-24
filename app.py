@@ -161,11 +161,12 @@ def place_order():
             customer_id = existing["id"]
         else:
             cur.execute("""INSERT INTO customers (name, phone, email, address, lat, lng)
-                          VALUES (%s,%s,%s,%s,%s,%s)""",
-                        (data["name"], data["phone"], data.get("email",""), data["address"],
-                         data.get("lat"), data.get("lng")))
-            customer_id = cur.lastrowid
+                VALUES (%s,%s,%s,%s,%s,%s)
+                    RETURNING id""",
+                        (data["name"], data["phone"], data.get("email",""),
+                            data["address"], data.get("lat"), data.get("lng")))
 
+customer_id = cur.fetchone()[0]
         # Generate order number
         order_num = f"BMS{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
@@ -173,12 +174,15 @@ def place_order():
         total = sum(item["price"] * item["qty"] for item in data["items"])
 
         cur.execute("""INSERT INTO orders
-                      (order_number, customer_id, customer_name, customer_phone,
-                       delivery_address, lat, lng, total_amount, notes)
-                      VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
-                    (order_num, customer_id, data["name"], data["phone"],
-                     data["address"], data.get("lat"), data.get("lng"), total, data.get("notes","")))
-        order_id = cur.lastrowid
+            (order_number, customer_id, customer_name, customer_phone,
+                delivery_address, lat, lng, total_amount, notes)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                        RETURNING id""",
+                            (order_num, customer_id, data["name"], data["phone"],
+                                 data["address"], data.get("lat"), data.get("lng"),
+                                     total, data.get("notes","")))
+
+        order_id = cur.fetchone()[0]
 
         # Order items
         for item in data["items"]:
