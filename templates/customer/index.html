@@ -501,6 +501,41 @@ let cart = JSON.parse(localStorage.getItem('bms_cart') || '[]');
 let allMaterials = [];
 let currentCat = '';
 let isOrdering = false; // FIX: prevent double submit
+const LIVE_API_ORIGIN = 'https://harish-bms.vercel.app';
+const FALLBACK_MATERIALS = [
+  {id:1,name:'Cement (OPC 53 Grade)',category:'Cement',price:410,unit:'bag',stock:500,image_url:'https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80'},
+  {id:2,name:'PPC Cement',category:'Cement',price:370,unit:'bag',stock:400,image_url:'https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80'},
+  {id:3,name:'River Sand',category:'Sand',price:65,unit:'cft',stock:1200,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg'},
+  {id:4,name:'M-Sand (Manufactured)',category:'Sand',price:45,unit:'cft',stock:1500,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg'},
+  {id:5,name:'P-Sand',category:'Sand',price:52,unit:'cft',stock:900,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg'},
+  {id:6,name:'Red Bricks',category:'Bricks',price:12,unit:'piece',stock:6000,image_url:'https://images.unsplash.com/photo-1769104397835-2297e730f361?auto=format&fit=crop&w=900&q=80'},
+  {id:7,name:'Fly Ash Bricks',category:'Bricks',price:7.5,unit:'piece',stock:5000,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg'},
+  {id:8,name:'AAC Blocks',category:'Bricks',price:55,unit:'piece',stock:2500,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg'},
+  {id:9,name:'Solid Concrete Block',category:'Bricks',price:35,unit:'piece',stock:2500,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg'},
+  {id:10,name:'TMT Steel Bar (8mm)',category:'Steel',price:68,unit:'kg',stock:2500,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg/960px-20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg'},
+  {id:11,name:'TMT Steel Bar (12mm)',category:'Steel',price:70,unit:'kg',stock:2000,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg/960px-20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg'},
+  {id:12,name:'12mm Blue Metal',category:'Aggregate',price:35,unit:'cft',stock:900,image_url:'https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80'},
+  {id:13,name:'20mm Blue Metal',category:'Aggregate',price:40,unit:'cft',stock:1200,image_url:'https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80'},
+  {id:14,name:'40mm Blue Metal',category:'Aggregate',price:30,unit:'cft',stock:1000,image_url:'https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80'},
+  {id:15,name:'Blue Metal Dust',category:'Aggregate',price:30,unit:'cft',stock:1000,image_url:'https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80'},
+  {id:16,name:'Wall Putty',category:'Finishing',price:420,unit:'bag',stock:300,image_url:'https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=900&q=80'}
+];
+
+async function fetchJson(path) {
+  const urls = [path];
+  if (window.location.origin !== LIVE_API_ORIGIN) urls.push(LIVE_API_ORIGIN + path);
+  let lastError;
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, {cache: 'no-store'});
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch (e) {
+      lastError = e;
+    }
+  }
+  throw lastError;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   loadCategories();
@@ -510,8 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadCategories() {
   try {
-    const res = await fetch('/api/categories');
-    const data = await res.json();
+    const data = await fetchJson('/api/categories');
     if (!data.success) return;
     const container = document.getElementById('categories');
     data.data.forEach(cat => {
@@ -528,13 +562,16 @@ async function loadMaterials(cat='', search='') {
   const grid = document.getElementById('materialsGrid');
   grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
   try {
-    const res = await fetch(`/api/materials?category=${encodeURIComponent(cat)}&search=${encodeURIComponent(search)}`);
-    const data = await res.json();
+    const data = await fetchJson(`/api/materials?category=${encodeURIComponent(cat)}&search=${encodeURIComponent(search)}`);
     if (!data.success) { grid.innerHTML = '<div class="loading">Failed to load</div>'; return; }
     allMaterials = data.data;
     renderMaterials(allMaterials);
   } catch(e) {
-    grid.innerHTML = '<div class="loading"><i class="fa fa-wifi" style="font-size:32px;margin-bottom:8px;display:block"></i>Connection error. Is Flask running?</div>';
+    allMaterials = FALLBACK_MATERIALS.filter(m =>
+      (!cat || m.category === cat) &&
+      (!search || m.name.toLowerCase().includes(search.toLowerCase()))
+    );
+    renderMaterials(allMaterials);
   }
 }
 
