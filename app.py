@@ -15,7 +15,8 @@ CORS(app)
 # ─── DB CONFIG ───────────────────────────────────────────
 DATABASE_URL = os.getenv("DATABASE_URL")
 USE_POSTGRES = bool(DATABASE_URL)
-DB_PATH = os.path.join(tempfile.gettempdir() if os.environ.get("VERCEL") else BASE_DIR, "harish_bms.db")
+DB_PATH = os.environ.get("SQLITE_DB_PATH", os.path.join(tempfile.gettempdir(), "harish_bms.db"))
+DB_READY = False
 
 if USE_POSTGRES:
     import psycopg2
@@ -75,6 +76,12 @@ class AppSqliteConnection(sqlite3.Connection):
 
 def hash_pw(pw):
     return hashlib.sha256(pw.encode()).hexdigest()
+
+def ensure_db():
+    global DB_READY
+    if not DB_READY:
+        init_db()
+        DB_READY = True
 
 # ─── INIT DB ─────────────────────────────────────────────
 def init_db():
@@ -239,6 +246,11 @@ def init_db():
     print("✅ DB initialized")
 
 # ─── CUSTOMER ROUTES ─────────────────────────────────────
+@app.before_request
+def prepare_database():
+    if request.path.startswith("/api") or request.path == "/admin/login":
+        ensure_db()
+
 @app.route("/")
 def index():
     return render_template("customer/index.html")
@@ -627,7 +639,6 @@ def admin_customers():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
-init_db()
-
 if __name__ == "__main__":
+    ensure_db()
     app.run(debug=True, host="0.0.0.0", port=5000)
