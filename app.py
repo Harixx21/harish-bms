@@ -249,7 +249,15 @@ def init_db():
 @app.before_request
 def prepare_database():
     if request.path.startswith("/api") or request.path == "/admin/login":
-        ensure_db()
+        try:
+            ensure_db()
+        except Exception as e:
+            return jsonify({
+                "success": False,
+                "error": f"DB init failed: {e}",
+                "db_path": DB_PATH,
+                "use_postgres": USE_POSTGRES,
+            }), 500
 
 @app.route("/")
 def index():
