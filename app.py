@@ -84,6 +84,42 @@ def ensure_db():
         DB_READY = True
 
 # ─── INIT DB ─────────────────────────────────────────────
+DEFAULT_MATERIALS = [
+    ("Cement (OPC 53 Grade)", "Cement", 410.00, "bag", 500, "https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80", "50kg OPC cement bag. Indicative Chennai/India retail range checked: about Rs 340-540 per bag."),
+    ("PPC Cement", "Cement", 370.00, "bag", 400, "https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80", "50kg PPC cement bag for masonry and plaster. Indicative retail rate selected from current market range."),
+    ("River Sand", "Sand", 65.00, "cft", 1200, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Clean river sand for concrete and masonry. Indicative rate based on current Chennai/TN sand listings."),
+    ("M-Sand (Manufactured)", "Sand", 45.00, "cft", 1500, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Manufactured sand for concrete work. Current Chennai listing is around Rs 45 per cft."),
+    ("P-Sand", "Sand", 52.00, "cft", 900, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Plastering sand for smooth finishing. Indicative Chennai unit rate converted for per-cft display."),
+    ("Red Bricks", "Bricks", 12.00, "piece", 6000, "https://images.unsplash.com/photo-1769104397835-2297e730f361?auto=format&fit=crop&w=900&q=80", "Solid red clay brick. Current Chennai brick listing shows about Rs 12 per piece."),
+    ("Fly Ash Bricks", "Bricks", 7.50, "piece", 5000, "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg", "Fly ash brick for wall construction. Current Chennai listing shows about Rs 7.50 per piece."),
+    ("AAC Blocks", "Bricks", 55.00, "piece", 2500, "https://plus.unsplash.com/premium_photo-1676154517862-3d39720f63f5?auto=format&fit=crop&w=900&q=80", "Lightweight AAC block. Indicative market range checked: about Rs 45-55 per piece."),
+    ("Solid Concrete Block", "Bricks", 35.00, "piece", 2500, "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg", "Solid concrete block. Current Chennai listing shows about Rs 35 per piece."),
+    ("TMT Steel Bar (8mm)", "Steel", 68.00, "kg", 2500, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg/960px-20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg", "Fe500D TMT reinforcement bar. Indicative India rate selected around Rs 68 per kg."),
+    ("TMT Steel Bar (12mm)", "Steel", 70.00, "kg", 2000, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg/960px-20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg", "Fe500D TMT reinforcement bar. Indicative India rate selected around Rs 70 per kg."),
+    ("12mm Blue Metal", "Aggregate", 35.00, "cft", 900, "https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80", "12mm blue metal aggregate. Current Chennai jalli listing shows about Rs 35 per cft."),
+    ("20mm Blue Metal", "Aggregate", 40.00, "cft", 1200, "https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80", "20mm blue metal aggregate. Current Chennai jalli listing shows about Rs 40 per cft."),
+    ("40mm Blue Metal", "Aggregate", 30.00, "cft", 1000, "https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80", "40mm blue metal aggregate. Current Chennai jalli listing shows about Rs 30 per cft."),
+    ("Blue Metal Dust", "Aggregate", 30.00, "cft", 1000, "https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80", "Crusher dust / blue metal dust. Current Chennai jalli listing shows about Rs 30 per cft."),
+    ("Wall Putty", "Finishing", 420.00, "bag", 300, "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=900&q=80", "White cement based wall putty for smooth interior finishing."),
+]
+
+def seed_materials(cur):
+    for name, category, price, unit, stock, image_url, description in DEFAULT_MATERIALS:
+        cur.execute(
+            """UPDATE materials
+               SET category=%s, price=%s, unit=%s, stock=%s, image_url=%s,
+                   description=%s, active=1, updated_at=CURRENT_TIMESTAMP
+               WHERE name=%s""",
+            (category, price, unit, stock, image_url, description, name),
+        )
+        if cur.rowcount == 0:
+            cur.execute(
+                """INSERT INTO materials
+                   (name, category, price, unit, stock, image_url, description, active)
+                   VALUES (%s,%s,%s,%s,%s,%s,%s,1)""",
+                (name, category, price, unit, stock, image_url, description),
+            )
+
 def init_db():
     conn = get_db()
     cur = conn.cursor()
@@ -144,21 +180,7 @@ def init_db():
         cur.execute("SELECT id FROM admin WHERE username='admin'")
         if not cur.fetchone():
             cur.execute("INSERT INTO admin (username, password) VALUES (?, ?)", ("admin", hash_pw("admin123")))
-        cur.execute("SELECT COUNT(*) FROM materials")
-        if cur.fetchone()[0] == 0:
-            materials = [
-                ("Cement (OPC 53 Grade)", "Cement", 380.00, "bag", 500, "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400", "Premium quality OPC 53 Grade cement"),
-                ("River Sand", "Sand", 55.00, "cft", 1000, "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400", "Clean river sand for construction"),
-                ("M-Sand (Manufactured)", "Sand", 42.00, "cft", 800, "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400", "Eco-friendly manufactured sand"),
-                ("Red Bricks", "Bricks", 8.50, "piece", 5000, "https://images.unsplash.com/photo-1587582423116-ec07293f0395?w=400", "Standard red clay bricks"),
-                ("Fly Ash Bricks", "Bricks", 7.00, "piece", 3000, "https://images.unsplash.com/photo-1587582423116-ec07293f0395?w=400", "Lightweight fly ash bricks"),
-                ("TMT Steel Bar (8mm)", "Steel", 68.00, "kg", 2000, "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400", "Fe500D grade TMT bars"),
-                ("TMT Steel Bar (12mm)", "Steel", 72.00, "kg", 1500, "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400", "Fe500D grade TMT bars"),
-                ("20mm Blue Metal", "Aggregate", 48.00, "cft", 600, "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400", "Crushed granite aggregate"),
-                ("40mm Blue Metal", "Aggregate", 44.00, "cft", 600, "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400", "Crushed granite aggregate"),
-                ("Wall Putty", "Finishing", 320.00, "bag", 200, "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=400", "Smooth finish wall putty"),
-            ]
-            cur.executemany("INSERT INTO materials (name, category, price, unit, stock, image_url, description) VALUES (?, ?, ?, ?, ?, ?, ?)", materials)
+        seed_materials(cur)
         conn.commit()
         cur.close()
         conn.close()
@@ -173,13 +195,14 @@ def init_db():
             price DECIMAL(10,2) NOT NULL,
             unit VARCHAR(20) DEFAULT 'bag',
             stock INT DEFAULT 0,
-            image_url VARCHAR(255),
+            image_url TEXT,
             description TEXT,
             active SMALLINT DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    cur.execute("ALTER TABLE materials ALTER COLUMN image_url TYPE TEXT")
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS customers (
@@ -240,6 +263,7 @@ def init_db():
     if not cur.fetchone():
         cur.execute("INSERT INTO admin (username, password) VALUES ('admin', %s)",
                     (hash_pw("admin123"),))
+    seed_materials(cur)
     conn.commit()
     cur.close()
     conn.close()
