@@ -1,12 +1,10 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from flask_cors import CORS
-import psycopg2
 import sqlite3
 import hashlib
 import os
 import tempfile
 from datetime import datetime
-from psycopg2.extras import RealDictCursor
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -18,6 +16,13 @@ CORS(app)
 DATABASE_URL = os.getenv("DATABASE_URL")
 USE_POSTGRES = bool(DATABASE_URL)
 DB_PATH = os.path.join(tempfile.gettempdir() if os.environ.get("VERCEL") else BASE_DIR, "harish_bms.db")
+
+if USE_POSTGRES:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+else:
+    psycopg2 = None
+    RealDictCursor = None
 
 def get_db():
     if USE_POSTGRES:
