@@ -143,7 +143,7 @@ def init_db():
         )""")
         cur.execute("SELECT id FROM admin WHERE username='admin'")
         if not cur.fetchone():
-            cur.execute("INSERT INTO admin (username, password) VALUES (?, ?)", (hash_pw("admin123"),))
+            cur.execute("INSERT INTO admin (username, password) VALUES (?, ?)", ("admin", hash_pw("admin123")))
         cur.execute("SELECT COUNT(*) FROM materials")
         if cur.fetchone()[0] == 0:
             materials = [
