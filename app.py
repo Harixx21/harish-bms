@@ -255,8 +255,6 @@ def prepare_database():
             return jsonify({
                 "success": False,
                 "error": f"DB init failed: {e}",
-                "db_path": DB_PATH,
-                "use_postgres": USE_POSTGRES,
             }), 500
 
 @app.route("/")
