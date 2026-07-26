@@ -7,11 +7,11 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 :root {
-  --primary:#e67e22; --primary-dark:#ca6f1e; --secondary:#2c3e50;
-  --accent:#f39c12; --bg:#f0f2f5; --card:#fff;
-  --text:#2c3e50; --muted:#7f8c8d; --border:#e8ecf0;
-  --success:#27ae60; --danger:#e74c3c; --info:#3498db; --warning:#f39c12;
-  --shadow:0 2px 12px rgba(0,0,0,0.06); --radius:16px;
+  --primary:#d86d1d; --primary-dark:#b95716; --secondary:#17313b;
+  --accent:#13a77b; --bg:#f4f7f5; --card:#fff;
+  --text:#19313a; --muted:#718086; --border:#dce5df;
+  --success:#158a58; --danger:#cf3f35; --info:#2f7dd1; --warning:#d79516;
+  --shadow:0 14px 34px rgba(25,49,58,0.10); --radius:14px;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text); }
@@ -19,7 +19,7 @@ body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text
 /* SIDEBAR */
 .sidebar {
   position:fixed; left:0; top:0; bottom:0; width:240px;
-  background:linear-gradient(180deg,#1a252f 0%,#2c3e50 100%);
+  background:linear-gradient(180deg,#10282f 0%,#17313b 58%,#0f2027 100%);
   z-index:100; padding:0 0 20px;
   overflow-y:auto;
   transition:transform 0.3s;
@@ -44,7 +44,7 @@ body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text
   cursor:pointer;transition:all 0.2s;margin-bottom:2px;
 }
 .nav-item:hover,.nav-item.active { background:rgba(255,255,255,0.1);color:white; }
-.nav-item.active { background:var(--primary);color:white; }
+.nav-item.active { background:linear-gradient(135deg,var(--primary),#f2a043);color:white; }
 .nav-item i { width:18px;text-align:center;font-size:15px; }
 .nav-badge {
   margin-left:auto;background:var(--danger);color:white;
@@ -55,10 +55,10 @@ body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text
 /* MAIN */
 .main { margin-left:240px; min-height:100vh; }
 .topbar {
-  background:white;padding:14px 24px;
+  background:rgba(255,255,255,0.88);padding:14px 24px;
   display:flex;align-items:center;justify-content:space-between;
   border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:50;
+  position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
 }
 .topbar h1 { font-size:20px;font-weight:800;color:var(--text); }
 .topbar-right { display:flex;align-items:center;gap:12px; }
@@ -83,7 +83,7 @@ body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text
 }
 .stat-card {
   background:var(--card);border-radius:var(--radius);
-  padding:20px;box-shadow:var(--shadow);
+  padding:20px;box-shadow:var(--shadow);border:1px solid rgba(25,49,58,0.07);
   display:flex;align-items:center;gap:14px;
 }
 .stat-icon {
@@ -100,7 +100,7 @@ body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text
 .stat-label { font-size:12px;color:var(--muted);font-weight:500; }
 
 /* TABLE */
-.card { background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px; }
+.card { background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;border:1px solid rgba(25,49,58,0.07); }
 .card-header {
   padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
   border-bottom:1px solid var(--border);
@@ -135,6 +135,7 @@ tr:hover td { background:#fafafa; }
 .badge-delivery   { background:#e8f5e9;color:#2e7d32; }
 .badge-delivered  { background:#e8f5e9;color:#27ae60; }
 .badge-cancelled  { background:#fde8e8;color:#e74c3c; }
+.badge-rejected   { background:#fde8e8;color:#a9342d; }
 .badge-instock    { background:#e8f5e9;color:#27ae60; }
 .badge-lowstock   { background:#fffde7;color:#f57f17; }
 .badge-outstock   { background:#fde8e8;color:#e74c3c; }
@@ -147,8 +148,23 @@ tr:hover td { background:#fafafa; }
 .btn-primary  { background:var(--primary);color:white; }
 .btn-success  { background:var(--success);color:white; }
 .btn-danger   { background:var(--danger);color:white; }
+.btn-warning  { background:var(--warning);color:white; }
+.btn-info     { background:var(--info);color:white; }
 .btn-outline  { background:none;border:1px solid var(--border);color:var(--muted); }
 .btn-sm { padding:4px 10px;font-size:12px; }
+.quick-actions { display:flex;gap:6px;flex-wrap:wrap;margin-top:8px; }
+.action-pill { border:1px solid var(--border);background:white;color:var(--text);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700;cursor:pointer; }
+.action-pill.confirm { color:var(--info);border-color:#bfd7f5; }
+.action-pill.delivery { color:var(--success);border-color:#bde6d2; }
+.action-pill.reject { color:var(--danger);border-color:#f3c2bd; }
+.material-thumb { width:52px;height:42px;object-fit:cover;border-radius:8px;margin-right:10px;vertical-align:middle;border:1px solid var(--border); }
+.material-name-cell { display:flex;align-items:center;min-width:220px; }
+.ops-grid { display:grid;grid-template-columns:1.4fr .9fr;gap:20px;align-items:start; }
+.chat-panel { padding:16px; }
+.chat-bubble { background:#f7faf8;border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:10px; }
+.chat-bubble strong { display:block;font-size:13px;margin-bottom:3px;color:var(--text); }
+.chat-bubble span { color:var(--muted);font-size:12px;line-height:1.4;display:block; }
+.chat-template { width:100%;border:1px solid var(--border);border-radius:12px;padding:10px;font-size:13px;color:var(--text);background:white;margin-top:8px; }
 
 /* MODAL */
 .modal {
@@ -194,6 +210,7 @@ tr:hover td { background:#fafafa; }
   .menu-btn { display:block; }
   .stats-grid { grid-template-columns:1fr 1fr; }
   .form-row { grid-template-columns:1fr; }
+  .ops-grid { grid-template-columns:1fr; }
 }
 
 /* CHART */
@@ -260,7 +277,7 @@ tr:hover td { background:#fafafa; }
         <div class="chart-bars" id="chartBars"></div>
       </div>
     </div>
-    <!-- Recent orders preview -->
+    <div class="ops-grid">
     <div class="card">
       <div class="card-header">
         <h3>🕐 Recent Orders</h3>
@@ -273,6 +290,22 @@ tr:hover td { background:#fafafa; }
         </table>
       </div>
     </div>
+    <div class="card chat-panel">
+      <div class="card-header" style="padding:0 0 12px;border-bottom:0">
+        <h3>Customer Chat Assist</h3>
+      </div>
+      <div class="chat-bubble">
+        <strong>Confirm message</strong>
+        <span>Hi, your Harish BMS order is confirmed. Materials are being prepared now.</span>
+      </div>
+      <div class="chat-bubble">
+        <strong>Delivery message</strong>
+        <span>Your order is out for delivery. Please keep your phone reachable for the driver.</span>
+      </div>
+      <textarea class="chat-template" id="quickMessage" rows="4">Hi, this is Harish BMS. Your order status has been updated.</textarea>
+      <button class="btn btn-primary" style="margin-top:10px" onclick="copyQuickMessage()"><i class="fa fa-copy"></i> Copy Message</button>
+    </div>
+    </div>
   </div>
 
   <!-- ORDERS PAGE -->
@@ -284,8 +317,10 @@ tr:hover td { background:#fafafa; }
           <div class="filter-tab active" onclick="filterOrders('')">All</div>
           <div class="filter-tab" onclick="filterOrders('pending')">Pending</div>
           <div class="filter-tab" onclick="filterOrders('confirmed')">Confirmed</div>
+          <div class="filter-tab" onclick="filterOrders('processing')">Processing</div>
           <div class="filter-tab" onclick="filterOrders('out_for_delivery')">Delivery</div>
           <div class="filter-tab" onclick="filterOrders('delivered')">Done</div>
+          <div class="filter-tab" onclick="filterOrders('rejected')">Rejected</div>
         </div>
       </div>
       <div class="table-wrap">
@@ -483,12 +518,17 @@ function renderOrders(orders) {
         <td style="font-size:12px;color:var(--muted)">${new Date(o.created_at).toLocaleDateString('en-IN')}</td>
         <td>${statusBadge(o.status)}</td>
         <td>
-          <select onchange="updateStatus(${o.id},this.value)" style="padding:4px 8px;border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer">
-            ${['pending','confirmed','processing','out_for_delivery','delivered','cancelled'].map(s=>
-              `<option value="${s}" ${s===o.status?'selected':''}>${s.replace(/_/g,' ')}</option>`
+          <select onchange="updateStatus(${o.id},this.value)" style="padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer">
+            ${['pending','confirmed','processing','out_for_delivery','delivered','rejected'].map(s=>
+              `<option value="${s}" ${s===o.status?'selected':''}>${statusLabel(s)}</option>`
             ).join('')}
           </select>
           <button class="btn btn-outline btn-sm" style="margin-left:4px" onclick="openOrderDetail(${o.id})"><i class="fa fa-eye"></i></button>
+          <div class="quick-actions">
+            <button class="action-pill confirm" onclick="updateStatus(${o.id},'confirmed')">Confirm</button>
+            <button class="action-pill delivery" onclick="updateStatus(${o.id},'out_for_delivery')">Delivery</button>
+            <button class="action-pill reject" onclick="updateStatus(${o.id},'rejected')">Reject</button>
+          </div>
         </td>
       </tr>`).join('')
     : '<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--muted)">No orders found</td></tr>';
@@ -509,6 +549,7 @@ async function updateStatus(orderId, status) {
     });
     const d = await res.json();
     if(d.success) showToast('Status updated ✓');
+    if(d.success) { loadDashboard(); loadOrders(); }
     else showToast('Error: '+d.error);
   } catch(e) { showToast('Error updating status'); }
 }
@@ -545,6 +586,12 @@ function openOrderDetail(orderId) {
 }
 function closeOrderModal() { document.getElementById('orderModal').classList.remove('open'); }
 
+function copyQuickMessage() {
+  const el = document.getElementById('quickMessage');
+  navigator.clipboard?.writeText(el.value);
+  showToast('Message copied');
+}
+
 // ── MATERIALS ───────────────────────────────────────────
 async function loadMaterials() {
   try {
@@ -556,7 +603,7 @@ async function loadMaterials() {
       const stockClass = m.stock > 50 ? 'instock' : m.stock > 0 ? 'lowstock' : 'outstock';
       const stockText = m.stock > 50 ? 'In Stock' : m.stock > 0 ? 'Low Stock' : 'Out of Stock';
       return `<tr>
-        <td><strong>${m.name}</strong></td>
+        <td><div class="material-name-cell"><img class="material-thumb" src="${m.image_url||''}" alt="${m.name}"><strong>${m.name}</strong></div></td>
         <td>${m.category}</td>
         <td>₹${parseFloat(m.price).toFixed(0)}</td>
         <td>${m.unit}</td>
@@ -663,9 +710,22 @@ async function loadCustomers() {
 function statusBadge(s) {
   const map = {
     pending:'badge-pending',confirmed:'badge-confirmed',processing:'badge-processing',
-    out_for_delivery:'badge-delivery',delivered:'badge-delivered',cancelled:'badge-cancelled'
+    out_for_delivery:'badge-delivery',delivered:'badge-delivered',cancelled:'badge-cancelled',rejected:'badge-rejected'
   };
-  return `<span class="badge ${map[s]||''}">${s.replace(/_/g,' ')}</span>`;
+  return `<span class="badge ${map[s]||''}">${statusLabel(s)}</span>`;
+}
+
+function statusLabel(s) {
+  const labels = {
+    pending:'Pending',
+    confirmed:'Confirmed',
+    processing:'Processing',
+    out_for_delivery:'Out for delivery',
+    delivered:'Delivered',
+    cancelled:'Cancelled',
+    rejected:'Rejected'
+  };
+  return labels[s] || s.replace(/_/g,' ');
 }
 
 function showToast(msg) {

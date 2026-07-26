@@ -96,10 +96,10 @@ DEFAULT_MATERIALS = [
     ("Solid Concrete Block", "Bricks", 35.00, "piece", 2500, "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg", "Solid concrete block. Current Chennai listing shows about Rs 35 per piece."),
     ("TMT Steel Bar (8mm)", "Steel", 68.00, "kg", 2500, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg/960px-20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg", "Fe500D TMT reinforcement bar. Indicative India rate selected around Rs 68 per kg."),
     ("TMT Steel Bar (12mm)", "Steel", 70.00, "kg", 2000, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg/960px-20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg", "Fe500D TMT reinforcement bar. Indicative India rate selected around Rs 70 per kg."),
-    ("12mm Blue Metal", "Aggregate", 35.00, "cft", 900, "https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80", "12mm blue metal aggregate. Current Chennai jalli listing shows about Rs 35 per cft."),
-    ("20mm Blue Metal", "Aggregate", 40.00, "cft", 1200, "https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80", "20mm blue metal aggregate. Current Chennai jalli listing shows about Rs 40 per cft."),
+    ("12mm Blue Metal", "Aggregate", 35.00, "cft", 900, "https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Splitt%20WikiCom.jpg?width=900", "12mm blue metal aggregate. Current Chennai jalli listing shows about Rs 35 per cft."),
+    ("20mm Blue Metal", "Aggregate", 40.00, "cft", 1200, "https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Schotter%20WikiCom.jpg?width=900", "20mm blue metal aggregate. Current Chennai jalli listing shows about Rs 40 per cft."),
     ("40mm Blue Metal", "Aggregate", 30.00, "cft", 1000, "https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80", "40mm blue metal aggregate. Current Chennai jalli listing shows about Rs 30 per cft."),
-    ("Blue Metal Dust", "Aggregate", 30.00, "cft", 1000, "https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80", "Crusher dust / blue metal dust. Current Chennai jalli listing shows about Rs 30 per cft."),
+    ("Blue Metal Dust", "Aggregate", 30.00, "cft", 1000, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Crusher dust / blue metal dust. Current Chennai jalli listing shows about Rs 30 per cft."),
     ("Wall Putty", "Finishing", 420.00, "bag", 300, "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=900&q=80", "White cement based wall putty for smooth interior finishing."),
 ]
 
@@ -475,7 +475,7 @@ def admin_stats():
     try:
         conn = get_db()
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("SELECT COUNT(*) as total, SUM(total_amount) as revenue FROM orders WHERE status!='cancelled'")
+        cur.execute("SELECT COUNT(*) as total, SUM(total_amount) as revenue FROM orders WHERE status NOT IN ('cancelled', 'rejected')")
         orders_stat = cur.fetchone()
         cur.execute("SELECT COUNT(*) as total FROM customers")
         cust_stat = cur.fetchone()
@@ -489,12 +489,12 @@ def admin_stats():
         if USE_POSTGRES:
             cur.execute("""SELECT DATE(created_at) as date, SUM(total_amount) as revenue,
                       COUNT(*) as orders FROM orders
-                      WHERE status!='cancelled' AND created_at >= NOW() - INTERVAL '7 days'
+                      WHERE status NOT IN ('cancelled', 'rejected') AND created_at >= NOW() - INTERVAL '7 days'
                       GROUP BY DATE(created_at) ORDER BY date""")
         else:
             cur.execute("""SELECT date(created_at) as date, SUM(total_amount) as revenue,
                       COUNT(*) as orders FROM orders
-                      WHERE status!='cancelled' AND created_at >= date('now', '-7 days')
+                      WHERE status NOT IN ('cancelled', 'rejected') AND created_at >= date('now', '-7 days')
                       GROUP BY date(created_at) ORDER BY date""")
         chart_data = cur.fetchall()
         for row in chart_data:
@@ -658,7 +658,7 @@ def admin_customers():
         cur.execute("""SELECT c.*, COUNT(o.id) as order_count,
                       SUM(o.total_amount) as total_spent
                       FROM customers c
-                      LEFT JOIN orders o ON c.id=o.customer_id AND o.status!='cancelled'
+                      LEFT JOIN orders o ON c.id=o.customer_id AND o.status NOT IN ('cancelled', 'rejected')
                       GROUP BY c.id ORDER BY c.created_at DESC""")
         customers = cur.fetchall()
         for c in customers:
