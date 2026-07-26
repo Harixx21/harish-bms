@@ -1,20 +1,72 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from flask_cors import CORS
 import psycopg2
+import sqlite3
 import hashlib
 import os
+import tempfile
 from datetime import datetime
 from psycopg2.extras import RealDictCursor
 
-app = Flask(__name__)
-app.secret_key = "bms_secret_key_2024"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+app = Flask(__name__, template_folder=os.path.join(BASE_DIR, "templates"))
+app.secret_key = os.environ.get("SECRET_KEY", "bms_secret_key_2024")
 CORS(app)
 
 # ─── DB CONFIG ───────────────────────────────────────────
 DATABASE_URL = os.getenv("DATABASE_URL")
+USE_POSTGRES = bool(DATABASE_URL)
+DB_PATH = os.path.join(tempfile.gettempdir() if os.environ.get("VERCEL") else BASE_DIR, "harish_bms.db")
 
 def get_db():
-    return psycopg2.connect(DATABASE_URL)
+    if USE_POSTGRES:
+        return psycopg2.connect(DATABASE_URL)
+    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+    conn = sqlite3.connect(DB_PATH, factory=AppSqliteConnection)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def get_cursor(conn, dict_rows=False):
+    if USE_POSTGRES and dict_rows:
+        return conn.cursor(cursor_factory=RealDictCursor)
+    return conn.cursor()
+
+def db_sql(query):
+    return query if USE_POSTGRES else query.replace("%s", "?")
+
+def db_execute(cur, query, params=None):
+    cur.execute(db_sql(query), params or ())
+
+def row_to_dict(row):
+    return dict(row) if not isinstance(row, dict) else row
+
+def rows_to_dicts(rows):
+    return [row_to_dict(r) for r in rows]
+
+class HybridRow(dict):
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            return list(self.values())[key]
+        return super().__getitem__(key)
+
+class AppSqliteCursor(sqlite3.Cursor):
+    def execute(self, query, params=()):
+        return super().execute(db_sql(query), params or ())
+
+    def executemany(self, query, seq_of_params):
+        return super().executemany(db_sql(query), seq_of_params)
+
+    def fetchone(self):
+        row = super().fetchone()
+        return HybridRow(dict(row)) if row is not None else None
+
+    def fetchall(self):
+        return [HybridRow(dict(row)) for row in super().fetchall()]
+
+class AppSqliteConnection(sqlite3.Connection):
+    def cursor(self, *args, **kwargs):
+        return super().cursor(factory=AppSqliteCursor)
 
 def hash_pw(pw):
     return hashlib.sha256(pw.encode()).hexdigest()
@@ -23,6 +75,83 @@ def hash_pw(pw):
 def init_db():
     conn = get_db()
     cur = conn.cursor()
+
+    if not USE_POSTGRES:
+        cur.execute("""CREATE TABLE IF NOT EXISTS materials (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            category TEXT,
+            price REAL NOT NULL,
+            unit TEXT DEFAULT 'bag',
+            stock INTEGER DEFAULT 0,
+            image_url TEXT,
+            description TEXT,
+            active INTEGER DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )""")
+        cur.execute("""CREATE TABLE IF NOT EXISTS customers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            phone TEXT UNIQUE NOT NULL,
+            email TEXT,
+            address TEXT,
+            lat REAL,
+            lng REAL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )""")
+        cur.execute("""CREATE TABLE IF NOT EXISTS orders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            order_number TEXT UNIQUE NOT NULL,
+            customer_id INTEGER,
+            customer_name TEXT,
+            customer_phone TEXT,
+            delivery_address TEXT,
+            lat REAL,
+            lng REAL,
+            total_amount REAL,
+            status TEXT DEFAULT 'pending',
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )""")
+        cur.execute("""CREATE TABLE IF NOT EXISTS order_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            order_id INTEGER NOT NULL,
+            material_id INTEGER,
+            material_name TEXT,
+            quantity INTEGER NOT NULL,
+            unit TEXT,
+            price REAL
+        )""")
+        cur.execute("""CREATE TABLE IF NOT EXISTS admin (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )""")
+        cur.execute("SELECT id FROM admin WHERE username='admin'")
+        if not cur.fetchone():
+            cur.execute("INSERT INTO admin (username, password) VALUES (?, ?)", (hash_pw("admin123"),))
+        cur.execute("SELECT COUNT(*) FROM materials")
+        if cur.fetchone()[0] == 0:
+            materials = [
+                ("Cement (OPC 53 Grade)", "Cement", 380.00, "bag", 500, "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400", "Premium quality OPC 53 Grade cement"),
+                ("River Sand", "Sand", 55.00, "cft", 1000, "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400", "Clean river sand for construction"),
+                ("M-Sand (Manufactured)", "Sand", 42.00, "cft", 800, "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400", "Eco-friendly manufactured sand"),
+                ("Red Bricks", "Bricks", 8.50, "piece", 5000, "https://images.unsplash.com/photo-1587582423116-ec07293f0395?w=400", "Standard red clay bricks"),
+                ("Fly Ash Bricks", "Bricks", 7.00, "piece", 3000, "https://images.unsplash.com/photo-1587582423116-ec07293f0395?w=400", "Lightweight fly ash bricks"),
+                ("TMT Steel Bar (8mm)", "Steel", 68.00, "kg", 2000, "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400", "Fe500D grade TMT bars"),
+                ("TMT Steel Bar (12mm)", "Steel", 72.00, "kg", 1500, "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400", "Fe500D grade TMT bars"),
+                ("20mm Blue Metal", "Aggregate", 48.00, "cft", 600, "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400", "Crushed granite aggregate"),
+                ("40mm Blue Metal", "Aggregate", 44.00, "cft", 600, "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400", "Crushed granite aggregate"),
+                ("Wall Putty", "Finishing", 320.00, "bag", 200, "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=400", "Smooth finish wall putty"),
+            ]
+            cur.executemany("INSERT INTO materials (name, category, price, unit, stock, image_url, description) VALUES (?, ?, ?, ?, ?, ?, ?)", materials)
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("DB initialized")
+        return
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS materials (
@@ -215,8 +344,21 @@ def track_order():
         data = request.json
         conn = get_db()
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("""SELECT o.*, STRING_AGG(
+        if USE_POSTGRES:
+            cur.execute("""SELECT o.*, STRING_AGG(
                 oi.material_name || '|' || oi.quantity::text || '|' || oi.unit || '|' || oi.price::text,
+                ';;'
+              ) as items_raw
+              FROM orders o
+              LEFT JOIN order_items oi ON o.id=oi.order_id
+              WHERE o.order_number=%s OR (o.customer_phone=%s)
+              GROUP BY o.id
+              ORDER BY o.created_at DESC
+              LIMIT 10""",
+            (data.get("order_number","__"), data.get("phone","__")))
+        else:
+            cur.execute("""SELECT o.*, GROUP_CONCAT(
+                oi.material_name || '|' || oi.quantity || '|' || oi.unit || '|' || oi.price,
                 ';;'
               ) as items_raw
               FROM orders o
@@ -297,10 +439,16 @@ def admin_stats():
         cur.execute("""SELECT COUNT(*) as total FROM materials
                       WHERE active=1 AND stock < 50""")
         low_stock = cur.fetchone()
-        cur.execute("""SELECT DATE(created_at) as date, SUM(total_amount) as revenue,
+        if USE_POSTGRES:
+            cur.execute("""SELECT DATE(created_at) as date, SUM(total_amount) as revenue,
                       COUNT(*) as orders FROM orders
                       WHERE status!='cancelled' AND created_at >= NOW() - INTERVAL '7 days'
                       GROUP BY DATE(created_at) ORDER BY date""")
+        else:
+            cur.execute("""SELECT date(created_at) as date, SUM(total_amount) as revenue,
+                      COUNT(*) as orders FROM orders
+                      WHERE status!='cancelled' AND created_at >= date('now', '-7 days')
+                      GROUP BY date(created_at) ORDER BY date""")
         chart_data = cur.fetchall()
         for row in chart_data:
             row["date"] = str(row["date"])
@@ -327,12 +475,20 @@ def admin_orders():
         conn = get_db()
         cur = conn.cursor(cursor_factory=RealDictCursor)
         status = request.args.get("status", "")
-        query = """SELECT o.*, STRING_AGG(
-            oi.material_name || '|' || oi.quantity::text || '|' || oi.unit || '|' || oi.price::text,
-            ';;'
-          ) as items_raw
-          FROM orders o
-          LEFT JOIN order_items oi ON o.id=oi.order_id"""
+        if USE_POSTGRES:
+            query = """SELECT o.*, STRING_AGG(
+                oi.material_name || '|' || oi.quantity::text || '|' || oi.unit || '|' || oi.price::text,
+                ';;'
+              ) as items_raw
+              FROM orders o
+              LEFT JOIN order_items oi ON o.id=oi.order_id"""
+        else:
+            query = """SELECT o.*, GROUP_CONCAT(
+                oi.material_name || '|' || oi.quantity || '|' || oi.unit || '|' || oi.price,
+                ';;'
+              ) as items_raw
+              FROM orders o
+              LEFT JOIN order_items oi ON o.id=oi.order_id"""
         params = []
         if status:
             query += " WHERE o.status=%s"
@@ -401,8 +557,11 @@ def add_material():
                     (data["name"], data["category"], data["price"], data["unit"],
                      data["stock"], data.get("image_url",""), data.get("description","")))
         conn.commit()
-        cur.execute("SELECT currval(pg_get_serial_sequence('materials', 'id'))")
-        new_id = cur.fetchone()[0]
+        if USE_POSTGRES:
+            cur.execute("SELECT currval(pg_get_serial_sequence('materials', 'id'))")
+            new_id = cur.fetchone()[0]
+        else:
+            new_id = cur.lastrowid
         cur.close(); conn.close()
         return jsonify({"success": True, "id": new_id})
     except Exception as e:
@@ -463,6 +622,7 @@ def admin_customers():
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
+init_db()
+
 if __name__ == "__main__":
-    init_db()
     app.run(debug=True, host="0.0.0.0", port=5000)
