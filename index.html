@@ -531,6 +531,26 @@ async function fetchJson(path) {
   throw lastError;
 }
 
+async function postJson(path, payload) {
+  const urls = [path];
+  if (window.location.origin !== LIVE_API_ORIGIN) urls.push(LIVE_API_ORIGIN + path);
+  let lastError;
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch (e) {
+      lastError = e;
+    }
+  }
+  throw lastError;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadCategories();
   loadMaterials();
@@ -710,19 +730,14 @@ async function placeOrder() {
   btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Placing Order...';
 
   try {
-    const res = await fetch('/api/order', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        name, phone,
-        email: document.getElementById('custEmail').value,
-        address,
-        lat: null, lng: null,
-        notes: document.getElementById('custNotes').value,
-        items: cart.map(c => ({id: c.id, name: c.name, price: c.price, qty: c.qty, unit: c.unit}))
-      })
+    const data = await postJson('/api/order', {
+      name, phone,
+      email: document.getElementById('custEmail').value,
+      address,
+      lat: null, lng: null,
+      notes: document.getElementById('custNotes').value,
+      items: cart.map(c => ({id: c.id, name: c.name, price: c.price, qty: c.qty, unit: c.unit}))
     });
-    const data = await res.json();
     if (data.success) {
       document.getElementById('orderNumDisplay').textContent = data.order_number;
       document.getElementById('checkoutForm').style.display = 'none';
@@ -780,11 +795,7 @@ async function trackOrder() {
   if (!orderNum && !phone) { showToast('Enter order number or phone'); return; }
   document.getElementById('trackResults').innerHTML = '<div class="loading"><div class="spinner"></div>Searching...</div>';
   try {
-    const res = await fetch('/api/order/track', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({order_number: orderNum, phone})
-    });
-    const data = await res.json();
+    const data = await postJson('/api/order/track', {order_number: orderNum, phone});
     if (!data.success || !data.data.length) {
       document.getElementById('trackResults').innerHTML = '<div class="track-result" style="text-align:center;color:var(--text-light)">No orders found</div>';
       return;
