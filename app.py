@@ -359,8 +359,19 @@ def place_order():
         # Generate order number
         order_num = f"BMS{datetime.now().strftime('%Y%m%d%H%M%S')}"
 
-        # Calculate total
-        total = sum(item["price"] * item["qty"] for item in data["items"])
+        # Calculate total with explicit casts because browser/DB JSON values can arrive as strings.
+        order_items = []
+        for item in data["items"]:
+            qty = int(item["qty"])
+            price = float(item["price"])
+            order_items.append({
+                "id": int(item["id"]),
+                "name": item["name"],
+                "qty": qty,
+                "unit": item["unit"],
+                "price": price,
+            })
+        total = sum(item["price"] * item["qty"] for item in order_items)
 
         cur.execute("""INSERT INTO orders
             (order_number, customer_id, customer_name, customer_phone,
@@ -374,7 +385,7 @@ def place_order():
         order_id = cur.fetchone()["id"]
 
         # Order items
-        for item in data["items"]:
+        for item in order_items:
 
             cur.execute("""
             INSERT INTO order_items
