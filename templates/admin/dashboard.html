@@ -7,19 +7,25 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 :root {
-  --primary:#d86d1d; --primary-dark:#b95716; --secondary:#17313b;
-  --accent:#13a77b; --bg:#f4f7f5; --card:#fff;
-  --text:#19313a; --muted:#718086; --border:#dce5df;
-  --success:#158a58; --danger:#cf3f35; --info:#2f7dd1; --warning:#d79516;
-  --shadow:0 14px 34px rgba(25,49,58,0.10); --radius:14px;
+  --primary:#c45722; --primary-dark:#963b19; --secondary:#12343b;
+  --accent:#0f9f78; --bg:#f6f3ec; --card:#fffdf8;
+  --text:#172d32; --muted:#6d7c7c; --border:#e4dbca;
+  --success:#11825c; --danger:#c84236; --info:#286fbe; --warning:#ca8b12;
+  --shadow:0 18px 42px rgba(18,52,59,0.13); --radius:14px;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text); }
+body {
+  font-family:'Segoe UI',sans-serif;
+  background:
+    radial-gradient(circle at top right, rgba(196,87,34,0.13), transparent 30%),
+    linear-gradient(180deg,#fbf7ef 0%,var(--bg) 44%,#eef5f1 100%);
+  color:var(--text);
+}
 
 /* SIDEBAR */
 .sidebar {
   position:fixed; left:0; top:0; bottom:0; width:240px;
-  background:linear-gradient(180deg,#10282f 0%,#17313b 58%,#0f2027 100%);
+  background:linear-gradient(180deg,#0d2a31 0%,#12343b 52%,#092127 100%);
   z-index:100; padding:0 0 20px;
   overflow-y:auto;
   transition:transform 0.3s;
@@ -30,7 +36,7 @@ body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text
   display:flex; align-items:center; gap:10px;
 }
 .sidebar-logo .icon {
-  width:40px;height:40px;background:var(--primary);
+  width:40px;height:40px;background:linear-gradient(135deg,var(--primary),#e0a23e);
   border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;
 }
 .sidebar-logo h2 { color:white;font-size:15px;font-weight:700; }
@@ -43,8 +49,8 @@ body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text
   color:rgba(255,255,255,0.7);font-size:14px;font-weight:500;
   cursor:pointer;transition:all 0.2s;margin-bottom:2px;
 }
-.nav-item:hover,.nav-item.active { background:rgba(255,255,255,0.1);color:white; }
-.nav-item.active { background:linear-gradient(135deg,var(--primary),#f2a043);color:white; }
+.nav-item:hover,.nav-item.active { background:rgba(255,255,255,0.12);color:white; }
+.nav-item.active { background:linear-gradient(135deg,var(--primary),#df9d35);color:white; box-shadow:0 10px 22px rgba(196,87,34,0.24); }
 .nav-item i { width:18px;text-align:center;font-size:15px; }
 .nav-badge {
   margin-left:auto;background:var(--danger);color:white;
@@ -55,7 +61,7 @@ body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text
 /* MAIN */
 .main { margin-left:240px; min-height:100vh; }
 .topbar {
-  background:rgba(255,255,255,0.88);padding:14px 24px;
+  background:rgba(255,253,248,0.9);padding:14px 24px;
   display:flex;align-items:center;justify-content:space-between;
   border-bottom:1px solid var(--border);
   position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
@@ -83,9 +89,10 @@ body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text
 }
 .stat-card {
   background:var(--card);border-radius:var(--radius);
-  padding:20px;box-shadow:var(--shadow);border:1px solid rgba(25,49,58,0.07);
+  padding:20px;box-shadow:var(--shadow);border:1px solid rgba(25,49,58,0.08);
   display:flex;align-items:center;gap:14px;
 }
+.stat-card:hover { transform:translateY(-2px); transition:transform 0.18s ease, box-shadow 0.18s ease; box-shadow:0 22px 52px rgba(18,52,59,0.16); }
 .stat-icon {
   width:52px;height:52px;border-radius:14px;
   display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
@@ -100,7 +107,7 @@ body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text
 .stat-label { font-size:12px;color:var(--muted);font-weight:500; }
 
 /* TABLE */
-.card { background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;border:1px solid rgba(25,49,58,0.07); }
+.card { background:rgba(255,253,248,0.96);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;border:1px solid rgba(25,49,58,0.08); }
 .card-header {
   padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
   border-bottom:1px solid var(--border);
@@ -109,9 +116,9 @@ body { font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text
 .filter-tabs { display:flex;gap:6px; }
 .filter-tab {
   background:var(--bg);border:1px solid var(--border);
-  color:var(--muted);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;
+  color:var(--muted);padding:6px 12px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;
 }
-.filter-tab.active,.filter-tab:hover { background:var(--primary);border-color:var(--primary);color:white; }
+.filter-tab.active,.filter-tab:hover { background:linear-gradient(135deg,var(--primary),#df9d35);border-color:transparent;color:white; }
 
 .table-wrap { overflow-x:auto; }
 table { width:100%;border-collapse:collapse; }
@@ -439,6 +446,7 @@ tr:hover td { background:#fafafa; }
 <script>
 let ordersData = [];
 let materialsData = [];
+let currentOrderFilter = '';
 
 async function checkDatabaseHealth() {
   try {
@@ -560,9 +568,17 @@ function renderOrders(orders) {
 }
 
 function filterOrders(status) {
+  currentOrderFilter = status;
   document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
   event.target.classList.add('active');
   loadOrders(status);
+}
+
+function activateAllOrdersFilter() {
+  currentOrderFilter = '';
+  const tabs = document.querySelectorAll('.filter-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  if (tabs[0]) tabs[0].classList.add('active');
 }
 
 async function updateStatus(orderId, status) {
@@ -574,7 +590,11 @@ async function updateStatus(orderId, status) {
     });
     const d = await res.json();
     if(d.success) showToast('Status updated ✓');
-    if(d.success) { loadDashboard(); loadOrders(); }
+    if(d.success) {
+      activateAllOrdersFilter();
+      await loadOrders('');
+      loadDashboard();
+    }
     else showToast('Error: '+d.error);
   } catch(e) { showToast('Error updating status'); }
 }
