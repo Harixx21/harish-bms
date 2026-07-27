@@ -119,6 +119,7 @@ body {
   font-weight: 800;
   cursor: pointer;
   display: flex; align-items: center; gap: 6px;
+  text-decoration: none;
 }
 .admin-btn:hover { background: rgba(255,255,255,0.2); }
 .floating-admin {
@@ -138,6 +139,7 @@ body {
   align-items: center;
   gap: 7px;
   cursor: pointer;
+  text-decoration: none;
 }
 .hero::after {
   content: "";
@@ -453,7 +455,7 @@ body {
       </div>
     </div>
     <div class="header-actions">
-      <button class="admin-btn" onclick="window.location='/admin'"><i class="fa fa-lock"></i> Admin</button>
+      <a class="admin-btn" href="/admin"><i class="fa fa-lock"></i> Admin</a>
       <button class="cart-btn" onclick="openCart()">
         <i class="fa fa-shopping-cart"></i>
         <span class="cart-badge" id="cartBadge">0</span>
@@ -603,7 +605,7 @@ body {
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
-<button class="floating-admin" onclick="window.location='/admin'"><i class="fa fa-lock"></i> Admin Login</button>
+<a class="floating-admin" href="/admin"><i class="fa fa-lock"></i> Admin Login</a>
 
 <script>
 let cart = JSON.parse(localStorage.getItem('bms_cart') || '[]');
