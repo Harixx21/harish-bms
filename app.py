@@ -13,7 +13,12 @@ app.secret_key = os.environ.get("SECRET_KEY", "bms_secret_key_2024")
 CORS(app)
 
 # ─── DB CONFIG ───────────────────────────────────────────
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = (
+    os.getenv("DATABASE_URL")
+    or os.getenv("POSTGRES_URL")
+    or os.getenv("POSTGRES_URL_NON_POOLING")
+    or os.getenv("NEON_DATABASE_URL")
+)
 USE_POSTGRES = bool(DATABASE_URL)
 DB_PATH = os.environ.get("SQLITE_DB_PATH", os.path.join(tempfile.gettempdir(), "harish_bms.db"))
 DB_READY = False
@@ -285,6 +290,14 @@ def prepare_database():
 @app.route("/")
 def index():
     return render_template("customer/index.html")
+
+@app.route("/api/health")
+def health():
+    return jsonify({
+        "success": True,
+        "database": "postgres" if USE_POSTGRES else "temporary_sqlite",
+        "persistent": bool(USE_POSTGRES),
+    })
 
 @app.route("/api/materials")
 def get_materials():
