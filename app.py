@@ -85,25 +85,26 @@ def ensure_db():
 
 # ─── INIT DB ─────────────────────────────────────────────
 DEFAULT_MATERIALS = [
-    ("Cement (OPC 53 Grade)", "Cement", 410.00, "bag", 500, "https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80", "50kg OPC cement bag. Indicative Chennai/India retail range checked: about Rs 340-540 per bag."),
-    ("PPC Cement", "Cement", 370.00, "bag", 400, "https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80", "50kg PPC cement bag for masonry and plaster. Indicative retail rate selected from current market range."),
-    ("River Sand", "Sand", 65.00, "cft", 1200, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Clean river sand for concrete and masonry. Indicative rate based on current Chennai/TN sand listings."),
-    ("M-Sand (Manufactured)", "Sand", 45.00, "cft", 1500, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Manufactured sand for concrete work. Current Chennai listing is around Rs 45 per cft."),
-    ("P-Sand", "Sand", 52.00, "cft", 900, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Plastering sand for smooth finishing. Indicative Chennai unit rate converted for per-cft display."),
-    ("Red Bricks", "Bricks", 12.00, "piece", 6000, "https://images.unsplash.com/photo-1769104397835-2297e730f361?auto=format&fit=crop&w=900&q=80", "Solid red clay brick. Current Chennai brick listing shows about Rs 12 per piece."),
-    ("Fly Ash Bricks", "Bricks", 7.50, "piece", 5000, "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg", "Fly ash brick for wall construction. Current Chennai listing shows about Rs 7.50 per piece."),
-    ("AAC Blocks", "Bricks", 55.00, "piece", 2500, "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg", "Lightweight AAC block. Indicative market range checked: about Rs 45-55 per piece."),
-    ("Solid Concrete Block", "Bricks", 35.00, "piece", 2500, "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg", "Solid concrete block. Current Chennai listing shows about Rs 35 per piece."),
-    ("TMT Steel Bar (8mm)", "Steel", 68.00, "kg", 2500, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg/960px-20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg", "Fe500D TMT reinforcement bar. Indicative India rate selected around Rs 68 per kg."),
-    ("TMT Steel Bar (12mm)", "Steel", 70.00, "kg", 2000, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg/960px-20_mm_TMT_bars_manufactured_at_Durgapur_Steel_Factory_-_2.jpg", "Fe500D TMT reinforcement bar. Indicative India rate selected around Rs 70 per kg."),
-    ("12mm Blue Metal", "Aggregate", 35.00, "cft", 900, "https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Splitt%20WikiCom.jpg?width=900", "12mm blue metal aggregate. Current Chennai jalli listing shows about Rs 35 per cft."),
-    ("20mm Blue Metal", "Aggregate", 40.00, "cft", 1200, "https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Schotter%20WikiCom.jpg?width=900", "20mm blue metal aggregate. Current Chennai jalli listing shows about Rs 40 per cft."),
-    ("40mm Blue Metal", "Aggregate", 30.00, "cft", 1000, "https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80", "40mm blue metal aggregate. Current Chennai jalli listing shows about Rs 30 per cft."),
-    ("Blue Metal Dust", "Aggregate", 30.00, "cft", 1000, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Crusher dust / blue metal dust. Current Chennai jalli listing shows about Rs 30 per cft."),
-    ("Wall Putty", "Finishing", 420.00, "bag", 300, "https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?w=900&q=80", "White cement based wall putty for smooth interior finishing."),
+    ("12mm Aggregate", "Aggregate", 45.00, "cft", 900, "https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Splitt%20WikiCom.jpg?width=900", "12mm blue metal aggregate for concrete and roof work."),
+    ("20mm Aggregate", "Aggregate", 50.00, "cft", 1200, "https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Schotter%20WikiCom.jpg?width=900", "20mm blue metal aggregate for RCC and foundation concrete."),
+    ("40mm Aggregate", "Aggregate", 48.00, "cft", 1000, "https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80", "40mm aggregate for heavy concrete filling and base work."),
+    ("Blue Metal Dust", "Aggregate", 30.00, "cft", 1000, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Fine quarry dust for levelling, filling and block work."),
+    ("M-Sand", "Sand", 62.00, "cft", 1500, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Concrete-grade manufactured sand."),
+    ("P-Sand", "Sand", 72.00, "cft", 900, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Plastering sand for smooth wall finish."),
+    ("Waste Sand", "Sand", 28.00, "cft", 800, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Waste sand / demolition filling sand for site filling and rough levelling."),
+    ("Normal Bricks", "Bricks", 12.00, "piece", 6000, "https://images.unsplash.com/photo-1769104397835-2297e730f361?auto=format&fit=crop&w=900&q=80", "Normal red clay brick for wall construction."),
+    ("Fly Ash Bricks", "Bricks", 7.50, "piece", 5000, "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg", "Fly ash brick for strong and clean wall work."),
+    ("Broken Bricks", "Bricks", 7.00, "piece", 3500, "https://images.unsplash.com/photo-1769104397835-2297e730f361?auto=format&fit=crop&w=900&q=80", "Broken brick pieces for filling, soling and base work."),
+    ("Hollow Block", "Blocks", 45.00, "piece", 2500, "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg", "Concrete hollow block for compound walls and partition work."),
+    ("UltraTech Cement", "Cement", 430.00, "bag", 500, "https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80", "UltraTech 50kg cement bag."),
+    ("Chettinad Cement", "Cement", 390.00, "bag", 500, "https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80", "Chettinad 50kg cement bag."),
+    ("Semman Red Soil", "Soil", 35.00, "cft", 1000, "https://commons.wikimedia.org/wiki/Special:FilePath/A%20red%20soil%20crop%20field.JPG?width=900", "Semman red soil for garden, plants and filling work."),
 ]
 
 def seed_materials(cur):
+    active_names = [m[0] for m in DEFAULT_MATERIALS]
+    placeholders = ",".join(["%s"] * len(active_names))
+    cur.execute(f"UPDATE materials SET active=0 WHERE name NOT IN ({placeholders})", tuple(active_names))
     for name, category, price, unit, stock, image_url, description in DEFAULT_MATERIALS:
         cur.execute(
             """UPDATE materials
