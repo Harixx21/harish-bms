@@ -155,6 +155,7 @@ tr:hover td { background:#fafafa; }
 .quick-actions { display:flex;gap:6px;flex-wrap:wrap;margin-top:8px; }
 .action-pill { border:1px solid var(--border);background:white;color:var(--text);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700;cursor:pointer; }
 .action-pill.confirm { color:var(--info);border-color:#bfd7f5; }
+.action-pill.process { color:#7b1fa2;border-color:#d8b7e6; }
 .action-pill.delivery { color:var(--success);border-color:#bde6d2; }
 .action-pill.reject { color:var(--danger);border-color:#f3c2bd; }
 .material-thumb { width:52px;height:42px;object-fit:cover;border-radius:8px;margin-right:10px;vertical-align:middle;border:1px solid var(--border); }
@@ -549,6 +550,7 @@ function renderOrders(orders) {
           <button class="btn btn-outline btn-sm" style="margin-left:4px" onclick="openOrderDetail(${o.id})"><i class="fa fa-eye"></i></button>
           <div class="quick-actions">
             <button class="action-pill confirm" onclick="updateStatus(${o.id},'confirmed')">Confirm</button>
+            <button class="action-pill process" onclick="updateStatus(${o.id},'processing')">Process</button>
             <button class="action-pill delivery" onclick="updateStatus(${o.id},'out_for_delivery')">Delivery</button>
             <button class="action-pill reject" onclick="updateStatus(${o.id},'rejected')">Reject</button>
           </div>

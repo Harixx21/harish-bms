@@ -399,6 +399,13 @@ body {
 
 /* TRACK */
 .track-result { background: var(--bg); border-radius: 12px; padding: 14px; margin-top: 12px; }
+.track-head { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px; }
+.track-status-badge { font-size:12px; background:var(--primary); color:white; padding:4px 10px; border-radius:20px; white-space:nowrap; text-transform:capitalize; }
+.track-items { background:white; border:1px solid var(--border); border-radius:10px; padding:10px; margin:10px 0 12px; }
+.track-item { display:flex; justify-content:space-between; gap:10px; padding:7px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.track-item:last-child { border-bottom:0; }
+.track-item strong { color:var(--text); }
+.track-refresh { width:100%; margin-top:10px; padding:10px; border:1px solid var(--border); background:white; border-radius:10px; color:var(--primary); font-weight:700; cursor:pointer; }
 .status-timeline { display: flex; flex-direction: column; gap: 0; margin-top: 12px; }
 .status-step { display: flex; align-items: flex-start; gap: 12px; padding: 8px 0; }
 .step-dot {
@@ -931,6 +938,14 @@ const STATUS_STEPS = [
   {key:'delivered',       label:'Delivered ✓',        desc:'Order delivered successfully'},
 ];
 
+function formatStatus(status) {
+  const step = STATUS_STEPS.find(s => s.key === status);
+  if (step) return step.label;
+  if (status === 'rejected') return 'Rejected';
+  if (status === 'cancelled') return 'Cancelled';
+  return (status || 'Pending').replace(/_/g, ' ');
+}
+
 async function trackOrder() {
   const orderNum = document.getElementById('trackOrderNum').value.trim().toUpperCase();
   const phone = document.getElementById('trackPhone').value.trim();
@@ -945,6 +960,14 @@ async function trackOrder() {
     document.getElementById('trackResults').innerHTML = data.data.map(order => {
       const currentIdx = Math.max(0, STATUS_STEPS.findIndex(s => s.key === order.status));
       const isClosed = order.status === 'cancelled' || order.status === 'rejected';
+      const itemsHtml = (order.items || []).map(item => {
+        const qty = parseFloat(item.qty || item.quantity || 0);
+        const price = parseFloat(item.price || 0);
+        return `<div class="track-item">
+          <div><strong>${item.name}</strong><br><span style="color:var(--text-light)">${qty} ${item.unit}</span></div>
+          <div style="font-weight:800;color:var(--primary)">Rs ${Math.round(price * qty).toLocaleString('en-IN')}</div>
+        </div>`;
+      }).join('') || '<div style="font-size:13px;color:var(--text-light)">Order items loading</div>';
       const stepsHtml = isClosed
         ? `<div style="color:var(--danger);font-weight:700;padding:8px 0"><i class="fa fa-times-circle"></i> ${order.status === 'rejected' ? 'Order Rejected' : 'Order Cancelled'}</div>`
         : STATUS_STEPS.map((step, i) => {
@@ -961,13 +984,18 @@ async function trackOrder() {
             </div>`;
           }).join('');
       return `<div class="track-result">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <div style="font-weight:800;font-size:15px">${order.order_number}</div>
-          <div style="font-size:12px;background:var(--primary);color:white;padding:3px 10px;border-radius:20px">${order.status.replace(/_/g,' ')}</div>
+        <div class="track-head">
+          <div>
+            <div style="font-weight:800;font-size:15px">${order.order_number}</div>
+            <div style="font-size:12px;color:var(--text-light);margin-top:3px">${order.customer_name || ''}</div>
+          </div>
+          <div class="track-status-badge">${formatStatus(order.status)}</div>
         </div>
         <div style="font-size:13px;color:var(--text-light);margin-bottom:4px">📅 ${new Date(order.created_at).toLocaleDateString('en-IN')}</div>
         <div style="font-size:14px;font-weight:700;color:var(--primary);margin-bottom:12px">Total: ₹${parseFloat(order.total_amount).toFixed(0)}</div>
+        <div class="track-items">${itemsHtml}</div>
         <div class="status-timeline">${stepsHtml}</div>
+        <button class="track-refresh" onclick="trackOrder()"><i class="fa fa-rotate"></i> Refresh Status</button>
       </div>`;
     }).join('');
   } catch(e) {
