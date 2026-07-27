@@ -115,6 +115,24 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
   display: flex; align-items: center; gap: 6px;
 }
 .admin-btn:hover { background: rgba(255,255,255,0.2); }
+.floating-admin {
+  position: fixed;
+  right: 14px;
+  bottom: 18px;
+  z-index: 180;
+  background: linear-gradient(135deg, var(--secondary), #244b57);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 14px 34px rgba(25,49,58,0.22);
+  border-radius: 999px;
+  padding: 11px 14px;
+  font-size: 13px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+}
 .hero::after {
   content: "";
   position: absolute; inset: auto 0 0 0; height: 96px;
@@ -525,6 +543,7 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+<button class="floating-admin" onclick="window.location='/admin'"><i class="fa fa-lock"></i> Admin Login</button>
 
 <script>
 let cart = JSON.parse(localStorage.getItem('bms_cart') || '[]');
