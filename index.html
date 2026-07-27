@@ -563,7 +563,10 @@ body {
       <p>Your order has been received. We'll confirm shortly.</p>
       <div class="order-num-badge" id="orderNumDisplay"></div>
       <p style="font-size:13px;color:var(--text-light)">Save this number to track your order</p>
-      <button onclick="doneOrder()" style="margin-top:20px;width:100%;padding:16px;background:var(--primary);color:white;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer">
+      <button onclick="trackPlacedOrder()" style="margin-top:20px;width:100%;padding:16px;background:linear-gradient(135deg,var(--primary),var(--accent));color:white;border:none;border-radius:14px;font-size:16px;font-weight:800;cursor:pointer">
+        Track This Order
+      </button>
+      <button onclick="doneOrder()" style="margin-top:10px;width:100%;padding:14px;background:none;border:2px solid var(--border);border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;color:var(--text)">
         Done 🎉
       </button>
     </div>
@@ -600,6 +603,7 @@ let cart = JSON.parse(localStorage.getItem('bms_cart') || '[]');
 let allMaterials = [];
 let currentCat = '';
 let isOrdering = false; // FIX: prevent double submit
+let lastOrderNumber = localStorage.getItem('bms_last_order') || '';
 const LIVE_API_ORIGIN = 'https://harish-bms.vercel.app';
 const FALLBACK_MATERIALS = [
   {id:1,name:'12mm Aggregate',category:'Aggregate',price:45,unit:'cft',stock:900,image_url:'https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Splitt%20WikiCom.jpg?width=900'},
@@ -859,6 +863,9 @@ async function placeOrder() {
       items: cart.map(c => ({id: c.id, name: c.name, price: c.price, qty: c.qty, unit: c.unit}))
     });
     if (data.success) {
+      lastOrderNumber = data.order_number;
+      localStorage.setItem('bms_last_order', lastOrderNumber);
+      localStorage.setItem('bms_last_phone', phone);
       document.getElementById('orderNumDisplay').textContent = data.order_number;
       document.getElementById('checkoutForm').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
@@ -893,8 +900,23 @@ function doneOrder() {
 
 // TRACK
 function openTrack() {
+  const savedOrder = localStorage.getItem('bms_last_order') || '';
+  const savedPhone = localStorage.getItem('bms_last_phone') || '';
+  if (savedOrder && !document.getElementById('trackOrderNum').value.trim()) {
+    document.getElementById('trackOrderNum').value = savedOrder;
+  }
+  if (savedPhone && !document.getElementById('trackPhone').value.trim()) {
+    document.getElementById('trackPhone').value = savedPhone;
+  }
   document.getElementById('trackModal').classList.add('open');
   document.getElementById('overlay').classList.add('open');
+}
+function trackPlacedOrder() {
+  document.getElementById('checkoutModal').classList.remove('open');
+  document.getElementById('trackOrderNum').value = lastOrderNumber || localStorage.getItem('bms_last_order') || '';
+  document.getElementById('trackPhone').value = localStorage.getItem('bms_last_phone') || '';
+  openTrack();
+  trackOrder();
 }
 function closeTrack() {
   document.getElementById('trackModal').classList.remove('open');
@@ -910,7 +932,7 @@ const STATUS_STEPS = [
 ];
 
 async function trackOrder() {
-  const orderNum = document.getElementById('trackOrderNum').value.trim();
+  const orderNum = document.getElementById('trackOrderNum').value.trim().toUpperCase();
   const phone = document.getElementById('trackPhone').value.trim();
   if (!orderNum && !phone) { showToast('Enter order number or phone'); return; }
   document.getElementById('trackResults').innerHTML = '<div class="loading"><div class="spinner"></div>Searching...</div>';
@@ -921,7 +943,7 @@ async function trackOrder() {
       return;
     }
     document.getElementById('trackResults').innerHTML = data.data.map(order => {
-      const currentIdx = STATUS_STEPS.findIndex(s => s.key === order.status);
+      const currentIdx = Math.max(0, STATUS_STEPS.findIndex(s => s.key === order.status));
       const isClosed = order.status === 'cancelled' || order.status === 'rejected';
       const stepsHtml = isClosed
         ? `<div style="color:var(--danger);font-weight:700;padding:8px 0"><i class="fa fa-times-circle"></i> ${order.status === 'rejected' ? 'Order Rejected' : 'Order Cancelled'}</div>`

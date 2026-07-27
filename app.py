@@ -389,7 +389,9 @@ def place_order():
 @app.route("/api/order/track", methods=["POST"])
 def track_order():
     try:
-        data = request.json
+        data = request.json or {}
+        order_number = (data.get("order_number") or "__").strip().upper()
+        phone = (data.get("phone") or "__").strip()
         conn = get_db()
         cur = conn.cursor(cursor_factory=RealDictCursor)
         if USE_POSTGRES:
@@ -403,7 +405,7 @@ def track_order():
               GROUP BY o.id
               ORDER BY o.created_at DESC
               LIMIT 10""",
-            (data.get("order_number","__"), data.get("phone","__")))
+            (order_number, phone))
         else:
             cur.execute("""SELECT o.*, GROUP_CONCAT(
                 oi.material_name || '|' || oi.quantity || '|' || oi.unit || '|' || oi.price,
@@ -415,7 +417,7 @@ def track_order():
               GROUP BY o.id
               ORDER BY o.created_at DESC
               LIMIT 10""",
-            (data.get("order_number","__"), data.get("phone","__")))
+            (order_number, phone))
         orders = cur.fetchall()
         for o in orders:
             o["created_at"] = str(o["created_at"])
@@ -568,7 +570,7 @@ def update_order_status():
         data = request.json
         conn = get_db()
         cur = conn.cursor()
-        cur.execute("UPDATE orders SET status=%s WHERE id=%s",
+        cur.execute("UPDATE orders SET status=%s, updated_at=CURRENT_TIMESTAMP WHERE id=%s",
                     (data["status"], data["order_id"]))
         conn.commit()
         cur.close(); conn.close()
