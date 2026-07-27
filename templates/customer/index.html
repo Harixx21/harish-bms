@@ -101,6 +101,20 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
   background-repeat: no-repeat;
   filter: brightness(0.48) saturate(1.08);
 }
+.header-actions { display:flex;align-items:center;gap:8px; }
+.admin-btn {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: white;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+}
+.admin-btn:hover { background: rgba(255,255,255,0.2); }
 .hero::after {
   content: "";
   position: absolute; inset: auto 0 0 0; height: 96px;
@@ -371,10 +385,13 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
         <p>Building Materials Supply</p>
       </div>
     </div>
-    <button class="cart-btn" onclick="openCart()">
-      <i class="fa fa-shopping-cart"></i>
-      <span class="cart-badge" id="cartBadge">0</span>
-    </button>
+    <div class="header-actions">
+      <button class="admin-btn" onclick="window.location='/admin'"><i class="fa fa-lock"></i> Admin</button>
+      <button class="cart-btn" onclick="openCart()">
+        <i class="fa fa-shopping-cart"></i>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+    </div>
   </div>
   <div class="search-bar">
     <input type="text" placeholder="Search materials..." id="searchInput" oninput="handleSearch()">
@@ -519,16 +536,16 @@ const FALLBACK_MATERIALS = [
   {id:1,name:'12mm Aggregate',category:'Aggregate',price:45,unit:'cft',stock:900,image_url:'https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Splitt%20WikiCom.jpg?width=900'},
   {id:2,name:'20mm Aggregate',category:'Aggregate',price:50,unit:'cft',stock:1200,image_url:'https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Schotter%20WikiCom.jpg?width=900'},
   {id:3,name:'40mm Aggregate',category:'Aggregate',price:48,unit:'cft',stock:1000,image_url:'https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80'},
-  {id:4,name:'Blue Metal Dust',category:'Aggregate',price:30,unit:'cft',stock:1000,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg'},
+  {id:4,name:'Blue Metal Dust',category:'Aggregate',price:30,unit:'cft',stock:1000,image_url:'https://commons.wikimedia.org/wiki/Special:FilePath/M%20Sand%20fo%20Tamilnadu.jpg?width=900'},
   {id:5,name:'M-Sand',category:'Sand',price:62,unit:'cft',stock:1500,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg'},
-  {id:6,name:'P-Sand',category:'Sand',price:72,unit:'cft',stock:900,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg'},
-  {id:7,name:'Waste Sand',category:'Sand',price:28,unit:'cft',stock:800,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg'},
+  {id:6,name:'P-Sand',category:'Sand',price:72,unit:'cft',stock:900,image_url:'https://commons.wikimedia.org/wiki/Special:FilePath/M%20Sand%20of%20Salem.jpg?width=900'},
+  {id:7,name:'Waste Sand',category:'Sand',price:28,unit:'cft',stock:800,image_url:'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80'},
   {id:8,name:'Normal Bricks',category:'Bricks',price:12,unit:'piece',stock:6000,image_url:'https://images.unsplash.com/photo-1769104397835-2297e730f361?auto=format&fit=crop&w=900&q=80'},
-  {id:9,name:'Fly Ash Bricks',category:'Bricks',price:7.5,unit:'piece',stock:5000,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg'},
-  {id:10,name:'Broken Bricks',category:'Bricks',price:7,unit:'piece',stock:3500,image_url:'https://images.unsplash.com/photo-1769104397835-2297e730f361?auto=format&fit=crop&w=900&q=80'},
-  {id:11,name:'Hollow Block',category:'Blocks',price:45,unit:'piece',stock:2500,image_url:'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Concrete_Masonry_blocks.jpg/960px-Concrete_Masonry_blocks.jpg'},
+  {id:9,name:'Fly Ash Bricks',category:'Bricks',price:7.5,unit:'piece',stock:5000,image_url:'https://commons.wikimedia.org/wiki/Special:FilePath/Concrete%20Masonry%20blocks.jpg?width=900'},
+  {id:10,name:'Broken Bricks',category:'Bricks',price:7,unit:'piece',stock:3500,image_url:'https://commons.wikimedia.org/wiki/Special:FilePath/Rubble.jpg?width=900'},
+  {id:11,name:'Hollow Block',category:'Blocks',price:45,unit:'piece',stock:2500,image_url:'https://commons.wikimedia.org/wiki/Special:FilePath/Concrete%20Masonry%20blocks.jpg?width=900'},
   {id:12,name:'UltraTech Cement',category:'Cement',price:430,unit:'bag',stock:500,image_url:'https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80'},
-  {id:13,name:'Chettinad Cement',category:'Cement',price:390,unit:'bag',stock:500,image_url:'https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80'},
+  {id:13,name:'Chettinad Cement',category:'Cement',price:390,unit:'bag',stock:500,image_url:'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80'},
   {id:14,name:'Semman Red Soil',category:'Soil',price:35,unit:'cft',stock:1000,image_url:'https://commons.wikimedia.org/wiki/Special:FilePath/A%20red%20soil%20crop%20field.JPG?width=900'}
 ];
 
