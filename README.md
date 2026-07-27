@@ -1,4 +1,4 @@
-# 🏗️ Harish BMS — Building Material Supply App
+# KRG BMS - Building Material Supply App
 
 A full-stack web application for managing building material orders.
 Built with **Python Flask + MySQL + HTML/CSS/JS** — mobile responsive.
