@@ -7,26 +7,32 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 :root {
-  --primary: #d86d1d;
-  --primary-dark: #b95716;
-  --secondary: #17313b;
-  --accent: #13a77b;
-  --bg: #f4f7f5;
+  --primary: #c4522a;
+  --primary-dark: #9d3d21;
+  --secondary: #123238;
+  --accent: #d9a441;
+  --bg: #f3f0e8;
   --card-bg: #ffffff;
-  --text: #19313a;
-  --text-light: #6d7d82;
-  --border: #dce5df;
-  --success: #158a58;
-  --danger: #cf3f35;
-  --shadow: 0 14px 34px rgba(25,49,58,0.12);
+  --text: #1c2d30;
+  --text-light: #687779;
+  --border: #e0d8c9;
+  --success: #167052;
+  --danger: #bf3b35;
+  --shadow: 0 16px 38px rgba(18,50,56,0.14);
   --radius: 16px;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(217,164,65,0.16), transparent 34%),
+    linear-gradient(180deg, #f8f4ea 0%, var(--bg) 45%, #eef3ef 100%);
+  color: var(--text);
+}
 
 /* HEADER */
 .header {
-  background: rgba(23,49,59,0.94);
+  background: rgba(18,50,56,0.95);
   backdrop-filter: blur(12px);
   padding: 0;
   position: sticky;
@@ -43,16 +49,16 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 .logo { display: flex; align-items: center; gap: 10px; }
 .logo-icon {
   width: 40px; height: 40px;
-  background: linear-gradient(135deg, var(--primary), #f2a043);
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   font-size: 20px;
 }
 .logo-text h1 { color: #fff; font-size: 16px; font-weight: 700; }
-.logo-text p { color: var(--accent); font-size: 11px; }
+.logo-text p { color: #f3d28e; font-size: 11px; }
 .cart-btn {
   position: relative;
-  background: linear-gradient(135deg, var(--primary), #f2a043);
+  background: linear-gradient(135deg, var(--primary), var(--accent));
   border: none;
   color: white;
   width: 44px; height: 44px;
@@ -64,7 +70,7 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 .cart-badge {
   position: absolute;
   top: -6px; right: -6px;
-  background: var(--accent);
+  background: #1b8f68;
   color: white;
   font-size: 10px;
   font-weight: 700;
@@ -80,7 +86,7 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 }
 .search-bar input::placeholder { color: rgba(255,255,255,0.5); }
 .track-btn {
-  background: var(--accent); border: none; color: white;
+  background: linear-gradient(135deg, #17745b, #1ba77c); border: none; color: white;
   padding: 10px 16px; border-radius: 12px; font-size: 13px;
   font-weight: 600; cursor: pointer; white-space: nowrap;
 }
@@ -99,7 +105,7 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: brightness(0.48) saturate(1.08);
+  filter: brightness(0.42) saturate(1.12) contrast(1.04);
 }
 .header-actions { display:flex;align-items:center;gap:8px; }
 .admin-btn {
@@ -136,7 +142,7 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 .hero::after {
   content: "";
   position: absolute; inset: auto 0 0 0; height: 96px;
-  background: linear-gradient(180deg, rgba(244,247,245,0), var(--bg));
+  background: linear-gradient(180deg, rgba(243,240,232,0), var(--bg));
   z-index: 1;
 }
 .hero-content {
@@ -147,22 +153,57 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
   width: 100%;
 }
 .hero-content h2 {
-  color: white; font-size: 28px; font-weight: 900;
+  color: white; font-size: 30px; font-weight: 900;
   text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 .hero-content p {
-  color: rgba(255,255,255,0.9); font-size: 14px; margin-top: 6px;
+  color: rgba(255,255,255,0.92); font-size: 14px; margin-top: 8px;
   text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.hero-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff6dd;
+  font-size: 12px;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
 }
 .hero-stats {
   display: flex; justify-content: center; gap: 28px; margin-top: 20px;
 }
 .hero-stat { text-align: center; }
 .hero-stat .num {
-  color: var(--accent); font-size: 22px; font-weight: 800;
+  color: #f3c464; font-size: 22px; font-weight: 900;
   text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 .hero-stat .lbl { color: rgba(255,255,255,0.85); font-size: 11px; }
+.trust-strip {
+  margin: -8px 14px 12px;
+  position: relative;
+  z-index: 3;
+  background: rgba(255,255,255,0.94);
+  border: 1px solid rgba(224,216,201,0.9);
+  box-shadow: 0 12px 28px rgba(18,50,56,0.10);
+  border-radius: 14px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.trust-item { text-align:center; }
+.trust-item strong { display:block;color:var(--secondary);font-size:13px;font-weight:900; }
+.trust-item span { color:var(--text-light);font-size:11px;font-weight:700; }
+@media(max-width:420px) {
+  .hero-content h2 { font-size: 26px; }
+  .trust-strip { grid-template-columns: 1fr; text-align: left; }
+  .trust-item { text-align: left; padding: 2px 4px; }
+}
 
 /* CATEGORIES */
 .categories {
@@ -176,11 +217,12 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
   cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0;
 }
 .cat-chip.active, .cat-chip:hover {
-  background: var(--primary); border-color: var(--primary); color: white;
+  background: linear-gradient(135deg, var(--primary), var(--accent)); border-color: transparent; color: white;
 }
 
 /* MATERIALS GRID */
 .section-title { padding: 4px 16px 10px; font-size: 18px; font-weight: 900; color: var(--secondary); }
+.section-subtitle { padding: 0 16px 12px; color: var(--text-light); font-size: 12px; font-weight: 700; }
 .materials-grid {
   padding: 0 12px 18px;
   display: grid;
@@ -207,7 +249,7 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 .mat-body { padding: 12px; }
 .mat-top { display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px; }
 .mat-cat { font-size: 10px; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
-.mat-chip { background: rgba(19,167,123,0.12); color: var(--accent); border-radius: 999px; padding: 3px 7px; font-size: 10px; font-weight: 800; white-space: nowrap; }
+.mat-chip { background: rgba(22,112,82,0.12); color: #167052; border-radius: 999px; padding: 3px 7px; font-size: 10px; font-weight: 800; white-space: nowrap; }
 .mat-name { font-size: 14px; font-weight: 900; color: var(--text); margin: 4px 0; line-height: 1.25; min-height: 36px; }
 .mat-desc { font-size: 11px; color: var(--text-light); line-height: 1.35; height: 30px; overflow: hidden; margin-bottom: 8px; }
 .mat-price { font-size: 18px; font-weight: 900; color: var(--primary); }
@@ -217,7 +259,7 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 .low-stock-warn { color: var(--accent); }
 .out-stock { color: var(--danger); }
 .add-btn {
-  width: 100%; background: linear-gradient(135deg, var(--primary), #f2a043); color: white; border: none;
+  width: 100%; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none;
   padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 900;
   cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
   transition: background 0.2s;
@@ -226,7 +268,7 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 .add-btn:disabled { background: #ccc; cursor: not-allowed; }
 .qty-ctrl {
   display: flex; align-items: center; justify-content: space-between;
-  background: var(--primary); border-radius: 10px; overflow: hidden;
+  background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 10px; overflow: hidden;
 }
 .qty-ctrl button {
   background: none; border: none; color: white;
@@ -421,14 +463,21 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 <div class="hero">
   <div class="hero-bg"></div>
   <div class="hero-content">
-    <h2>🏗️ Quality Materials, Fast Delivery</h2>
-    <p>Aggregate &bull; Sand &bull; Bricks &bull; Blocks &bull; Cement &bull; Soil</p>
+    <h2>Build Strong. Deliver Fast.</h2>
+    <p>Site-ready aggregates, sand, bricks, blocks, cement and soil for daily construction work.</p>
+    <div class="hero-line"><i class="fa fa-shield"></i> Fresh stock, clear rates, direct site delivery</div>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="num">500+</div><div class="lbl">Products</div></div>
-      <div class="hero-stat"><div class="num">24hr</div><div class="lbl">Delivery</div></div>
-      <div class="hero-stat"><div class="num">100%</div><div class="lbl">Quality</div></div>
+      <div class="hero-stat"><div class="num">14</div><div class="lbl">Core Materials</div></div>
+      <div class="hero-stat"><div class="num">Fast</div><div class="lbl">Site Dispatch</div></div>
+      <div class="hero-stat"><div class="num">Clear</div><div class="lbl">Per Unit Rate</div></div>
     </div>
   </div>
+</div>
+
+<div class="trust-strip">
+  <div class="trust-item"><strong>Right Material</strong><span>size-wise selection</span></div>
+  <div class="trust-item"><strong>Easy Order</strong><span>cart to tracking</span></div>
+  <div class="trust-item"><strong>Owner Update</strong><span>admin status control</span></div>
 </div>
 
 <!-- CATEGORIES -->
@@ -438,6 +487,7 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 
 <!-- MATERIALS -->
 <div class="section-title">Available Materials</div>
+<div class="section-subtitle">Choose what you need, add quantity, and track every order from confirmation to delivery.</div>
 <div class="materials-grid" id="materialsGrid">
   <div class="loading"><div class="spinner"></div>Loading materials...</div>
 </div>
