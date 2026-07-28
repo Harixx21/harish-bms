@@ -4,6 +4,7 @@ import sqlite3
 import hashlib
 import os
 import tempfile
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -13,12 +14,23 @@ app.secret_key = os.environ.get("SECRET_KEY", "bms_secret_key_2024")
 CORS(app)
 
 # ─── DB CONFIG ───────────────────────────────────────────
-DATABASE_URL = (
-    os.getenv("DATABASE_URL")
-    or os.getenv("POSTGRES_URL")
-    or os.getenv("POSTGRES_URL_NON_POOLING")
-    or os.getenv("NEON_DATABASE_URL")
-)
+def get_database_url():
+    for name in ("POSTGRES_URL", "NEON_DATABASE_URL", "POSTGRES_URL_NON_POOLING", "DATABASE_URL"):
+        value = os.getenv(name)
+        if value:
+            return value, name
+    return None, None
+
+def with_postgres_ssl(url):
+    if not url or not url.startswith(("postgres://", "postgresql://")):
+        return url
+    parts = urlsplit(url)
+    query = dict(parse_qsl(parts.query, keep_blank_values=True))
+    query.setdefault("sslmode", "require")
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+
+DATABASE_URL, DATABASE_SOURCE = get_database_url()
+DATABASE_URL = with_postgres_ssl(DATABASE_URL)
 USE_POSTGRES = bool(DATABASE_URL)
 DB_PATH = os.environ.get("SQLITE_DB_PATH", os.path.join(tempfile.gettempdir(), "harish_bms.db"))
 DB_READY = False
@@ -32,7 +44,7 @@ else:
 
 def get_db():
     if USE_POSTGRES:
-        return psycopg2.connect(DATABASE_URL)
+        return psycopg2.connect(DATABASE_URL, connect_timeout=10)
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     conn = sqlite3.connect(DB_PATH, factory=AppSqliteConnection)
     conn.row_factory = sqlite3.Row
@@ -289,6 +301,7 @@ def health():
     return jsonify({
         "success": True,
         "database": "postgres" if USE_POSTGRES else "temporary_sqlite",
+        "source": DATABASE_SOURCE or "SQLITE_DB_PATH",
         "persistent": bool(USE_POSTGRES),
     })
 
