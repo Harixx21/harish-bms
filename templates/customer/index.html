@@ -227,7 +227,7 @@ body {
 .trust-item strong { display:block;color:var(--secondary);font-size:13px;font-weight:900; }
 .trust-item span { color:var(--text-light);font-size:11px;font-weight:700; }
 .store-location {
-  margin: 0 14px 14px;
+  margin: 18px 14px 24px;
   display: grid;
   grid-template-columns: minmax(160px, 220px) 1fr;
   gap: 12px;
@@ -565,6 +565,18 @@ body {
   <div class="trust-item"><strong>Owner Update</strong><span>admin status control</span></div>
 </div>
 
+<!-- CATEGORIES -->
+<div class="categories" id="categories">
+  <div class="cat-chip active" onclick="filterCat('')">All</div>
+</div>
+
+<!-- MATERIALS -->
+<div class="section-title">Available Materials</div>
+<div class="section-subtitle">Choose what you need, add quantity, and track every order from confirmation to delivery.</div>
+<div class="materials-grid" id="materialsGrid">
+  <div class="loading"><div class="spinner"></div>Loading materials...</div>
+</div>
+
 <div class="store-location">
   <div class="store-location-photo">
     <img src="/static/krg-dindigul-yard.jpg" alt="KRG BMS Dindigul yard">
@@ -582,18 +594,6 @@ body {
       </a>
     </div>
   </div>
-</div>
-
-<!-- CATEGORIES -->
-<div class="categories" id="categories">
-  <div class="cat-chip active" onclick="filterCat('')">All</div>
-</div>
-
-<!-- MATERIALS -->
-<div class="section-title">Available Materials</div>
-<div class="section-subtitle">Choose what you need, add quantity, and track every order from confirmation to delivery.</div>
-<div class="materials-grid" id="materialsGrid">
-  <div class="loading"><div class="spinner"></div>Loading materials...</div>
 </div>
 
 <!-- CART OVERLAY + DRAWER -->
