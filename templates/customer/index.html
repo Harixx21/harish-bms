@@ -186,6 +186,30 @@ body {
   text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 .hero-stat .lbl { color: rgba(255,255,255,0.85); font-size: 11px; }
+.hero-location {
+  margin: 18px auto 0;
+  width: min(92%, 520px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(18,50,56,0.72);
+  border: 1px solid rgba(255,255,255,0.22);
+  color: white;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 14px 32px rgba(0,0,0,0.22);
+}
+.hero-location strong { display:block;font-size:13px;font-weight:900; }
+.hero-location span { display:block;font-size:11px;color:#ffe7b0;font-weight:700;margin-top:2px; }
+.hero-location a {
+  flex-shrink: 0;
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 10px;border-radius:10px;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  color:white;text-decoration:none;font-size:12px;font-weight:900;
+}
 .trust-strip {
   margin: -8px 14px 12px;
   position: relative;
@@ -241,6 +265,7 @@ body {
 .location-link.secondary { background:#fff7ed; color:var(--primary); border:1px solid #f0c08b; }
 @media(max-width:420px) {
   .hero-content h2 { font-size: 26px; }
+  .hero-location { align-items:flex-start; flex-direction:column; }
   .trust-strip { grid-template-columns: 1fr; text-align: left; }
   .trust-item { text-align: left; padding: 2px 4px; }
   .store-location { grid-template-columns: 1fr; }
@@ -521,6 +546,15 @@ body {
       <div class="hero-stat"><div class="num">14</div><div class="lbl">Core Materials</div></div>
       <div class="hero-stat"><div class="num">Fast</div><div class="lbl">Site Dispatch</div></div>
       <div class="hero-stat"><div class="num">Clear</div><div class="lbl">Per Unit Rate</div></div>
+    </div>
+    <div class="hero-location">
+      <div>
+        <strong><i class="fa fa-location-dot"></i> KRG BMS Yard - Dindigul</strong>
+        <span>Visit our material yard or get delivery to your site</span>
+      </div>
+      <a href="https://www.google.com/maps/search/?api=1&query=KRG%20BMS%20Dindigul%20Tamil%20Nadu" target="_blank" rel="noopener">
+        Open Map
+      </a>
     </div>
   </div>
 </div>
