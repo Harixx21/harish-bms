@@ -202,10 +202,36 @@ body {
 .trust-item { text-align:center; }
 .trust-item strong { display:block;color:var(--secondary);font-size:13px;font-weight:900; }
 .trust-item span { color:var(--text-light);font-size:11px;font-weight:700; }
+.store-location {
+  margin: 0 14px 14px;
+  display: grid;
+  grid-template-columns: 118px 1fr;
+  gap: 12px;
+  align-items: stretch;
+  background: rgba(255,255,255,0.96);
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 28px rgba(18,50,56,0.10);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.store-location img { width: 100%; height: 100%; min-height: 118px; object-fit: cover; }
+.store-location-body { padding: 12px 12px 12px 0; }
+.store-location-kicker { color: var(--primary); font-size: 10px; font-weight: 900; text-transform: uppercase; }
+.store-location h3 { font-size: 15px; margin: 3px 0 5px; color: var(--secondary); }
+.store-location p { font-size: 12px; color: var(--text-light); line-height: 1.35; font-weight: 700; }
+.location-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.location-link {
+  display:inline-flex; align-items:center; gap:6px; padding:8px 10px;
+  background:var(--secondary); color:white; text-decoration:none; border-radius:10px;
+  font-size:12px; font-weight:800;
+}
+.location-link.secondary { background:#fff7ed; color:var(--primary); border:1px solid #f0c08b; }
 @media(max-width:420px) {
   .hero-content h2 { font-size: 26px; }
   .trust-strip { grid-template-columns: 1fr; text-align: left; }
   .trust-item { text-align: left; padding: 2px 4px; }
+  .store-location { grid-template-columns: 1fr; }
+  .store-location-body { padding: 12px; }
 }
 
 /* CATEGORIES */
@@ -490,6 +516,23 @@ body {
   <div class="trust-item"><strong>Owner Update</strong><span>admin status control</span></div>
 </div>
 
+<div class="store-location">
+  <img src="/static/krg-dindigul-yard.jpg" alt="KRG BMS Dindigul yard">
+  <div class="store-location-body">
+    <div class="store-location-kicker">Store Location</div>
+    <h3>KRG BMS Yard - Dindigul</h3>
+    <p>Dindigul, Tamil Nadu. Materials are supplied from this yard for nearby site delivery.</p>
+    <div class="location-actions">
+      <a class="location-link" href="https://www.google.com/maps/search/?api=1&query=KRG%20BMS%20Dindigul%20Tamil%20Nadu" target="_blank" rel="noopener">
+        <i class="fa fa-location-dot"></i> Open Location
+      </a>
+      <a class="location-link secondary" href="https://www.google.com/maps/dir/?api=1&destination=Dindigul%2C%20Tamil%20Nadu" target="_blank" rel="noopener">
+        <i class="fa fa-route"></i> Get Direction
+      </a>
+    </div>
+  </div>
+</div>
+
 <!-- CATEGORIES -->
 <div class="categories" id="categories">
   <div class="cat-chip active" onclick="filterCat('')">All</div>
@@ -552,7 +595,7 @@ body {
         <label>Delivery Location (Map)</label>
         <div class="map-container" id="mapContainer">
           <iframe id="mapFrame" width="100%" height="100%" frameborder="0" style="border:0"
-            src="https://maps.google.com/maps?q=Dindigul,Tamil+Nadu&z=13&output=embed" allowfullscreen></iframe>
+            src="https://maps.google.com/maps?q=KRG+BMS+Yard,Dindigul,Tamil+Nadu&z=14&output=embed" allowfullscreen></iframe>
         </div>
         <button type="button" onclick="updateMap()" style="margin-top:8px;padding:8px 16px;background:var(--secondary);color:white;border:none;border-radius:8px;font-size:13px;cursor:pointer">
           <i class="fa fa-map"></i> Show on Map
