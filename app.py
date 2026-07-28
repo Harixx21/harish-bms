@@ -604,7 +604,7 @@ def admin_materials():
     try:
         conn = get_db()
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("SELECT * FROM materials WHERE active=1 ORDER BY category, name")
+        cur.execute("SELECT * FROM materials ORDER BY active DESC, category, name")
         mats = cur.fetchall()
         for m in mats:
             m["price"] = float(m["price"])
@@ -664,7 +664,7 @@ def delete_material(mid):
     try:
         conn = get_db()
         cur = conn.cursor()
-        cur.execute("DELETE FROM materials WHERE id=%s", (mid,))
+        cur.execute("UPDATE materials SET active=0, updated_at=CURRENT_TIMESTAMP WHERE id=%s", (mid,))
         conn.commit()
         cur.close(); conn.close()
         return jsonify({"success": True})

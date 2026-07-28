@@ -647,8 +647,8 @@ async function loadMaterials() {
     if(!d.success) return;
     materialsData = d.data;
     document.getElementById('materialsBody').innerHTML = d.data.map(m => {
-      const stockClass = m.stock > 50 ? 'instock' : m.stock > 0 ? 'lowstock' : 'outstock';
-      const stockText = m.stock > 50 ? 'In Stock' : m.stock > 0 ? 'Low Stock' : 'Out of Stock';
+      const stockClass = !m.active ? 'outstock' : m.stock > 50 ? 'instock' : m.stock > 0 ? 'lowstock' : 'outstock';
+      const stockText = !m.active ? 'Hidden' : m.stock > 50 ? 'In Stock' : m.stock > 0 ? 'Low Stock' : 'Out of Stock';
       return `<tr>
         <td><div class="material-name-cell"><img class="material-thumb" src="${m.image_url||''}" alt="${m.name}"><strong>${m.name}</strong></div></td>
         <td>${m.category}</td>
@@ -658,7 +658,7 @@ async function loadMaterials() {
         <td><span class="badge badge-${stockClass}">${stockText}</span></td>
         <td>
           <button class="btn btn-outline btn-sm" onclick="editMaterial(${m.id})"><i class="fa fa-edit"></i></button>
-          <button class="btn btn-danger btn-sm" onclick="deleteMaterial(${m.id})" style="margin-left:4px"><i class="fa fa-trash"></i></button>
+          <button class="btn btn-danger btn-sm" onclick="deleteMaterial(${m.id})" style="margin-left:4px"><i class="fa fa-eye-slash"></i></button>
         </td>
       </tr>`;
     }).join('') || '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">No materials</td></tr>';
@@ -727,7 +727,7 @@ async function saveMaterial() {
 }
 
 async function deleteMaterial(id) {
-  if(!confirm('Hide this material from store?')) return;
+  if(!confirm('Hide this material from customer store? It will stay saved in admin.')) return;
   try {
     const res = await fetch(`/api/admin/material/${id}`, {method:'DELETE'});
     const d = await res.json();
