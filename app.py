@@ -107,24 +107,17 @@ DEFAULT_MATERIALS = [
 ]
 
 def seed_materials(cur):
-    active_names = [m[0] for m in DEFAULT_MATERIALS]
-    placeholders = ",".join(["%s"] * len(active_names))
-    cur.execute(f"UPDATE materials SET active=0 WHERE name NOT IN ({placeholders})", tuple(active_names))
+    cur.execute("SELECT COUNT(*) FROM materials")
+    existing_count = cur.fetchone()[0]
+    if existing_count:
+        return
     for name, category, price, unit, stock, image_url, description in DEFAULT_MATERIALS:
         cur.execute(
-            """UPDATE materials
-               SET category=%s, price=%s, unit=%s, stock=%s, image_url=%s,
-                   description=%s, active=1, updated_at=CURRENT_TIMESTAMP
-               WHERE name=%s""",
-            (category, price, unit, stock, image_url, description, name),
+            """INSERT INTO materials
+               (name, category, price, unit, stock, image_url, description, active)
+               VALUES (%s,%s,%s,%s,%s,%s,%s,1)""",
+            (name, category, price, unit, stock, image_url, description),
         )
-        if cur.rowcount == 0:
-            cur.execute(
-                """INSERT INTO materials
-                   (name, category, price, unit, stock, image_url, description, active)
-                   VALUES (%s,%s,%s,%s,%s,%s,%s,1)""",
-                (name, category, price, unit, stock, image_url, description),
-            )
 
 def init_db():
     conn = get_db()
@@ -318,7 +311,9 @@ def get_materials():
         cur.execute(query, params)
         materials = cur.fetchall()
         cur.close(); conn.close()
-        return jsonify({"success": True, "data": materials})
+        resp = jsonify({"success": True, "data": materials})
+        resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        return resp
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
@@ -650,7 +645,8 @@ def update_material(mid):
         conn = get_db()
         cur = conn.cursor()
         cur.execute("""UPDATE materials SET name=%s, category=%s, price=%s,
-                      unit=%s, stock=%s, image_url=%s, description=%s, active=%s
+                      unit=%s, stock=%s, image_url=%s, description=%s, active=%s,
+                      updated_at=CURRENT_TIMESTAMP
                       WHERE id=%s""",
                     (data["name"], data["category"], data["price"], data["unit"],
                      data["stock"], data.get("image_url",""), data.get("description",""),
