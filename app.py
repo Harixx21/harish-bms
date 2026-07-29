@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, Response, render_template, request, jsonify, session, redirect, url_for
 from flask_cors import CORS
 import sqlite3
 import hashlib
@@ -12,6 +12,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__, template_folder=os.path.join(BASE_DIR, "templates"))
 app.secret_key = os.environ.get("SECRET_KEY", "bms_secret_key_2024")
 CORS(app)
+
+SITE_URL = os.environ.get("SITE_URL", "https://harish-bms.vercel.app").rstrip("/")
 
 # ─── DB CONFIG ───────────────────────────────────────────
 def get_database_url():
@@ -295,6 +297,30 @@ def prepare_database():
 @app.route("/")
 def index():
     return render_template("customer/index.html")
+
+@app.route("/robots.txt")
+def robots_txt():
+    body = f"""User-agent: *
+Allow: /
+
+Sitemap: {SITE_URL}/sitemap.xml
+"""
+    return Response(body, mimetype="text/plain")
+
+@app.route("/sitemap.xml")
+def sitemap_xml():
+    today = datetime.utcnow().strftime("%Y-%m-%d")
+    body = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>{SITE_URL}/</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+"""
+    return Response(body, mimetype="application/xml")
 
 @app.route("/api/health")
 def health():
