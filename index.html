@@ -2529,7 +2529,7 @@ function addToCart(id) {
   else { cart.push({id: mat.id, name: mat.name, price: parseFloat(mat.price), unit: mat.unit, qty: 1}); }
   saveCart(); renderMaterials(allMaterials); updateCartBadge();
   showToast(`${mat.name} added. Opening order form...`);
-  setTimeout(openCheckout, 180);
+  openCheckout();
 }
 
 function changeQty(id, delta) {
@@ -2596,10 +2596,6 @@ function renderCartItems() {
 // CHECKOUT
 function openCheckout() {
   if (cart.length === 0) { showToast('Cart is empty'); return; }
-  if (!getCustomerLogin()) {
-    openCustomerLogin('checkout');
-    return;
-  }
   closeAll();
   const total = cart.reduce((s,c) => s+c.price*c.qty, 0);
   document.getElementById('orderSummaryItems').innerHTML = cart.map(c =>
