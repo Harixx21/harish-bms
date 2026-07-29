@@ -1618,7 +1618,7 @@ body::before {
     </div>
     <div class="header-actions">
       <a class="admin-btn" href="/admin"><i class="fa fa-lock"></i> Login</a>
-      <button class="cart-btn" onclick="openCheckout()" title="Open order form">
+      <button class="cart-btn" onclick="openCart()" title="Open cart">
         <i class="fa fa-shopping-cart"></i>
         <span class="cart-badge" id="cartBadge">0</span>
       </button>
@@ -1627,7 +1627,7 @@ body::before {
   <nav class="nav-links" aria-label="Main navigation">
     <a class="{{ 'active' if page == 'home' else '' }}" href="/">Home</a>
     <a class="{{ 'active' if page == 'about' else '' }}" href="/about">About</a>
-    <a class="{{ 'active' if page == 'products' else '' }}" href="/products" data-requires-customer="true">Products</a>
+    <a class="{{ 'active' if page == 'products' else '' }}" href="/products">Products</a>
     <a class="{{ 'active' if page == 'contact' else '' }}" href="/contact">Contact</a>
   </nav>
   <div class="search-bar">
@@ -1644,7 +1644,7 @@ body::before {
     <h2>Strong Materials.<br>Site Ready Delivery.</h2>
     <p>Premium building materials and site vehicle rental from KRG BMS - aggregates, sand, bricks, blocks, cement, soil, JCB and tractor support around Dindigul.</p>
     <div class="hero-actions">
-      <a class="hero-cta" href="/products" data-requires-customer="true"><i class="fa fa-bag-shopping"></i> Shop Materials</a>
+      <a class="hero-cta" href="/products"><i class="fa fa-bag-shopping"></i> Shop Materials</a>
       <button class="hero-cta secondary" onclick="openTrack()"><i class="fa fa-location-dot"></i> Track Order</button>
     </div>
     <div class="hero-line"><i class="fa fa-shield"></i> Fresh stock, clear rates, direct site delivery</div>
@@ -1678,7 +1678,7 @@ body::before {
       <h3>Materials available at KRG BMS</h3>
       <p>Home page-la namma stock and rental options clear ah theriyanum-nu category wise add pannirukken. Full rate, unit and ordering Products page-la irukkum.</p>
     </div>
-    <a class="hero-cta" href="/products" data-requires-customer="true"><i class="fa fa-bag-shopping"></i> View All Products</a>
+    <a class="hero-cta" href="/products"><i class="fa fa-bag-shopping"></i> View All Products</a>
   </div>
   <div class="home-product-grid">
     <article class="home-product-card" style="--bg-img:url('https://5.imimg.com/data5/SELLER/Default/2025/5/509377073/SJ/CM/JW/23073964/concrete-blumet-12-500x500.png')">
@@ -1917,7 +1917,7 @@ body::before {
       <h3>Need materials or site vehicle rental?</h3>
       <p>Products page-la order pannunga. Admin confirmation and delivery/rental status track panna mudiyum.</p>
     </div>
-    <a class="hero-cta" href="/products" data-requires-customer="true"><i class="fa fa-bag-shopping"></i> View Products</a>
+    <a class="hero-cta" href="/products"><i class="fa fa-bag-shopping"></i> View Products</a>
   </div>
 </section>
 {% endif %}
@@ -2209,15 +2209,12 @@ async function postJson(path, payload) {
 document.addEventListener('DOMContentLoaded', () => {
   setupPageTransitions();
   setupScrollEffects();
-  const productsLocked = guardProductsPage();
   if (document.getElementById('materialsGrid')) {
     const initialSearch = new URLSearchParams(window.location.search).get('search') || '';
     const searchInput = document.getElementById('searchInput');
     if (searchInput) searchInput.value = initialSearch;
-    if (!productsLocked) {
-      loadCategories();
-      loadMaterials('', initialSearch);
-    }
+    loadCategories();
+    loadMaterials('', initialSearch);
   }
   updateCartBadge();
   updateCustomerBar();
@@ -2298,13 +2295,6 @@ function revealDynamicElements(selector) {
 }
 
 function guardProductsPage() {
-  if (CURRENT_PAGE !== 'products') return false;
-  if (getCustomerLogin()) {
-    document.body.classList.remove('product-locked');
-    return false;
-  }
-  document.body.classList.add('product-locked');
-  setTimeout(() => openCustomerLogin('products'), 260);
   return true;
 }
 
@@ -2453,10 +2443,6 @@ function logoutCustomer() {
   localStorage.removeItem('bms_customer_login');
   updateCustomerBar();
   closeModal();
-  if (CURRENT_PAGE === 'products') {
-    document.body.classList.add('product-locked');
-    openCustomerLogin('products');
-  }
   showToast('Customer logged out');
 }
 
@@ -2535,8 +2521,7 @@ function addToCart(id) {
   if (existing) { existing.qty++; }
   else { cart.push({id: mat.id, name: mat.name, price: parseFloat(mat.price), unit: mat.unit, qty: 1}); }
   saveCart(); renderMaterials(allMaterials); updateCartBadge();
-  showToast(`${mat.name} added. Opening order form...`);
-  openCheckout();
+  showToast(`${mat.name} added to cart`);
 }
 
 function changeQty(id, delta) {
