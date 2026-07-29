@@ -2600,6 +2600,10 @@ function renderCartItems() {
 // CHECKOUT
 function openCheckout() {
   if (cart.length === 0) { showToast('Cart is empty'); return; }
+  if (!getCustomerLogin()) {
+    openCustomerLogin('checkout');
+    return;
+  }
   closeAll();
   const total = cart.reduce((s,c) => s+c.price*c.qty, 0);
   document.getElementById('orderSummaryItems').innerHTML = cart.map(c =>
