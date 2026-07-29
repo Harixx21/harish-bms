@@ -1361,11 +1361,14 @@ body::before {
 
 /* TOAST */
 .toast {
-  position: fixed; bottom: 80px; left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: var(--secondary); color: white;
-  padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: 600;
-  z-index: 500; transition: transform 0.3s; white-space: nowrap;
+  position: fixed; top: 18px; left: 50%;
+  transform: translateX(-50%) translateY(-90px);
+  background: linear-gradient(135deg,#166949,#27ae60); color: white;
+  padding: 13px 18px; border-radius: 14px; font-size: 14px; font-weight: 900;
+  z-index: 6000; transition: transform 0.3s; white-space: normal;
+  width:min(calc(100% - 28px),420px);
+  text-align:center;
+  box-shadow:0 18px 40px rgba(0,0,0,0.28);
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
 
@@ -2663,8 +2666,10 @@ async function placeOrder() {
       if (modalBox) modalBox.scrollTop = 0;
       document.getElementById('checkoutModal').classList.add('open');
       document.getElementById('overlay').classList.add('open');
-      showToast(`Order placed successfully: ${data.order_number}`);
-      setTimeout(trackPlacedOrder, 450);
+      const successMessage = `Order placed successfully: ${data.order_number}`;
+      showToast(successMessage);
+      window.alert(successMessage);
+      setTimeout(trackPlacedOrder, 250);
     } else {
       const msg = data.error || 'Try again';
       setOrderStatus(msg, 'error');
