@@ -2137,6 +2137,13 @@ let allMaterials = [];
 let currentCat = '';
 let isOrdering = false; // FIX: prevent double submit
 let lastOrderNumber = localStorage.getItem('bms_last_order') || '';
+if (lastOrderNumber &&
+    localStorage.getItem('bms_cart') &&
+    localStorage.getItem('bms_cart_order_cleared') !== lastOrderNumber) {
+  localStorage.removeItem('bms_cart');
+  localStorage.setItem('bms_cart_order_cleared', lastOrderNumber);
+  cart = [];
+}
 let afterCustomerLogin = '';
 let afterCustomerLoginUrl = '';
 let revealObserver = null;
@@ -2554,6 +2561,18 @@ function setQty(id, val) {
 
 function saveCart() { localStorage.setItem('bms_cart', JSON.stringify(cart)); }
 
+function clearCartState() {
+  cart = [];
+  localStorage.removeItem('bms_cart');
+  if (lastOrderNumber) localStorage.setItem('bms_cart_order_cleared', lastOrderNumber);
+  updateCartBadge();
+  const cartItems = document.getElementById('cartItems');
+  const cartSummary = document.getElementById('cartSummary');
+  if (cartItems) cartItems.innerHTML = '<div class="empty-cart"><i class="fa fa-shopping-cart"></i><p>Cart is empty</p></div>';
+  if (cartSummary) cartSummary.style.display = 'none';
+  if (allMaterials.length) renderMaterials(allMaterials);
+}
+
 function updateCartBadge() {
   const total = cart.reduce((s,c) => s+c.qty, 0);
   const badge = document.getElementById('cartBadge');
@@ -2653,10 +2672,7 @@ async function placeOrder() {
       localStorage.setItem('bms_last_order', lastOrderNumber);
       localStorage.setItem('bms_last_phone', phone);
       document.getElementById('orderNumDisplay').textContent = data.order_number;
-      cart = [];
-      saveCart();
-      updateCartBadge();
-      renderMaterials(allMaterials);
+      clearCartState();
       document.getElementById('checkoutForm').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
       const modalBox = document.querySelector('#checkoutModal .modal-box');
@@ -2699,39 +2715,36 @@ function setOrderStatus(message, type='info') {
 
 // FIX: Done button — clear cart, close modal, reset everything
 function doneOrder() {
-  cart = [];
-  saveCart();
-  updateCartBadge();
+  clearCartState();
   isOrdering = false;
   closeModal();
   // Keep logged-in customer details; clear only notes.
   ['custNotes'].forEach(id => {
     document.getElementById(id).value = '';
   });
-  renderMaterials(allMaterials);
   showToast('Order placed successfully! 🎉');
 }
 
 // TRACK
-function openTrack() {
+function openTrack(autoSearch=true) {
   const savedOrder = localStorage.getItem('bms_last_order') || '';
   const savedPhone = localStorage.getItem('bms_last_phone') || '';
-  if (savedOrder && !document.getElementById('trackOrderNum').value.trim()) {
-    document.getElementById('trackOrderNum').value = savedOrder;
-  }
-  if (savedPhone && !document.getElementById('trackPhone').value.trim()) {
-    document.getElementById('trackPhone').value = savedPhone;
-  }
+  closeAll();
+  if (savedOrder) document.getElementById('trackOrderNum').value = savedOrder;
+  if (savedPhone) document.getElementById('trackPhone').value = savedPhone;
+  document.getElementById('trackResults').innerHTML = savedOrder || savedPhone
+    ? '<div class="loading"><div class="spinner"></div>Loading latest order...</div>'
+    : '';
   document.getElementById('trackModal').classList.add('open');
   document.getElementById('overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  if (autoSearch && (savedOrder || savedPhone)) setTimeout(trackOrder, 80);
 }
 function trackPlacedOrder() {
-  document.getElementById('checkoutModal').classList.remove('open');
   document.getElementById('trackOrderNum').value = lastOrderNumber || localStorage.getItem('bms_last_order') || '';
   document.getElementById('trackPhone').value = localStorage.getItem('bms_last_phone') || '';
-  openTrack();
-  trackOrder();
+  openTrack(false);
+  setTimeout(trackOrder, 80);
 }
 function closeTrack() {
   document.getElementById('trackModal').classList.remove('open');
