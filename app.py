@@ -107,6 +107,7 @@ DEFAULT_MATERIALS = [
     ("12mm Aggregate", "Aggregate", 45.00, "cft", 900, "https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Splitt%20WikiCom.jpg?width=900", "12mm blue metal aggregate for concrete and roof work."),
     ("20mm Aggregate", "Aggregate", 50.00, "cft", 1200, "https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Schotter%20WikiCom.jpg?width=900", "20mm blue metal aggregate for RCC and foundation concrete."),
     ("40mm Aggregate", "Aggregate", 48.00, "cft", 1000, "https://images.unsplash.com/photo-1782201780626-f5ebc46ba571?auto=format&fit=crop&w=900&q=80", "40mm aggregate for heavy concrete filling and base work."),
+    ("Karungal", "Aggregate", 55.00, "cft", 1000, "https://tse1.mm.bing.net/th/id/OIP.sgx5dFCDuGSyyQtc9vy_1gAAAA?r=0&w=330&h=450&rs=1&pid=ImgDetMain&o=7&rm=3", "Karungal black stone for foundation, filling, base work and site support."),
     ("Blue Metal Dust", "Aggregate", 30.00, "cft", 1000, "https://commons.wikimedia.org/wiki/Special:FilePath/M%20Sand%20fo%20Tamilnadu.jpg?width=900", "Fine quarry dust for levelling, filling and block work."),
     ("M-Sand", "Sand", 62.00, "cft", 1500, "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg", "Concrete-grade manufactured sand."),
     ("P-Sand", "Sand", 72.00, "cft", 900, "https://commons.wikimedia.org/wiki/Special:FilePath/M%20Sand%20of%20Salem.jpg?width=900", "Plastering sand for smooth wall finish."),
