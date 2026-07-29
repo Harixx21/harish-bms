@@ -1121,6 +1121,40 @@ body::before {
   max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 20px 16px 32px;
 }
 .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.auth-note {
+  background:#fff7e8;
+  border:1px solid #f1dfbd;
+  border-radius:12px;
+  padding:12px;
+  color:var(--text-light);
+  font-size:13px;
+  font-weight:750;
+  line-height:1.45;
+  margin-bottom:16px;
+}
+.customer-bar {
+  display:none;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  background:rgba(255,247,232,0.94);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px 12px;
+  margin-bottom:14px;
+}
+.customer-bar strong { color:var(--ink); font-size:14px; }
+.customer-bar span { color:var(--text-light); font-size:12px; font-weight:750; display:block; margin-top:2px; }
+.customer-bar button {
+  border:0;
+  background:var(--secondary);
+  color:white;
+  border-radius:8px;
+  padding:8px 10px;
+  font-size:12px;
+  font-weight:900;
+  cursor:pointer;
+}
 .form-group { margin-bottom: 14px; }
 .form-group label {
   display: block; font-size: 12px; font-weight: 700; color: var(--text-light);
@@ -1555,7 +1589,6 @@ body::before {
 </div>
 {% endif %}
 
-{% if page == 'contact' %}
 <section class="store-location" id="contact">
   <div class="store-location-panel">
     <div class="store-map">
@@ -1593,7 +1626,6 @@ body::before {
     </div>
   </div>
 </section>
-{% endif %}
 
 <!-- CART OVERLAY + DRAWER -->
 <div class="overlay" id="overlay" onclick="closeAll()"></div>
@@ -1618,6 +1650,13 @@ body::before {
   <div class="modal-box">
     <div id="checkoutForm">
       <div class="modal-title">📦 Place Order</div>
+      <div class="customer-bar" id="customerBar">
+        <div>
+          <strong id="customerBarName">Customer</strong>
+          <span id="customerBarPhone">Logged in</span>
+        </div>
+        <button type="button" onclick="logoutCustomer()">Logout</button>
+      </div>
       <div class="order-summary-mini">
         <h4>Order Summary</h4>
         <div id="orderSummaryItems"></div>
@@ -1676,6 +1715,34 @@ body::before {
   </div>
 </div>
 
+<!-- CUSTOMER LOGIN MODAL -->
+<div class="modal" id="customerLoginModal">
+  <div class="modal-box">
+    <div class="modal-title"><i class="fa fa-user-lock"></i> Customer Login</div>
+    <div class="auth-note">Order panna customer details login/save pannunga. Next time order form auto fill aagum.</div>
+    <div class="form-group">
+      <label>Full Name *</label>
+      <input type="text" id="loginName" placeholder="Your full name">
+    </div>
+    <div class="form-group">
+      <label>Phone Number *</label>
+      <input type="tel" id="loginPhone" placeholder="+91 9999999999">
+    </div>
+    <div class="form-group">
+      <label>Email (Optional)</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+      <label>Delivery Address *</label>
+      <textarea id="loginAddress" placeholder="House/Plot No, Street, Area, City, Pincode"></textarea>
+    </div>
+    <button class="place-order-btn" type="button" onclick="loginCustomer()">
+      <i class="fa fa-right-to-bracket"></i> LOGIN & CONTINUE
+    </button>
+    <button onclick="closeCustomerLogin()" style="width:100%;margin-top:10px;padding:12px;background:none;border:2px solid var(--border);border-radius:14px;font-size:14px;cursor:pointer;color:var(--text-light)">Cancel</button>
+  </div>
+</div>
+
 <!-- TRACK MODAL -->
 <div class="modal" id="trackModal">
   <div class="modal-box">
@@ -1707,6 +1774,7 @@ let allMaterials = [];
 let currentCat = '';
 let isOrdering = false; // FIX: prevent double submit
 let lastOrderNumber = localStorage.getItem('bms_last_order') || '';
+let afterCustomerLogin = '';
 const LIVE_API_ORIGIN = 'https://harish-bms.vercel.app';
 const FALLBACK_MATERIALS = [
   {id:1,name:'12mm Aggregate',category:'Aggregate',price:45,unit:'cft',stock:900,image_url:'https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Splitt%20WikiCom.jpg?width=900'},
@@ -1773,6 +1841,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMaterials('', initialSearch);
   }
   updateCartBadge();
+  updateCustomerBar();
 });
 
 async function loadCategories() {
@@ -1820,6 +1889,86 @@ async function loadMaterials(cat='', search='') {
     );
     renderMaterials(allMaterials);
   }
+}
+
+function getCustomerLogin() {
+  try {
+    return JSON.parse(localStorage.getItem('bms_customer_login') || 'null');
+  } catch(e) {
+    return null;
+  }
+}
+
+function setCustomerLogin(customer) {
+  localStorage.setItem('bms_customer_login', JSON.stringify(customer));
+}
+
+function openCustomerLogin(nextAction='checkout') {
+  afterCustomerLogin = nextAction;
+  const saved = getCustomerLogin();
+  if (saved) {
+    document.getElementById('loginName').value = saved.name || '';
+    document.getElementById('loginPhone').value = saved.phone || '';
+    document.getElementById('loginEmail').value = saved.email || '';
+    document.getElementById('loginAddress').value = saved.address || '';
+  }
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('customerLoginModal').classList.add('open');
+}
+
+function closeCustomerLogin() {
+  document.getElementById('customerLoginModal').classList.remove('open');
+  if (!document.getElementById('checkoutModal').classList.contains('open') &&
+      !document.getElementById('trackModal').classList.contains('open') &&
+      !document.getElementById('cartDrawer').classList.contains('open')) {
+    document.getElementById('overlay').classList.remove('open');
+  }
+}
+
+function loginCustomer() {
+  const name = document.getElementById('loginName').value.trim();
+  const phone = document.getElementById('loginPhone').value.trim();
+  const email = document.getElementById('loginEmail').value.trim();
+  const address = document.getElementById('loginAddress').value.trim();
+  if (!name || !phone || !address) {
+    showToast('Name, phone and address required');
+    return;
+  }
+  setCustomerLogin({name, phone, email, address});
+  updateCustomerBar();
+  closeCustomerLogin();
+  showToast('Login saved');
+  if (afterCustomerLogin === 'checkout') openCheckout();
+}
+
+function logoutCustomer() {
+  localStorage.removeItem('bms_customer_login');
+  updateCustomerBar();
+  closeModal();
+  showToast('Customer logged out');
+}
+
+function updateCustomerBar() {
+  const bar = document.getElementById('customerBar');
+  if (!bar) return;
+  const customer = getCustomerLogin();
+  if (!customer) {
+    bar.style.display = 'none';
+    return;
+  }
+  bar.style.display = 'flex';
+  document.getElementById('customerBarName').textContent = customer.name || 'Customer';
+  document.getElementById('customerBarPhone').textContent = customer.phone || 'Logged in';
+}
+
+function fillCheckoutFromLogin() {
+  const customer = getCustomerLogin();
+  if (!customer) return;
+  document.getElementById('custName').value = customer.name || '';
+  document.getElementById('custPhone').value = customer.phone || '';
+  document.getElementById('custEmail').value = customer.email || '';
+  document.getElementById('custAddress').value = customer.address || '';
+  updateCustomerBar();
 }
 
 function renderMaterials(materials) {
@@ -1939,6 +2088,11 @@ function renderCartItems() {
 
 // CHECKOUT
 function openCheckout() {
+  if (cart.length === 0) { showToast('Cart is empty'); return; }
+  if (!getCustomerLogin()) {
+    openCustomerLogin('checkout');
+    return;
+  }
   closeAll();
   const total = cart.reduce((s,c) => s+c.price*c.qty, 0);
   document.getElementById('orderSummaryItems').innerHTML = cart.map(c =>
@@ -1952,7 +2106,9 @@ function openCheckout() {
   btn.disabled = false;
   btn.innerHTML = '<i class="fa fa-check-circle"></i> PLACE ORDER';
   isOrdering = false;
+  fillCheckoutFromLogin();
   document.getElementById('checkoutModal').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
 }
 
 function updateMap() {
@@ -2017,8 +2173,8 @@ function doneOrder() {
   updateCartBadge();
   isOrdering = false;
   closeModal();
-  // Reset form fields
-  ['custName','custPhone','custEmail','custAddress','custNotes'].forEach(id => {
+  // Keep logged-in customer details; clear only notes.
+  ['custNotes'].forEach(id => {
     document.getElementById(id).value = '';
   });
   renderMaterials(allMaterials);
@@ -2144,10 +2300,17 @@ function closeAll() {
   document.getElementById('overlay').classList.remove('open');
   document.getElementById('cartDrawer').classList.remove('open');
   document.getElementById('trackModal').classList.remove('open');
+  document.getElementById('checkoutModal').classList.remove('open');
+  document.getElementById('customerLoginModal').classList.remove('open');
 }
 
 function closeModal() {
   document.getElementById('checkoutModal').classList.remove('open');
+  if (!document.getElementById('trackModal').classList.contains('open') &&
+      !document.getElementById('cartDrawer').classList.contains('open') &&
+      !document.getElementById('customerLoginModal').classList.contains('open')) {
+    document.getElementById('overlay').classList.remove('open');
+  }
 }
 
 function showToast(msg) {
