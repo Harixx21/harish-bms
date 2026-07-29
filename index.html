@@ -340,6 +340,118 @@ body {
 .trust-item { text-align:center; padding:6px; }
 .trust-item strong { display:block;color:var(--secondary);font-size:13px;font-weight:900; }
 .trust-item span { color:var(--text-light);font-size:11px;font-weight:700; }
+.home-products {
+  width:min(calc(100% - 28px), 1080px);
+  margin:28px auto 34px;
+}
+.home-products-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:16px;
+  margin-bottom:14px;
+}
+.home-products-head h3 {
+  margin-top:6px;
+  color:var(--ink);
+  font-size:30px;
+  line-height:1.12;
+}
+.home-products-head p {
+  color:var(--text-light);
+  font-size:14px;
+  font-weight:750;
+  line-height:1.45;
+  max-width:560px;
+  margin-top:8px;
+}
+.home-product-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+.home-product-card {
+  background:#fff;
+  border:1px solid rgba(184,51,24,0.12);
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 16px 38px rgba(82,45,18,0.12);
+}
+.home-product-card.featured {
+  grid-column:span 2;
+  display:grid;
+  grid-template-columns:.95fr 1.05fr;
+}
+.home-product-img {
+  min-height:190px;
+  background-size:cover;
+  background-position:center;
+  position:relative;
+}
+.home-product-img::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.22));
+}
+.home-product-body { padding:15px; }
+.home-product-type {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  color:var(--primary);
+  background:#fff3d8;
+  border:1px solid #efd59d;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:11px;
+  font-weight:950;
+  text-transform:uppercase;
+}
+.home-product-body h4 {
+  margin-top:10px;
+  color:var(--ink);
+  font-size:20px;
+  line-height:1.15;
+}
+.home-product-body p {
+  margin-top:7px;
+  color:var(--text-light);
+  font-size:13px;
+  font-weight:700;
+  line-height:1.45;
+}
+.home-product-list {
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:12px;
+}
+.home-product-list span {
+  background:#f8ead0;
+  color:#5a3a22;
+  border:1px solid #edd3a4;
+  border-radius:7px;
+  padding:6px 8px;
+  font-size:11px;
+  font-weight:900;
+}
+.home-products-note {
+  margin-top:16px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+.home-note {
+  padding:12px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#fff,#fff2d4);
+  border:1px solid var(--border);
+  font-weight:900;
+  color:var(--ink);
+  font-size:13px;
+}
+.home-note i { color:var(--primary); margin-right:7px; }
 .about-section {
   width:min(calc(100% - 28px), 1080px);
   margin: 28px auto 8px;
@@ -494,6 +606,11 @@ body {
   .hero-location { align-items:flex-start; flex-direction:column; }
   .trust-strip { grid-template-columns: 1fr; text-align: left; }
   .trust-item { text-align: left; padding: 2px 4px; }
+  .home-products-head { display:block; }
+  .home-products-head h3 { font-size:23px; }
+  .home-product-grid { grid-template-columns:1fr; }
+  .home-product-card.featured { grid-column:auto; display:block; }
+  .home-products-note { grid-template-columns:1fr; }
   .about-section { grid-template-columns:1fr; width:calc(100% - 24px); }
   .about-copy { padding:16px; }
   .about-copy h3 { font-size:22px; }
@@ -897,6 +1014,91 @@ body {
   <div class="trust-item"><strong>Easy Order</strong><span>cart to tracking</span></div>
   <div class="trust-item"><strong>Owner Update</strong><span>admin status control</span></div>
 </div>
+
+<section class="home-products">
+  <div class="home-products-head">
+    <div>
+      <div class="section-kicker">What We Supply</div>
+      <h3>Materials available at KRG BMS</h3>
+      <p>Home page-la namma stock clear ah theriyanum-nu category wise add pannirukken. Full rate, unit and ordering Products page-la irukkum.</p>
+    </div>
+    <a class="hero-cta" href="/products"><i class="fa fa-bag-shopping"></i> View All Products</a>
+  </div>
+  <div class="home-product-grid">
+    <article class="home-product-card featured">
+      <div class="home-product-img" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Schotter%20WikiCom.jpg?width=900')"></div>
+      <div class="home-product-body">
+        <div class="home-product-type"><i class="fa fa-mountain"></i> Aggregate</div>
+        <h4>12mm, 20mm and 40mm blue metal</h4>
+        <p>Concrete mixing, RCC roof work, foundation, road base and heavy filling-ku size-wise aggregate available.</p>
+        <div class="home-product-list">
+          <span>12mm Aggregate</span><span>20mm Aggregate</span><span>40mm Aggregate</span><span>Blue Metal Dust</span>
+        </div>
+      </div>
+    </article>
+    <article class="home-product-card">
+      <div class="home-product-img" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg')"></div>
+      <div class="home-product-body">
+        <div class="home-product-type"><i class="fa fa-layer-group"></i> Sand</div>
+        <h4>M-Sand and P-Sand</h4>
+        <p>Concrete work-ku M-Sand, plastering smooth finish-ku P-Sand, filling-ku waste sand.</p>
+        <div class="home-product-list">
+          <span>M-Sand</span><span>P-Sand</span><span>Waste Sand</span>
+        </div>
+      </div>
+    </article>
+    <article class="home-product-card">
+      <div class="home-product-img" style="background-image:url('https://images.unsplash.com/photo-1769104397835-2297e730f361?auto=format&fit=crop&w=900&q=80')"></div>
+      <div class="home-product-body">
+        <div class="home-product-type"><i class="fa fa-border-all"></i> Bricks</div>
+        <h4>Wall and filling bricks</h4>
+        <p>Wall construction-ku normal bricks, clean wall work-ku fly ash bricks, filling-ku broken bricks.</p>
+        <div class="home-product-list">
+          <span>Normal Bricks</span><span>Fly Ash Bricks</span><span>Broken Bricks</span>
+        </div>
+      </div>
+    </article>
+    <article class="home-product-card">
+      <div class="home-product-img" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Concrete%20Masonry%20blocks.jpg?width=900')"></div>
+      <div class="home-product-body">
+        <div class="home-product-type"><i class="fa fa-cubes"></i> Blocks</div>
+        <h4>Hollow block</h4>
+        <p>Compound wall, partition wall and fast site work-ku hollow block available.</p>
+        <div class="home-product-list">
+          <span>Hollow Block</span>
+        </div>
+      </div>
+    </article>
+    <article class="home-product-card">
+      <div class="home-product-img" style="background-image:url('https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80')"></div>
+      <div class="home-product-body">
+        <div class="home-product-type"><i class="fa fa-industry"></i> Cement</div>
+        <h4>Branded cement bags</h4>
+        <p>RCC, masonry and plastering site work-ku UltraTech and Chettinad cement available.</p>
+        <div class="home-product-list">
+          <span>UltraTech Cement</span><span>Chettinad Cement</span>
+        </div>
+      </div>
+    </article>
+    <article class="home-product-card">
+      <div class="home-product-img" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/A%20red%20soil%20crop%20field.JPG?width=900')"></div>
+      <div class="home-product-body">
+        <div class="home-product-type"><i class="fa fa-seedling"></i> Soil</div>
+        <h4>Semman red soil</h4>
+        <p>Garden, plant work, land filling and site levelling-ku red soil available.</p>
+        <div class="home-product-list">
+          <span>Semman Red Soil</span>
+        </div>
+      </div>
+    </article>
+  </div>
+  <div class="home-products-note">
+    <div class="home-note"><i class="fa fa-ruler-combined"></i> Units: cft, piece, bag, load, ton</div>
+    <div class="home-note"><i class="fa fa-tags"></i> Admin editable live rates</div>
+    <div class="home-note"><i class="fa fa-cart-plus"></i> Product page ordering</div>
+    <div class="home-note"><i class="fa fa-route"></i> Delivery status tracking</div>
+  </div>
+</section>
 {% endif %}
 
 {% if page == 'about' %}
