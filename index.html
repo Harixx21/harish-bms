@@ -341,8 +341,8 @@ body {
 .trust-item strong { display:block;color:var(--secondary);font-size:13px;font-weight:900; }
 .trust-item span { color:var(--text-light);font-size:11px;font-weight:700; }
 .home-products {
-  width:min(calc(100% - 28px), 1080px);
-  margin:28px auto 34px;
+  width:min(calc(100% - 16px), 1180px);
+  margin:28px auto 38px;
 }
 .home-products-head {
   display:flex;
@@ -367,34 +367,43 @@ body {
 }
 .home-product-grid {
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
+  grid-template-columns:1fr;
+  gap:18px;
 }
 .home-product-card {
-  background:#fff;
+  background:
+    linear-gradient(90deg,rgba(37,24,17,0.90),rgba(37,24,17,0.72),rgba(255,248,236,0.92)),
+    var(--bg-img) center/cover no-repeat;
   border:1px solid rgba(184,51,24,0.12);
   border-radius:10px;
   overflow:hidden;
-  box-shadow:0 16px 38px rgba(82,45,18,0.12);
-}
-.home-product-card.featured {
-  grid-column:span 2;
+  box-shadow:0 22px 56px rgba(82,45,18,0.18);
   display:grid;
-  grid-template-columns:.95fr 1.05fr;
+  grid-template-columns:minmax(260px,.9fr) minmax(0,1.25fr);
+  min-height:390px;
+  position:relative;
 }
 .home-product-img {
-  min-height:190px;
-  background-size:cover;
-  background-position:center;
+  min-height:100%;
+  background:var(--bg-img) center/cover no-repeat;
   position:relative;
+  margin:14px;
+  border-radius:9px;
+  box-shadow:0 18px 44px rgba(0,0,0,0.28);
+  border:1px solid rgba(255,255,255,0.34);
 }
 .home-product-img::after {
   content:"";
   position:absolute;
   inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.22));
+  background:linear-gradient(180deg,rgba(0,0,0,0.00),rgba(0,0,0,0.18));
 }
-.home-product-body { padding:15px; }
+.home-product-body {
+  padding:24px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
 .home-product-type {
   display:inline-flex;
   align-items:center;
@@ -407,19 +416,48 @@ body {
   font-size:11px;
   font-weight:950;
   text-transform:uppercase;
+  width:max-content;
 }
 .home-product-body h4 {
-  margin-top:10px;
+  margin-top:12px;
   color:var(--ink);
-  font-size:20px;
+  font-size:30px;
   line-height:1.15;
 }
 .home-product-body p {
-  margin-top:7px;
+  margin-top:9px;
   color:var(--text-light);
-  font-size:13px;
+  font-size:14px;
   font-weight:700;
-  line-height:1.45;
+  line-height:1.55;
+  max-width:650px;
+}
+.home-use-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:14px;
+}
+.home-use {
+  background:rgba(255,255,255,0.76);
+  border:1px solid rgba(236,217,184,0.95);
+  border-radius:9px;
+  padding:10px;
+}
+.home-use strong {
+  display:block;
+  color:var(--primary);
+  font-size:11px;
+  font-weight:950;
+  text-transform:uppercase;
+}
+.home-use span {
+  display:block;
+  color:var(--ink);
+  font-size:12px;
+  font-weight:850;
+  margin-top:4px;
+  line-height:1.35;
 }
 .home-product-list {
   display:flex;
@@ -609,7 +647,11 @@ body {
   .home-products-head { display:block; }
   .home-products-head h3 { font-size:23px; }
   .home-product-grid { grid-template-columns:1fr; }
-  .home-product-card.featured { grid-column:auto; display:block; }
+  .home-product-card { grid-template-columns:1fr; min-height:0; }
+  .home-product-img { min-height:220px; }
+  .home-product-body { padding:16px; }
+  .home-product-body h4 { font-size:23px; }
+  .home-use-grid { grid-template-columns:1fr; }
   .home-products-note { grid-template-columns:1fr; }
   .about-section { grid-template-columns:1fr; width:calc(100% - 24px); }
   .about-copy { padding:16px; }
@@ -1025,67 +1067,97 @@ body {
     <a class="hero-cta" href="/products"><i class="fa fa-bag-shopping"></i> View All Products</a>
   </div>
   <div class="home-product-grid">
-    <article class="home-product-card featured">
+    <article class="home-product-card" style="--bg-img:url('https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Schotter%20WikiCom.jpg?width=1200')">
       <div class="home-product-img" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Schotter%20WikiCom.jpg?width=900')"></div>
       <div class="home-product-body">
         <div class="home-product-type"><i class="fa fa-mountain"></i> Aggregate</div>
-        <h4>12mm, 20mm and 40mm blue metal</h4>
-        <p>Concrete mixing, RCC roof work, foundation, road base and heavy filling-ku size-wise aggregate available.</p>
+        <h4>Premium blue metal aggregate for strong concrete work</h4>
+        <p>Size-wise aggregate ready stock. 12mm fine concrete work-ku, 20mm RCC/foundation-ku, 40mm heavy base/filling-ku use pannalam. Blue metal dust levelling and block work-ku useful.</p>
+        <div class="home-use-grid">
+          <div class="home-use"><strong>Best For</strong><span>RCC, roof slab, footing, road base</span></div>
+          <div class="home-use"><strong>Available</strong><span>12mm, 20mm, 40mm, blue metal dust</span></div>
+          <div class="home-use"><strong>Order Unit</strong><span>cft / load based site supply</span></div>
+        </div>
         <div class="home-product-list">
           <span>12mm Aggregate</span><span>20mm Aggregate</span><span>40mm Aggregate</span><span>Blue Metal Dust</span>
         </div>
       </div>
     </article>
-    <article class="home-product-card">
+    <article class="home-product-card" style="--bg-img:url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/1200px-M-Sand_in_Salem.jpg')">
       <div class="home-product-img" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg')"></div>
       <div class="home-product-body">
         <div class="home-product-type"><i class="fa fa-layer-group"></i> Sand</div>
-        <h4>M-Sand and P-Sand</h4>
-        <p>Concrete work-ku M-Sand, plastering smooth finish-ku P-Sand, filling-ku waste sand.</p>
+        <h4>Construction sand matched to the work</h4>
+        <p>Concrete mixing-ku M-Sand, plastering smooth finish-ku P-Sand, site filling and rough levelling-ku waste sand. Work type-ku correct sand select panna finish and strength better ah irukkum.</p>
+        <div class="home-use-grid">
+          <div class="home-use"><strong>Best For</strong><span>Concrete, plastering, filling, levelling</span></div>
+          <div class="home-use"><strong>Available</strong><span>M-Sand, P-Sand, waste sand</span></div>
+          <div class="home-use"><strong>Order Unit</strong><span>cft / load supply</span></div>
+        </div>
         <div class="home-product-list">
           <span>M-Sand</span><span>P-Sand</span><span>Waste Sand</span>
         </div>
       </div>
     </article>
-    <article class="home-product-card">
+    <article class="home-product-card" style="--bg-img:url('https://images.unsplash.com/photo-1769104397835-2297e730f361?auto=format&fit=crop&w=1200&q=80')">
       <div class="home-product-img" style="background-image:url('https://images.unsplash.com/photo-1769104397835-2297e730f361?auto=format&fit=crop&w=900&q=80')"></div>
       <div class="home-product-body">
         <div class="home-product-type"><i class="fa fa-border-all"></i> Bricks</div>
-        <h4>Wall and filling bricks</h4>
-        <p>Wall construction-ku normal bricks, clean wall work-ku fly ash bricks, filling-ku broken bricks.</p>
+        <h4>Bricks for walls, filling and clean masonry</h4>
+        <p>Normal red bricks regular wall construction-ku, fly ash bricks clean and uniform wall work-ku, broken bricks soling/filling/base work-ku use pannalam.</p>
+        <div class="home-use-grid">
+          <div class="home-use"><strong>Best For</strong><span>Walls, compound, base filling, soling</span></div>
+          <div class="home-use"><strong>Available</strong><span>Normal, fly ash, broken bricks</span></div>
+          <div class="home-use"><strong>Order Unit</strong><span>piece / load supply</span></div>
+        </div>
         <div class="home-product-list">
           <span>Normal Bricks</span><span>Fly Ash Bricks</span><span>Broken Bricks</span>
         </div>
       </div>
     </article>
-    <article class="home-product-card">
+    <article class="home-product-card" style="--bg-img:url('https://commons.wikimedia.org/wiki/Special:FilePath/Concrete%20Masonry%20blocks.jpg?width=1200')">
       <div class="home-product-img" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/Concrete%20Masonry%20blocks.jpg?width=900')"></div>
       <div class="home-product-body">
         <div class="home-product-type"><i class="fa fa-cubes"></i> Blocks</div>
-        <h4>Hollow block</h4>
-        <p>Compound wall, partition wall and fast site work-ku hollow block available.</p>
+        <h4>Hollow blocks for faster site progress</h4>
+        <p>Compound wall, partition wall and fast masonry work-ku hollow block suitable. Lightweight handling and clean line wall work-ku useful.</p>
+        <div class="home-use-grid">
+          <div class="home-use"><strong>Best For</strong><span>Partition walls, compound walls</span></div>
+          <div class="home-use"><strong>Available</strong><span>Concrete hollow block</span></div>
+          <div class="home-use"><strong>Order Unit</strong><span>piece / load supply</span></div>
+        </div>
         <div class="home-product-list">
           <span>Hollow Block</span>
         </div>
       </div>
     </article>
-    <article class="home-product-card">
+    <article class="home-product-card" style="--bg-img:url('https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=1200&q=80')">
       <div class="home-product-img" style="background-image:url('https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80')"></div>
       <div class="home-product-body">
         <div class="home-product-type"><i class="fa fa-industry"></i> Cement</div>
-        <h4>Branded cement bags</h4>
-        <p>RCC, masonry and plastering site work-ku UltraTech and Chettinad cement available.</p>
+        <h4>Branded cement for RCC, masonry and plastering</h4>
+        <p>Daily site work-ku cement bags available. RCC, brick work, plastering and repair work-ku required quantity order pannalam.</p>
+        <div class="home-use-grid">
+          <div class="home-use"><strong>Best For</strong><span>RCC, brick masonry, plastering</span></div>
+          <div class="home-use"><strong>Available</strong><span>UltraTech and Chettinad cement</span></div>
+          <div class="home-use"><strong>Order Unit</strong><span>bag supply</span></div>
+        </div>
         <div class="home-product-list">
           <span>UltraTech Cement</span><span>Chettinad Cement</span>
         </div>
       </div>
     </article>
-    <article class="home-product-card">
+    <article class="home-product-card" style="--bg-img:url('https://commons.wikimedia.org/wiki/Special:FilePath/A%20red%20soil%20crop%20field.JPG?width=1200')">
       <div class="home-product-img" style="background-image:url('https://commons.wikimedia.org/wiki/Special:FilePath/A%20red%20soil%20crop%20field.JPG?width=900')"></div>
       <div class="home-product-body">
         <div class="home-product-type"><i class="fa fa-seedling"></i> Soil</div>
-        <h4>Semman red soil</h4>
-        <p>Garden, plant work, land filling and site levelling-ku red soil available.</p>
+        <h4>Semman red soil for garden and filling work</h4>
+        <p>Planting, garden bed preparation, land filling and levelling-ku semman red soil available. House site and small landscape work-ku useful.</p>
+        <div class="home-use-grid">
+          <div class="home-use"><strong>Best For</strong><span>Garden, plants, filling, levelling</span></div>
+          <div class="home-use"><strong>Available</strong><span>Semman red soil</span></div>
+          <div class="home-use"><strong>Order Unit</strong><span>cft / load supply</span></div>
+        </div>
         <div class="home-product-list">
           <span>Semman Red Soil</span>
         </div>
