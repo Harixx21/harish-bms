@@ -2653,13 +2653,17 @@ async function placeOrder() {
       localStorage.setItem('bms_last_order', lastOrderNumber);
       localStorage.setItem('bms_last_phone', phone);
       document.getElementById('orderNumDisplay').textContent = data.order_number;
+      cart = [];
+      saveCart();
+      updateCartBadge();
+      renderMaterials(allMaterials);
       document.getElementById('checkoutForm').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
       const modalBox = document.querySelector('#checkoutModal .modal-box');
       if (modalBox) modalBox.scrollTop = 0;
       document.getElementById('checkoutModal').classList.add('open');
       document.getElementById('overlay').classList.add('open');
-      showToast('Order placed successfully');
+      showToast(`Order placed successfully: ${data.order_number}`);
       setTimeout(trackPlacedOrder, 450);
     } else {
       const msg = data.error || 'Try again';
