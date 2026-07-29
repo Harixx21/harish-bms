@@ -1218,12 +1218,14 @@ body::before {
 /* CHECKOUT MODAL */
 .modal {
   position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 300;
-  display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(3px);
+  display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px);
+  padding: 16px;
 }
 .modal.open { display: flex; }
 .modal-box {
-  background: white; border-radius: 24px 24px 0 0; width: 100%;
-  max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 20px 16px 32px;
+  background: white; border-radius: 18px; width: 100%;
+  max-width: 600px; max-height: min(88vh, 680px); overflow-y: auto; padding: 20px 16px 24px;
+  box-shadow:0 24px 70px rgba(0,0,0,0.34);
 }
 .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
 .auth-note {
@@ -1549,13 +1551,10 @@ body::before {
   .store-map {
     height: 190px;
   }
-  .modal {
-    align-items: flex-end;
-  }
   .modal-box,
   .cart-drawer {
     max-height: 88vh;
-    border-radius: 18px 18px 0 0;
+    border-radius: 18px;
   }
 }
 
@@ -2206,7 +2205,7 @@ function setupPageTransitions() {
     link.addEventListener('click', event => {
       const targetUrl = link.href;
       const targetPath = new URL(targetUrl).pathname;
-      if (link.dataset.requiresCustomer === 'true' && !getCustomerLogin()) {
+      if (link.dataset.requiresCustomer === 'true') {
         event.preventDefault();
         afterCustomerLoginUrl = targetUrl;
         openCustomerLogin('products');
@@ -2372,6 +2371,7 @@ function openCustomerLogin(nextAction='checkout') {
   }
   document.getElementById('overlay').classList.add('open');
   document.getElementById('customerLoginModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeCustomerLogin() {
@@ -2380,6 +2380,7 @@ function closeCustomerLogin() {
       !document.getElementById('trackModal').classList.contains('open') &&
       !document.getElementById('cartDrawer').classList.contains('open')) {
     document.getElementById('overlay').classList.remove('open');
+    document.body.style.overflow = '';
   }
 }
 
@@ -2778,6 +2779,7 @@ function closeAll() {
   document.getElementById('trackModal').classList.remove('open');
   document.getElementById('checkoutModal').classList.remove('open');
   document.getElementById('customerLoginModal').classList.remove('open');
+  document.body.style.overflow = '';
 }
 
 function closeModal() {
@@ -2786,6 +2788,7 @@ function closeModal() {
       !document.getElementById('cartDrawer').classList.contains('open') &&
       !document.getElementById('customerLoginModal').classList.contains('open')) {
     document.getElementById('overlay').classList.remove('open');
+    document.body.style.overflow = '';
   }
 }
 
