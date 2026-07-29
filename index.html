@@ -600,6 +600,116 @@ body::before {
 }
 .about-card-content h4 { font-size:22px;font-weight:950; }
 .about-card-content p { margin-top:6px;font-size:13px;line-height:1.45;font-weight:750;color:#fff3d8; }
+.about-long {
+  width:min(calc(100% - 28px),1080px);
+  margin:18px auto 38px;
+  display:grid;
+  gap:18px;
+}
+.about-panel {
+  background:rgba(255,255,255,0.93);
+  border:1px solid var(--border);
+  border-radius:10px;
+  box-shadow:0 14px 34px rgba(82,45,18,0.10);
+  padding:22px;
+}
+.about-panel h3 {
+  color:var(--ink);
+  font-size:24px;
+  line-height:1.15;
+  margin-top:6px;
+}
+.about-panel p {
+  color:var(--text-light);
+  font-size:14px;
+  line-height:1.6;
+  font-weight:720;
+  margin-top:9px;
+}
+.about-supply-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:16px;
+}
+.about-supply-card {
+  min-height:180px;
+  border-radius:10px;
+  overflow:hidden;
+  position:relative;
+  background:var(--bg-img) center/cover no-repeat;
+  border:1px solid rgba(255,255,255,0.6);
+  box-shadow:0 12px 28px rgba(82,45,18,0.12);
+}
+.about-supply-card::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(31,22,16,0.12),rgba(31,22,16,0.78));
+}
+.about-supply-card div {
+  position:absolute;
+  inset:auto 0 0;
+  z-index:1;
+  padding:14px;
+  color:white;
+}
+.about-supply-card strong { display:block;font-size:16px;font-weight:950; }
+.about-supply-card span { display:block;margin-top:4px;font-size:12px;font-weight:750;color:#ffe7b0;line-height:1.35; }
+.about-process {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-top:16px;
+}
+.about-step {
+  background:#fff7e8;
+  border:1px solid #f1dfbd;
+  border-radius:10px;
+  padding:14px;
+}
+.about-step .num {
+  width:34px;height:34px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  color:white;font-weight:950;
+  margin-bottom:10px;
+}
+.about-step strong { display:block;color:var(--ink);font-size:14px;font-weight:950; }
+.about-step span { display:block;color:var(--text-light);font-size:12px;font-weight:750;line-height:1.45;margin-top:5px; }
+.about-feature-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.about-feature {
+  background:
+    linear-gradient(90deg,rgba(23,43,40,0.92),rgba(23,43,40,0.76)),
+    var(--bg-img) center/cover no-repeat;
+  border-radius:10px;
+  color:white;
+  min-height:260px;
+  display:flex;
+  align-items:flex-end;
+  padding:18px;
+  box-shadow:0 16px 38px rgba(37,24,17,0.16);
+}
+.about-feature h4 { font-size:22px;font-weight:950; }
+.about-feature p { color:#f3d9ad;margin-top:8px;font-size:13px;font-weight:760;line-height:1.5; }
+.about-cta {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  background:linear-gradient(135deg,#172b28,#33494b);
+  color:white;
+  border-radius:10px;
+  padding:22px;
+  box-shadow:0 18px 42px rgba(37,24,17,0.18);
+}
+.about-cta h3 { color:#fff7d6;margin:0;font-size:24px; }
+.about-cta p { color:#f3d9ad;margin-top:6px;font-size:13px;line-height:1.5;font-weight:760; }
 .store-location {
   margin: 28px 0 0;
   padding: 22px 14px 34px;
@@ -697,6 +807,13 @@ body::before {
   .about-copy h3 { font-size:22px; }
   .about-points { grid-template-columns:1fr; }
   .about-card { min-height:230px; }
+  .about-long { width:calc(100% - 24px); }
+  .about-panel { padding:16px; }
+  .about-supply-grid,
+  .about-process,
+  .about-feature-grid { grid-template-columns:1fr; }
+  .about-cta { display:block; }
+  .about-cta .hero-cta { margin-top:14px; }
   .shop-band { grid-template-columns: 1fr; width:calc(100% - 24px); }
   .shop-intro h3 { font-size:21px; }
   .categories { grid-auto-columns:minmax(116px, 1fr); }
@@ -1260,12 +1377,13 @@ body::before {
   <div class="about-copy">
     <div class="section-kicker">About KRG BMS</div>
     <h3>Dindigul building materials supplier for daily site work</h3>
-    <p>KRG BMS supplies site-ready blue metal aggregates, M-Sand, P-Sand, bricks, hollow blocks, cement and red soil. Customers can check products, add required quantity, place an order and track every update from confirmation to delivery.</p>
+    <p>KRG BMS supplies site-ready blue metal aggregates, M-Sand, P-Sand, bricks, hollow blocks, cement and red soil. Along with materials, JCB and tractor rental support is also available for digging, filling, shifting and local site work.</p>
+    <p>Customer-ku simple flow: product/rental choose pannunga, quantity or hours add pannunga, order place pannunga, admin update pannum status-a track pannunga.</p>
     <div class="about-points">
       <div class="about-point"><i class="fa fa-gem"></i><div><strong>Quality Stock</strong><span>Material listed by size and unit</span></div></div>
       <div class="about-point"><i class="fa fa-truck-fast"></i><div><strong>Site Delivery</strong><span>Dindigul local delivery support</span></div></div>
       <div class="about-point"><i class="fa fa-receipt"></i><div><strong>Clear Rates</strong><span>Admin controlled live pricing</span></div></div>
-      <div class="about-point"><i class="fa fa-location-crosshairs"></i><div><strong>Track Order</strong><span>Status updates visible anytime</span></div></div>
+      <div class="about-point"><i class="fa fa-tractor"></i><div><strong>Vehicle Rent</strong><span>JCB and tractor rental options</span></div></div>
     </div>
   </div>
   <div class="about-card">
@@ -1273,6 +1391,69 @@ body::before {
       <h4>KRG BMS Yard</h4>
       <p>17, Bharathipuram Road, J.J. Nagar, Dindigul, Tamil Nadu. Visit the yard or order directly from the products section.</p>
     </div>
+  </div>
+</section>
+
+<section class="about-long">
+  <div class="about-panel">
+    <div class="section-kicker">What We Handle</div>
+    <h3>Materials and rental support in one place</h3>
+    <p>Construction site-la daily requirement different ah irukkum. Foundation-ku aggregate, concrete-ku M-Sand, plastering-ku P-Sand, wall-ku bricks/blocks, finishing work-ku cement, garden/filling-ku semman soil, heavy work-ku JCB and tractor support. KRG BMS page-la ithu ellam separate category-wise view panna mudiyum.</p>
+    <div class="about-supply-grid">
+      <div class="about-supply-card" style="--bg-img:url('https://5.imimg.com/data5/SELLER/Default/2025/5/509377073/SJ/CM/JW/23073964/concrete-blumet-12-500x500.png')"><div><strong>Aggregates</strong><span>12mm, 20mm, 40mm and blue metal dust for concrete and base work.</span></div></div>
+      <div class="about-supply-card" style="--bg-img:url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/M-Sand_in_Salem.jpg/960px-M-Sand_in_Salem.jpg')"><div><strong>Sand</strong><span>M-Sand, P-Sand and waste sand for concrete, plastering and filling.</span></div></div>
+      <div class="about-supply-card" style="--bg-img:url('https://images.unsplash.com/photo-1769104397835-2297e730f361?auto=format&fit=crop&w=900&q=80')"><div><strong>Bricks</strong><span>Normal bricks, fly ash bricks and broken bricks for wall and filling work.</span></div></div>
+      <div class="about-supply-card" style="--bg-img:url('https://commons.wikimedia.org/wiki/Special:FilePath/Concrete%20Masonry%20blocks.jpg?width=900')"><div><strong>Blocks</strong><span>Hollow blocks for compound wall, partition and quick masonry work.</span></div></div>
+      <div class="about-supply-card" style="--bg-img:url('https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80')"><div><strong>Cement</strong><span>UltraTech and Chettinad cement bags for RCC, masonry and plastering.</span></div></div>
+      <div class="about-supply-card" style="--bg-img:url('https://commons.wikimedia.org/wiki/Special:FilePath/A%20red%20soil%20crop%20field.JPG?width=900')"><div><strong>Soil</strong><span>Semman red soil for garden, plants, filling and levelling work.</span></div></div>
+    </div>
+  </div>
+
+  <div class="about-feature-grid">
+    <div class="about-feature" style="--bg-img:url('https://tse1.mm.bing.net/th/id/OIP.AlKceuOLC2bpO_ssIzf_ewHaEU?r=0&rs=1&pid=ImgDetMain&o=7&rm=3')">
+      <div>
+        <h4>JCB rental support</h4>
+        <p>Digging, trench, foundation preparation, loading and site clearing-ku JCB 3DX rental option. Admin final hours, delivery/site distance and status update pannuvanga.</p>
+      </div>
+    </div>
+    <div class="about-feature" style="--bg-img:url('https://agriculturepost.com/wp-content/uploads/2021/09/TAFE-launches-Massey-Ferguson-7235-tractor-for-Bihar-Jharkhand-and-Haryana.jpg')">
+      <div>
+        <h4>Tractor rental support</h4>
+        <p>Soil shifting, small material movement, levelling and local site support-ku tractor rental option. Order tracking-la confirmation to delivery/rent status view aagum.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="about-panel">
+    <div class="section-kicker">How It Works</div>
+    <h3>Order and track without confusion</h3>
+    <p>Website-la customer order pannina admin panel-ku direct ah pogum. Admin `confirmed`, `processing`, `delivery`, `delivered`, `rejected` madhiri status update pannumbothu customer tracking-la same update theriyum.</p>
+    <div class="about-process">
+      <div class="about-step"><div class="num">1</div><strong>Choose</strong><span>Products page-la material or rental vehicle select pannunga.</span></div>
+      <div class="about-step"><div class="num">2</div><strong>Add Details</strong><span>Quantity, hours, address and phone number add pannunga.</span></div>
+      <div class="about-step"><div class="num">3</div><strong>Admin Update</strong><span>Owner admin panel-la order confirm and status update pannuvanga.</span></div>
+      <div class="about-step"><div class="num">4</div><strong>Track</strong><span>Order number or phone number use panni status anytime track pannalam.</span></div>
+    </div>
+  </div>
+
+  <div class="about-panel">
+    <div class="section-kicker">Why KRG BMS</div>
+    <h3>Built for daily construction work</h3>
+    <p>KRG BMS page simple ah product view, rate/unit, cart order, rental request and delivery tracking ellam handle panna build pannirukku. Admin side-la material price, image, unit and stock edit panna front page products update aagum.</p>
+    <div class="about-points">
+      <div class="about-point"><i class="fa fa-list-check"></i><div><strong>Category-wise stock</strong><span>Aggregate, sand, bricks, blocks, cement, soil and rental.</span></div></div>
+      <div class="about-point"><i class="fa fa-pen-to-square"></i><div><strong>Admin editable</strong><span>Price, image, unit, stock and description can be updated.</span></div></div>
+      <div class="about-point"><i class="fa fa-clock"></i><div><strong>Track every update</strong><span>Customer can view latest order status.</span></div></div>
+      <div class="about-point"><i class="fa fa-map-location-dot"></i><div><strong>Dindigul service</strong><span>Yard location and delivery address support added.</span></div></div>
+    </div>
+  </div>
+
+  <div class="about-cta">
+    <div>
+      <h3>Need materials or site vehicle rental?</h3>
+      <p>Products page-la order pannunga. Admin confirmation and delivery/rental status track panna mudiyum.</p>
+    </div>
+    <a class="hero-cta" href="/products"><i class="fa fa-bag-shopping"></i> View Products</a>
   </div>
 </section>
 {% endif %}
