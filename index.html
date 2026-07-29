@@ -103,7 +103,10 @@ body::before {
   top: 0;
   z-index: 100;
   box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  transition: transform 0.28s ease;
+  will-change: transform;
 }
+.header.header-hidden { transform: translateY(-100%); }
 .announcement {
   display:flex;
   align-items:center;
@@ -1852,7 +1855,31 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   updateCartBadge();
   updateCustomerBar();
+  setupAutoHideHeader();
 });
+
+function setupAutoHideHeader() {
+  const header = document.querySelector('.header');
+  if (!header) return;
+  let lastY = window.scrollY;
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const currentY = window.scrollY;
+      const scrollingDown = currentY > lastY;
+      const modalOpen = document.querySelector('.modal.open') || document.querySelector('.cart-drawer.open');
+      if (currentY < 70 || !scrollingDown || modalOpen) {
+        header.classList.remove('header-hidden');
+      } else if (currentY > 110 && scrollingDown) {
+        header.classList.add('header-hidden');
+      }
+      lastY = Math.max(0, currentY);
+      ticking = false;
+    });
+  }, {passive: true});
+}
 
 async function loadCategories() {
   try {
