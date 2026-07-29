@@ -94,7 +94,9 @@ body::before {
 
 /* HEADER */
 .header {
-  background: rgba(37,24,17,0.96);
+  background:
+    linear-gradient(90deg,rgba(37,24,17,0.90),rgba(37,24,17,0.68),rgba(37,24,17,0.90)),
+    url('/static/krg-vehicle-yard-clean.png') center 48%/cover no-repeat;
   backdrop-filter: blur(12px);
   padding: 0;
   position: sticky;
@@ -108,7 +110,7 @@ body::before {
   justify-content:center;
   gap:9px;
   padding:8px 12px;
-  background:linear-gradient(90deg,#7d2013,#b83318,#d99b27);
+  background:linear-gradient(90deg,rgba(125,32,19,0.94),rgba(184,51,24,0.92),rgba(217,155,39,0.90));
   color:#fff7dc;
   font-size:12px;
   font-weight:900;
@@ -120,6 +122,7 @@ body::before {
   justify-content: space-between;
   padding: 12px 42px;
   min-height: 132px;
+  background:linear-gradient(180deg,rgba(37,24,17,0.42),rgba(37,24,17,0.18));
 }
 .logo {
   display: flex; align-items: center; gap: 12px;
@@ -146,6 +149,7 @@ body::before {
   font-size: 18px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
+  box-shadow:0 10px 24px rgba(0,0,0,0.24);
 }
 .cart-badge {
   position: absolute;
@@ -159,10 +163,16 @@ body::before {
   display: flex; align-items: center; justify-content: center;
   display: none;
 }
-.search-bar { padding: 0 16px 14px; display: flex; gap: 8px; }
+.search-bar {
+  padding: 0 16px 14px;
+  display: flex;
+  gap: 8px;
+  background:linear-gradient(180deg,rgba(37,24,17,0.04),rgba(37,24,17,0.44));
+}
 .search-bar input {
   flex: 1; padding: 12px 16px; border: 1px solid rgba(255,230,180,0.20); border-radius: 8px;
-  background: rgba(255,255,255,0.12); color: white; font-size: 14px; outline: none;
+  background: rgba(0,0,0,0.22); color: white; font-size: 14px; outline: none;
+  box-shadow:0 8px 20px rgba(0,0,0,0.18);
 }
 .search-bar input::placeholder { color: rgba(255,255,255,0.5); }
 .track-btn {
@@ -223,8 +233,8 @@ body::before {
   border-color:transparent;
 }
 .admin-btn {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.28);
+  border: 1px solid rgba(255,255,255,0.24);
   color: white;
   height: 44px;
   padding: 0 12px;
@@ -235,7 +245,7 @@ body::before {
   display: flex; align-items: center; gap: 6px;
   text-decoration: none;
 }
-.admin-btn:hover { background: rgba(255,255,255,0.2); }
+.admin-btn:hover { background: rgba(255,255,255,0.20); }
 .floating-admin {
   display:none;
 }
