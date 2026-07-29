@@ -76,9 +76,20 @@ html { scroll-behavior: smooth; }
 body {
   font-family: 'Segoe UI', sans-serif;
   background:
-    radial-gradient(circle at top left, rgba(217,155,39,0.20), transparent 32%),
-    linear-gradient(180deg, #fff7e6 0%, var(--bg) 48%, #f6efe2 100%);
+    linear-gradient(180deg, rgba(255,248,236,0.86), rgba(255,248,236,0.94) 42%, rgba(246,239,226,0.96)),
+    url('/static/krg-materials-hero.jpg') center top / cover fixed no-repeat;
   color: var(--text);
+}
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  background:
+    radial-gradient(circle at 12% 12%, rgba(217,155,39,0.22), transparent 28%),
+    radial-gradient(circle at 88% 26%, rgba(184,51,24,0.16), transparent 30%),
+    linear-gradient(180deg, rgba(255,248,236,0.30), rgba(255,248,236,0.72));
 }
 
 /* HEADER */
@@ -528,7 +539,7 @@ body {
 }
 .about-copy,
 .about-card {
-  background:#fff;
+  background:rgba(255,255,255,0.92);
   border:1px solid var(--border);
   border-radius:10px;
   box-shadow:0 14px 34px rgba(82,45,18,0.10);
@@ -704,7 +715,7 @@ body {
   align-items:stretch;
 }
 .shop-intro {
-  background:linear-gradient(135deg,#fff,#fff3d8);
+  background:linear-gradient(135deg,rgba(255,255,255,0.94),rgba(255,243,216,0.92));
   border:1px solid var(--border);
   border-radius:10px;
   padding:16px;
@@ -739,7 +750,7 @@ body {
 .categories::-webkit-scrollbar { display: none; }
 .cat-chip {
   min-height:94px;
-  background: white;
+  background: rgba(255,255,255,0.92);
   border: 1px solid var(--border);
   color: var(--text);
   padding: 12px 10px;
@@ -780,23 +791,33 @@ body {
 .section-title {
   width:min(calc(100% - 28px), 1080px);
   margin: 24px auto 0;
-  padding: 0 0 8px;
+  padding: 12px 14px 8px;
   font-size: 23px;
   font-weight: 950;
   color: var(--ink);
+  background:rgba(255,248,236,0.76);
+  border:1px solid rgba(236,217,184,0.78);
+  border-bottom:0;
+  border-radius:10px 10px 0 0;
+  backdrop-filter:blur(8px);
 }
 .section-subtitle {
   width:min(calc(100% - 28px), 1080px);
   margin: 0 auto;
-  padding: 0 0 14px;
+  padding: 0 14px 14px;
   color: var(--text-light);
   font-size: 13px;
   font-weight: 750;
+  background:rgba(255,248,236,0.76);
+  border:1px solid rgba(236,217,184,0.78);
+  border-top:0;
+  border-radius:0 0 10px 10px;
+  backdrop-filter:blur(8px);
 }
 .materials-grid {
   width:min(calc(100% - 24px), 1088px);
   margin:0 auto;
-  padding: 0 0 18px;
+  padding: 16px 0 18px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
@@ -810,7 +831,7 @@ body {
 }
 
 .mat-card {
-  background: var(--card-bg); border-radius: var(--radius);
+  background: rgba(255,255,255,0.94); border-radius: var(--radius);
   overflow: hidden; box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s;
   border: 1px solid rgba(184,51,24,0.10);
   position: relative;
