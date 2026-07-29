@@ -62,6 +62,7 @@
   --radius: 10px;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
   font-family: 'Segoe UI', sans-serif;
   background:
@@ -173,6 +174,26 @@ body {
   filter: brightness(0.56) saturate(1.12) contrast(1.04);
 }
 .header-actions { display:flex;align-items:center;gap:8px; }
+.nav-links {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:0 16px 12px;
+}
+.nav-links a {
+  color:#fff3d8;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:900;
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid transparent;
+}
+.nav-links a:hover {
+  background:rgba(255,255,255,0.12);
+  border-color:rgba(255,230,180,0.18);
+}
 .admin-btn {
   background: rgba(255,255,255,0.12);
   border: 1px solid rgba(255,255,255,0.18);
@@ -304,6 +325,77 @@ body {
 .trust-item { text-align:center; padding:6px; }
 .trust-item strong { display:block;color:var(--secondary);font-size:13px;font-weight:900; }
 .trust-item span { color:var(--text-light);font-size:11px;font-weight:700; }
+.about-section {
+  width:min(calc(100% - 28px), 1080px);
+  margin: 28px auto 8px;
+  display:grid;
+  grid-template-columns: 1.1fr .9fr;
+  gap:18px;
+  align-items:stretch;
+}
+.about-copy,
+.about-card {
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:10px;
+  box-shadow:0 14px 34px rgba(82,45,18,0.10);
+}
+.about-copy { padding:22px; }
+.section-kicker {
+  color:var(--primary);
+  font-size:11px;
+  font-weight:950;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+}
+.about-copy h3 {
+  margin-top:7px;
+  color:var(--ink);
+  font-size:28px;
+  line-height:1.12;
+}
+.about-copy p {
+  margin-top:10px;
+  color:var(--text-light);
+  font-size:14px;
+  line-height:1.6;
+  font-weight:700;
+}
+.about-points {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-top:16px;
+}
+.about-point {
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  padding:10px;
+  background:#fff7e8;
+  border:1px solid #f1dfbd;
+  border-radius:8px;
+}
+.about-point i { color:var(--primary); margin-top:2px; }
+.about-point strong { display:block;font-size:13px;color:var(--ink); }
+.about-point span { display:block;font-size:11px;color:var(--text-light);font-weight:700;margin-top:2px; }
+.about-card {
+  padding:0;
+  overflow:hidden;
+  min-height:280px;
+  position:relative;
+  background:
+    linear-gradient(180deg,rgba(37,24,17,0.12),rgba(37,24,17,0.76)),
+    url('/static/krg-dindigul-yard.jpg') center/cover no-repeat;
+}
+.about-card-content {
+  position:absolute;
+  inset:auto 0 0;
+  padding:18px;
+  color:white;
+}
+.about-card-content h4 { font-size:22px;font-weight:950; }
+.about-card-content p { margin-top:6px;font-size:13px;line-height:1.45;font-weight:750;color:#fff3d8; }
 .store-location {
   margin: 28px 0 0;
   padding: 22px 14px 34px;
@@ -381,10 +473,17 @@ body {
   .logo-icon { width: 46px; height: 46px; border-radius: 12px; }
   .logo-text h1 { font-size: 17px; }
   .logo-text p { font-size: 10px; }
+  .nav-links { justify-content:flex-start; overflow-x:auto; padding:0 12px 10px; }
+  .nav-links a { flex-shrink:0; font-size:12px; padding:7px 10px; }
   .hero-content h2 { font-size: 26px; }
   .hero-location { align-items:flex-start; flex-direction:column; }
   .trust-strip { grid-template-columns: 1fr; text-align: left; }
   .trust-item { text-align: left; padding: 2px 4px; }
+  .about-section { grid-template-columns:1fr; width:calc(100% - 24px); }
+  .about-copy { padding:16px; }
+  .about-copy h3 { font-size:22px; }
+  .about-points { grid-template-columns:1fr; }
+  .about-card { min-height:230px; }
   .shop-band { grid-template-columns: 1fr; width:calc(100% - 24px); }
   .shop-intro h3 { font-size:21px; }
   .categories { grid-auto-columns:minmax(116px, 1fr); }
@@ -737,6 +836,12 @@ body {
       </button>
     </div>
   </div>
+  <nav class="nav-links" aria-label="Main navigation">
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#products">Products</a>
+    <a href="#contact">Contact</a>
+  </nav>
   <div class="search-bar">
     <input type="text" placeholder="Search materials..." id="searchInput" oninput="handleSearch()">
     <button class="track-btn" onclick="openTrack()"><i class="fa fa-map-marker"></i> Track</button>
@@ -744,13 +849,13 @@ body {
 </div>
 
 <!-- HERO WITH FULL BG IMAGE -->
-<div class="hero">
+<section class="hero" id="home">
   <div class="hero-bg"></div>
   <div class="hero-content">
     <h2>Strong Materials.<br>Site Ready Delivery.</h2>
     <p>Premium building materials from KRG BMS - aggregates, sand, bricks, blocks, cement and soil delivered around Dindigul.</p>
     <div class="hero-actions">
-      <button class="hero-cta" onclick="document.getElementById('materialsGrid').scrollIntoView({behavior:'smooth'})"><i class="fa fa-bag-shopping"></i> Shop Materials</button>
+      <button class="hero-cta" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})"><i class="fa fa-bag-shopping"></i> Shop Materials</button>
       <button class="hero-cta secondary" onclick="openTrack()"><i class="fa fa-location-dot"></i> Track Order</button>
     </div>
     <div class="hero-line"><i class="fa fa-shield"></i> Fresh stock, clear rates, direct site delivery</div>
@@ -769,7 +874,7 @@ body {
       </a>
     </div>
   </div>
-</div>
+</section>
 
 <div class="trust-strip">
   <div class="trust-item"><strong>Right Material</strong><span>size-wise selection</span></div>
@@ -777,8 +882,29 @@ body {
   <div class="trust-item"><strong>Owner Update</strong><span>admin status control</span></div>
 </div>
 
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="about-copy">
+    <div class="section-kicker">About KRG BMS</div>
+    <h3>Dindigul building materials supplier for daily site work</h3>
+    <p>KRG BMS supplies site-ready blue metal aggregates, M-Sand, P-Sand, bricks, hollow blocks, cement and red soil. Customers can check products, add required quantity, place an order and track every update from confirmation to delivery.</p>
+    <div class="about-points">
+      <div class="about-point"><i class="fa fa-gem"></i><div><strong>Quality Stock</strong><span>Material listed by size and unit</span></div></div>
+      <div class="about-point"><i class="fa fa-truck-fast"></i><div><strong>Site Delivery</strong><span>Dindigul local delivery support</span></div></div>
+      <div class="about-point"><i class="fa fa-receipt"></i><div><strong>Clear Rates</strong><span>Admin controlled live pricing</span></div></div>
+      <div class="about-point"><i class="fa fa-location-crosshairs"></i><div><strong>Track Order</strong><span>Status updates visible anytime</span></div></div>
+    </div>
+  </div>
+  <div class="about-card">
+    <div class="about-card-content">
+      <h4>KRG BMS Yard</h4>
+      <p>17, Bharathipuram Road, J.J. Nagar, Dindigul, Tamil Nadu. Visit the yard or order directly from the products section.</p>
+    </div>
+  </div>
+</section>
+
 <!-- CATEGORIES -->
-<div class="shop-band">
+<section class="shop-band" id="products">
   <div class="shop-intro">
     <div class="eyebrow">KRG BMS Store</div>
     <h3>Choose by material type</h3>
@@ -787,7 +913,7 @@ body {
   <div class="categories" id="categories">
     <div class="cat-chip active" data-icon="★" onclick="filterCat('')">All Materials</div>
   </div>
-</div>
+</section>
 
 <!-- MATERIALS -->
 <div class="section-title">Available Materials</div>
@@ -796,7 +922,7 @@ body {
   <div class="loading"><div class="spinner"></div>Loading materials...</div>
 </div>
 
-<div class="store-location">
+<section class="store-location" id="contact">
   <div class="store-location-panel">
     <div class="store-map">
       <iframe src="https://maps.google.com/maps?q=17%20Bharathipuram%20Rd%2C%20J.J.%20Nagar%2C%20Dindigul%2C%20Tamil%20Nadu%2C%20India&z=15&output=embed" allowfullscreen loading="lazy"></iframe>
@@ -832,7 +958,7 @@ body {
       </form>
     </div>
   </div>
-</div>
+</section>
 
 <!-- CART OVERLAY + DRAWER -->
 <div class="overlay" id="overlay" onclick="closeAll()"></div>
