@@ -2528,7 +2528,8 @@ function addToCart(id) {
   if (existing) { existing.qty++; }
   else { cart.push({id: mat.id, name: mat.name, price: parseFloat(mat.price), unit: mat.unit, qty: 1}); }
   saveCart(); renderMaterials(allMaterials); updateCartBadge();
-  showToast(`${mat.name} added!`);
+  showToast(`${mat.name} added. Opening order form...`);
+  setTimeout(openCheckout, 180);
 }
 
 function changeQty(id, delta) {
