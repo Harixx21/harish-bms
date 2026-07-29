@@ -118,14 +118,15 @@ DEFAULT_MATERIALS = [
     ("UltraTech Cement", "Cement", 430.00, "bag", 500, "https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80", "UltraTech 50kg cement bag."),
     ("Chettinad Cement", "Cement", 390.00, "bag", 500, "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80", "Chettinad 50kg cement bag."),
     ("Semman Red Soil", "Soil", 35.00, "cft", 1000, "https://commons.wikimedia.org/wiki/Special:FilePath/A%20red%20soil%20crop%20field.JPG?width=900", "Semman red soil for garden, plants and filling work."),
+    ("JCB Rental", "Rental", 1500.00, "hour", 10, "https://commons.wikimedia.org/wiki/Special:FilePath/2023-02-13%20-%20JCB%20JS220LC%20hydraulic%20excavator%20-%2001.jpg?width=900", "JCB / excavator rental for digging, site clearing, trench work and earth moving. Transport and diesel terms may vary by site."),
+    ("Tractor Rental", "Rental", 900.00, "hour", 10, "https://commons.wikimedia.org/wiki/Special:FilePath/Tractor%20Mount%20Trencher.JPG?width=900", "Tractor rental for soil shifting, material movement, levelling and small site support work. Final rate may vary by distance and load."),
 ]
 
 def seed_materials(cur):
-    cur.execute("SELECT COUNT(*) FROM materials")
-    existing_count = cur.fetchone()[0]
-    if existing_count:
-        return
     for name, category, price, unit, stock, image_url, description in DEFAULT_MATERIALS:
+        cur.execute("SELECT id FROM materials WHERE LOWER(name)=LOWER(%s) LIMIT 1", (name,))
+        if cur.fetchone():
+            continue
         cur.execute(
             """INSERT INTO materials
                (name, category, price, unit, stock, image_url, description, active)
