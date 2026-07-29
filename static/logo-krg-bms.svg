@@ -1,49 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 220" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 220" role="img" aria-labelledby="title desc">
   <title id="title">KRG Building Materials Logo</title>
-  <desc id="desc">Vector logo with KRG text and an orange construction lorry.</desc>
+  <desc id="desc">Modern KRG letter logo with a loaded lorry before the K.</desc>
   <defs>
-    <linearGradient id="orange" x1="270" y1="72" x2="465" y2="154" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#ff6a00"/>
-      <stop offset="1" stop-color="#e64700"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="620" y2="220" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f7f1e3"/>
+      <stop offset="1" stop-color="#e7dac0"/>
     </linearGradient>
-    <linearGradient id="steel" x1="88" y1="62" x2="330" y2="118" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#787b7d"/>
-      <stop offset="1" stop-color="#4f5557"/>
+    <linearGradient id="orange" x1="32" y1="72" x2="216" y2="168" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff8a00"/>
+      <stop offset="1" stop-color="#ef4e0a"/>
     </linearGradient>
+    <linearGradient id="letter" x1="242" y1="48" x2="528" y2="162" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff7a00"/>
+      <stop offset="0.52" stop-color="#f05a0a"/>
+      <stop offset="1" stop-color="#263a40"/>
+    </linearGradient>
+    <filter id="softShadow" x="-12%" y="-18%" width="124%" height="136%">
+      <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#2c2c2c" flood-opacity="0.18"/>
+    </filter>
   </defs>
 
-  <rect width="520" height="220" rx="18" fill="#46585c"/>
-  <g opacity="0.9">
-    <path d="M95 80h224v16H105L95 80Z" fill="url(#steel)"/>
-    <path d="M82 86l12 24h225V96H101l-19-10Z" fill="#666b6d"/>
-    <path d="M319 72h10v70h-10z" fill="#6d7072"/>
-    <path d="M275 136h55" stroke="#686e70" stroke-width="9" stroke-linecap="square"/>
+  <rect width="620" height="220" rx="28" fill="url(#bg)"/>
+  <path d="M32 184C122 132 211 116 307 132c93 16 180 9 281-45v133H32Z" fill="#ffffff" opacity="0.38"/>
+
+  <g filter="url(#softShadow)">
+    <g transform="translate(28 54)">
+      <path d="M20 82h139c9 0 17 7 20 16l5 16H20V82Z" fill="url(#orange)"/>
+      <path d="M126 52h44l26 31v31h-38c-5-19-18-29-39-29h-18V52Z" fill="#f25b0b"/>
+      <path d="M137 61h28l15 18h-43V61Z" fill="#f5f7f7"/>
+      <path d="M20 52h96v30H20V52Z" fill="#263a40"/>
+      <path d="M28 39h82l11 13H16l12-13Z" fill="#6b7072"/>
+      <path d="M33 25h74l9 14H24l9-14Z" fill="#777b7d"/>
+      <path d="M45 13h54l8 12H36l9-12Z" fill="#8a8d8f"/>
+      <path d="M28 58h23m12 0h42" stroke="#f7f1e3" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
+      <path d="M158 112h37" stroke="#263a40" stroke-width="6" stroke-linecap="round" opacity="0.45"/>
+      <circle cx="55" cy="116" r="24" fill="#263a40"/>
+      <circle cx="55" cy="116" r="12" fill="#ff8a00"/>
+      <circle cx="148" cy="116" r="24" fill="#263a40"/>
+      <circle cx="148" cy="116" r="12" fill="#ff8a00"/>
+    </g>
+
+    <g transform="translate(246 42)">
+      <path d="M0 118V0h34v47L82 0h43L66 59l63 59H84L34 70v48H0Z" fill="#263a40"/>
+      <path d="M144 118V0h67c26 0 45 17 45 41 0 17-9 30-24 37l31 40h-42l-26-34h-17v34h-34Zm34-61h27c10 0 17-6 17-15 0-10-7-16-17-16h-27v31Z" fill="#f05a0a"/>
+      <path d="M337 121c-39 0-68-26-68-62 0-36 30-62 70-62 26 0 48 11 60 30l-29 18c-7-10-18-16-31-16-20 0-35 13-35 30 0 18 15 31 37 31 14 0 25-5 31-14h-39V52h73v66h-27l-4-16c-10 12-23 19-38 19Z" fill="#263a40"/>
+      <path d="M268 8h122" stroke="#ff8a00" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
+    </g>
   </g>
 
-  <text x="105" y="138"
+  <text x="407" y="196" text-anchor="middle"
         font-family="Arial Black, Arial, Helvetica, sans-serif"
-        font-size="60" font-weight="900" fill="#ffffff" letter-spacing="-2">KRG</text>
-
-  <g>
-    <path d="M338 75h38c24 0 46 4 66 12l13 17c12 1 18 6 20 18l-24 7v65h-31c-5-18-18-27-38-27h-44V75Z" fill="url(#orange)"/>
-    <path d="M374 112h52l11 51h-64c-6 0-11-5-11-11v-29c0-6 5-11 12-11Z" fill="#46585c"/>
-    <path d="M387 116h36l9 39h-38c-5 0-8-3-8-8v-31Z" fill="#46585c"/>
-    <path d="M365 84h60" stroke="#46585c" stroke-width="7" stroke-linecap="round"/>
-    <path d="M338 161h92c9 0 17 5 22 13l7 13H338v-26Z" fill="#e64700"/>
-    <path d="M337 161h-42c-14 0-27 8-34 20l-8 14h84v-34Z" fill="#e64700"/>
-    <path d="M465 141l27 11v30l-27-10v-31Z" fill="#f15a09"/>
-    <rect x="462" y="181" width="17" height="14" fill="#f15a09"/>
-    <rect x="305" y="172" width="14" height="28" rx="2" fill="#46585c"/>
-    <rect x="342" y="172" width="14" height="28" rx="2" fill="#46585c"/>
-    <circle cx="288" cy="193" r="28" fill="#f15a09"/>
-    <circle cx="288" cy="193" r="16" fill="#46585c"/>
-    <circle cx="288" cy="193" r="9" fill="#f15a09"/>
-    <circle cx="406" cy="193" r="28" fill="#f15a09"/>
-    <circle cx="406" cy="193" r="16" fill="#46585c"/>
-    <circle cx="406" cy="193" r="9" fill="#f15a09"/>
-  </g>
-
-  <text x="260" y="204" text-anchor="middle"
-        font-family="Arial Black, Arial, Helvetica, sans-serif"
-        font-size="30" font-weight="900" fill="#ffffff" letter-spacing="4">KRG BUILDING MATERIALS</text>
+        font-size="25" font-weight="900" fill="#263a40" letter-spacing="5">BUILDING MATERIALS</text>
 </svg>
