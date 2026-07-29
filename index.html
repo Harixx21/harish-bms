@@ -1304,6 +1304,7 @@ body::before {
   background: #ccc; cursor: not-allowed;
   box-shadow: none; transform: none;
 }
+.top-place-order { margin-bottom: 14px; }
 
 /* SUCCESS */
 .success-screen { text-align: center; padding: 32px 16px; display: none; }
@@ -2019,6 +2020,10 @@ body::before {
           <span>Total</span><span style="color:var(--primary)" id="orderSummaryTotal"></span>
         </div>
       </div>
+      <button class="place-order-btn place-order-submit top-place-order" id="placeOrderBtn" type="button" onclick="placeOrder()">
+        <i class="fa fa-check-circle"></i> PLACE ORDER
+      </button>
+      <div class="order-status" id="orderStatus"></div>
       <div class="form-group">
         <label>Full Name *</label>
         <input type="text" id="custName" placeholder="Your full name">
@@ -2049,10 +2054,9 @@ body::before {
         <label>Special Notes</label>
         <textarea id="custNotes" placeholder="Any delivery instructions..."></textarea>
       </div>
-      <button class="place-order-btn" id="placeOrderBtn" onclick="placeOrder()">
+      <button class="place-order-btn place-order-submit" type="button" onclick="placeOrder()">
         <i class="fa fa-check-circle"></i> PLACE ORDER
       </button>
-      <div class="order-status" id="orderStatus"></div>
       <button onclick="closeModal()" style="width:100%;margin-top:10px;padding:12px;background:none;border:2px solid var(--border);border-radius:14px;font-size:14px;cursor:pointer;color:var(--text-light)">Cancel</button>
     </div>
     <div class="success-screen" id="successScreen">
@@ -2600,15 +2604,14 @@ function openCheckout() {
   document.getElementById('orderSummaryTotal').textContent = `₹${total.toFixed(0)}`;
   document.getElementById('checkoutForm').style.display = 'block';
   document.getElementById('successScreen').style.display = 'none';
-  // RESET button state
-  const btn = document.getElementById('placeOrderBtn');
-  btn.disabled = false;
-  btn.innerHTML = '<i class="fa fa-check-circle"></i> PLACE ORDER';
+  setPlaceOrderButtons(false, '<i class="fa fa-check-circle"></i> PLACE ORDER');
   isOrdering = false;
   setOrderStatus('');
   fillCheckoutFromLogin();
   document.getElementById('checkoutModal').classList.add('open');
   document.getElementById('overlay').classList.add('open');
+  const modalBox = document.querySelector('#checkoutModal .modal-box');
+  if (modalBox) modalBox.scrollTop = 0;
   document.body.style.overflow = 'hidden';
 }
 
@@ -2633,9 +2636,7 @@ async function placeOrder() {
   if (cart.length === 0) { showToast('Cart is empty'); return; }
 
   isOrdering = true;
-  const btn = document.getElementById('placeOrderBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Placing Order...';
+  setPlaceOrderButtons(true, '<i class="fa fa-spinner fa-spin"></i> Placing Order...');
   setOrderStatus('Order save pannitu irukku. Please wait...', 'info');
 
   try {
@@ -2663,18 +2664,23 @@ async function placeOrder() {
       const msg = data.error || 'Try again';
       setOrderStatus(msg, 'error');
       showToast('Error: ' + msg);
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fa fa-check-circle"></i> PLACE ORDER';
+      setPlaceOrderButtons(false, '<i class="fa fa-check-circle"></i> PLACE ORDER');
       isOrdering = false;
     }
   } catch(e) {
     const msg = e.message || 'Connection error. Try again.';
     setOrderStatus(msg, 'error');
     showToast(msg);
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fa fa-check-circle"></i> PLACE ORDER';
+    setPlaceOrderButtons(false, '<i class="fa fa-check-circle"></i> PLACE ORDER');
     isOrdering = false;
   }
+}
+
+function setPlaceOrderButtons(disabled, html) {
+  document.querySelectorAll('.place-order-submit').forEach(button => {
+    button.disabled = disabled;
+    button.innerHTML = html;
+  });
 }
 
 function setOrderStatus(message, type='info') {
