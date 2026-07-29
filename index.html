@@ -79,6 +79,9 @@ body {
     linear-gradient(180deg, rgba(255,248,236,0.86), rgba(255,248,236,0.94) 42%, rgba(246,239,226,0.96)),
     url('/static/krg-materials-hero.jpg') center top / cover fixed no-repeat;
   color: var(--text);
+  opacity: 0;
+  transform: translateY(14px) scale(.995);
+  animation: pageOpen .72s cubic-bezier(.2,.8,.2,1) forwards;
 }
 body::before {
   content:"";
@@ -90,6 +93,84 @@ body::before {
     radial-gradient(circle at 12% 12%, rgba(217,155,39,0.22), transparent 28%),
     radial-gradient(circle at 88% 26%, rgba(184,51,24,0.16), transparent 30%),
     linear-gradient(180deg, rgba(255,248,236,0.30), rgba(255,248,236,0.72));
+}
+@keyframes pageOpen {
+  from { opacity: 0; transform: translateY(18px) scale(.99); filter: blur(8px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes panelGlow {
+  0% { transform: translateX(-120%) skewX(-14deg); opacity: 0; }
+  18% { opacity: .85; }
+  100% { transform: translateX(180%) skewX(-14deg); opacity: 0; }
+}
+.page-loader {
+  position:fixed;
+  inset:0;
+  z-index:5000;
+  pointer-events:none;
+  opacity:0;
+  background:
+    linear-gradient(90deg,rgba(37,24,17,.96),rgba(125,32,19,.82)),
+    url('/static/krg-vehicle-yard-clean.png') center/cover no-repeat;
+  transition:opacity .22s ease;
+  overflow:hidden;
+}
+.page-loader::after {
+  content:"";
+  position:absolute;
+  inset:0 auto 0 -30%;
+  width:34%;
+  background:linear-gradient(90deg,transparent,rgba(255,198,93,.72),transparent);
+  animation:panelGlow .9s ease both;
+}
+.page-loader.show { opacity:1; }
+.reveal-on-scroll {
+  opacity:0;
+  transform:translateY(26px);
+  filter:blur(4px);
+  transition:opacity .68s ease, transform .68s ease, filter .68s ease;
+}
+.reveal-on-scroll.revealed {
+  opacity:1;
+  transform:translateY(0);
+  filter:blur(0);
+}
+.home-product-card.reveal-on-scroll,
+.mat-card.reveal-on-scroll {
+  transition:opacity .68s ease, transform .68s ease, filter .68s ease, box-shadow .24s ease, border-color .24s ease;
+}
+.product-locked #products,
+.product-locked .section-title,
+.product-locked .section-subtitle,
+.product-locked #materialsGrid {
+  filter:blur(8px);
+  opacity:.22;
+  pointer-events:none;
+  user-select:none;
+}
+.lock-message {
+  width:min(calc(100% - 28px),760px);
+  margin:28px auto;
+  padding:22px;
+  border-radius:12px;
+  color:white;
+  text-align:center;
+  background:linear-gradient(135deg,rgba(37,24,17,.94),rgba(125,32,19,.90));
+  box-shadow:0 18px 44px rgba(37,24,17,.22);
+  display:none;
+}
+.product-locked .lock-message { display:block; }
+.lock-message h3 { font-size:24px;font-weight:950;margin-bottom:8px; }
+.lock-message p { color:#ffe6bd;font-weight:800;font-size:13px;line-height:1.55; }
+.lock-message button {
+  margin-top:14px;
+  border:0;
+  border-radius:9px;
+  padding:12px 18px;
+  color:white;
+  font-weight:950;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
 }
 
 /* HEADER */
@@ -1502,7 +1583,8 @@ body::before {
 }
 </style>
 </head>
-<body>
+<body data-page="{{ page }}">
+<div class="page-loader" id="pageLoader" aria-hidden="true"></div>
 
 <!-- HEADER -->
 <div class="header">
@@ -1522,7 +1604,7 @@ body::before {
   <nav class="nav-links" aria-label="Main navigation">
     <a class="{{ 'active' if page == 'home' else '' }}" href="/">Home</a>
     <a class="{{ 'active' if page == 'about' else '' }}" href="/about">About</a>
-    <a class="{{ 'active' if page == 'products' else '' }}" href="/products">Products</a>
+    <a class="{{ 'active' if page == 'products' else '' }}" href="/products" data-requires-customer="true">Products</a>
     <a class="{{ 'active' if page == 'contact' else '' }}" href="/contact">Contact</a>
   </nav>
   <div class="search-bar">
@@ -1539,7 +1621,7 @@ body::before {
     <h2>Strong Materials.<br>Site Ready Delivery.</h2>
     <p>Premium building materials and site vehicle rental from KRG BMS - aggregates, sand, bricks, blocks, cement, soil, JCB and tractor support around Dindigul.</p>
     <div class="hero-actions">
-      <a class="hero-cta" href="/products"><i class="fa fa-bag-shopping"></i> Shop Materials</a>
+      <a class="hero-cta" href="/products" data-requires-customer="true"><i class="fa fa-bag-shopping"></i> Shop Materials</a>
       <button class="hero-cta secondary" onclick="openTrack()"><i class="fa fa-location-dot"></i> Track Order</button>
     </div>
     <div class="hero-line"><i class="fa fa-shield"></i> Fresh stock, clear rates, direct site delivery</div>
@@ -1573,7 +1655,7 @@ body::before {
       <h3>Materials available at KRG BMS</h3>
       <p>Home page-la namma stock and rental options clear ah theriyanum-nu category wise add pannirukken. Full rate, unit and ordering Products page-la irukkum.</p>
     </div>
-    <a class="hero-cta" href="/products"><i class="fa fa-bag-shopping"></i> View All Products</a>
+    <a class="hero-cta" href="/products" data-requires-customer="true"><i class="fa fa-bag-shopping"></i> View All Products</a>
   </div>
   <div class="home-product-grid">
     <article class="home-product-card" style="--bg-img:url('https://5.imimg.com/data5/SELLER/Default/2025/5/509377073/SJ/CM/JW/23073964/concrete-blumet-12-500x500.png')">
@@ -1812,7 +1894,7 @@ body::before {
       <h3>Need materials or site vehicle rental?</h3>
       <p>Products page-la order pannunga. Admin confirmation and delivery/rental status track panna mudiyum.</p>
     </div>
-    <a class="hero-cta" href="/products"><i class="fa fa-bag-shopping"></i> View Products</a>
+    <a class="hero-cta" href="/products" data-requires-customer="true"><i class="fa fa-bag-shopping"></i> View Products</a>
   </div>
 </section>
 {% endif %}
@@ -1835,6 +1917,11 @@ body::before {
 <div class="section-subtitle">Choose what you need, add quantity or rental hours, and track every order from confirmation to delivery.</div>
 <div class="materials-grid" id="materialsGrid">
   <div class="loading"><div class="spinner"></div>Loading materials...</div>
+</div>
+<div class="lock-message" id="productsLockMessage">
+  <h3>Login to view products</h3>
+  <p>Customer details save pannina apram products, cart and order tracking full-a open aagum.</p>
+  <button type="button" onclick="openCustomerLogin('products')"><i class="fa fa-lock-open"></i> Login & Open Products</button>
 </div>
 {% endif %}
 
@@ -2024,6 +2111,9 @@ let currentCat = '';
 let isOrdering = false; // FIX: prevent double submit
 let lastOrderNumber = localStorage.getItem('bms_last_order') || '';
 let afterCustomerLogin = '';
+let afterCustomerLoginUrl = '';
+let revealObserver = null;
+const CURRENT_PAGE = document.body.dataset.page || '';
 const LIVE_API_ORIGIN = 'https://harish-bms.vercel.app';
 const FALLBACK_MATERIALS = [
   {id:1,name:'12mm Aggregate',category:'Aggregate',price:45,unit:'cft',stock:900,image_url:'https://commons.wikimedia.org/wiki/Special:FilePath/LF02-01%20Splitt%20WikiCom.jpg?width=900'},
@@ -2082,17 +2172,106 @@ async function postJson(path, payload) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  setupPageTransitions();
+  setupScrollEffects();
+  const productsLocked = guardProductsPage();
   if (document.getElementById('materialsGrid')) {
     const initialSearch = new URLSearchParams(window.location.search).get('search') || '';
     const searchInput = document.getElementById('searchInput');
     if (searchInput) searchInput.value = initialSearch;
-    loadCategories();
-    loadMaterials('', initialSearch);
+    if (!productsLocked) {
+      loadCategories();
+      loadMaterials('', initialSearch);
+    }
   }
   updateCartBadge();
   updateCustomerBar();
   setupAutoHideHeader();
 });
+
+function showPageLoader() {
+  const loader = document.getElementById('pageLoader');
+  if (loader) loader.classList.add('show');
+}
+
+function navigateWithEffect(url) {
+  showPageLoader();
+  setTimeout(() => { window.location.href = url; }, 180);
+}
+
+function setupPageTransitions() {
+  document.querySelectorAll('a[href]').forEach(link => {
+    const href = link.getAttribute('href') || '';
+    if (!href.startsWith('/') || href.startsWith('/admin')) return;
+    link.addEventListener('click', event => {
+      const targetUrl = link.href;
+      const targetPath = new URL(targetUrl).pathname;
+      if (link.dataset.requiresCustomer === 'true' && !getCustomerLogin()) {
+        event.preventDefault();
+        afterCustomerLoginUrl = targetUrl;
+        openCustomerLogin('products');
+        return;
+      }
+      if (targetPath !== window.location.pathname || new URL(targetUrl).search !== window.location.search) {
+        event.preventDefault();
+        navigateWithEffect(targetUrl);
+      }
+    });
+  });
+}
+
+function setupScrollEffects() {
+  const targets = document.querySelectorAll([
+    '.hero-content',
+    '.trust-strip',
+    '.home-products-head',
+    '.home-product-card',
+    '.home-note',
+    '.about-copy',
+    '.about-card',
+    '.about-brand-banner',
+    '.about-long-card',
+    '.shop-intro',
+    '.cat-chip',
+    '.mat-card',
+    '.store-location-panel'
+  ].join(','));
+  if (!targets.length) return;
+  targets.forEach((el, index) => {
+    el.classList.add('reveal-on-scroll');
+    el.style.transitionDelay = `${Math.min(index % 8, 7) * 45}ms`;
+  });
+  revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('revealed');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, {threshold: .14, rootMargin: '0px 0px -7% 0px'});
+  targets.forEach(el => revealObserver.observe(el));
+}
+
+function revealDynamicElements(selector) {
+  const items = document.querySelectorAll(selector);
+  items.forEach((el, index) => {
+    el.classList.add('reveal-on-scroll');
+    el.style.transitionDelay = `${Math.min(index, 8) * 45}ms`;
+    if (revealObserver) revealObserver.observe(el);
+    else requestAnimationFrame(() => el.classList.add('revealed'));
+  });
+}
+
+function guardProductsPage() {
+  if (CURRENT_PAGE !== 'products') return false;
+  if (getCustomerLogin()) {
+    document.body.classList.remove('product-locked');
+    return false;
+  }
+  document.body.classList.add('product-locked');
+  setTimeout(() => openCustomerLogin('products'), 260);
+  return true;
+}
 
 function setupAutoHideHeader() {
   const header = document.querySelector('.header');
@@ -2146,7 +2325,13 @@ async function loadCategories() {
 async function loadMaterials(cat='', search='') {
   const grid = document.getElementById('materialsGrid');
   if (!grid) {
-    window.location.href = `/products${search ? `?search=${encodeURIComponent(search)}` : ''}`;
+    const url = `/products${search ? `?search=${encodeURIComponent(search)}` : ''}`;
+    if (!getCustomerLogin()) {
+      afterCustomerLoginUrl = url;
+      openCustomerLogin('products');
+      return;
+    }
+    navigateWithEffect(url);
     return;
   }
   grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
@@ -2211,13 +2396,30 @@ function loginCustomer() {
   updateCustomerBar();
   closeCustomerLogin();
   showToast('Login saved');
-  if (afterCustomerLogin === 'checkout') openCheckout();
+  if (afterCustomerLogin === 'checkout') {
+    openCheckout();
+  } else if (afterCustomerLogin === 'products') {
+    if (CURRENT_PAGE === 'products') {
+      document.body.classList.remove('product-locked');
+      const initialSearch = new URLSearchParams(window.location.search).get('search') || '';
+      loadCategories();
+      loadMaterials('', initialSearch);
+    } else {
+      navigateWithEffect(afterCustomerLoginUrl || '/products');
+    }
+  }
+  afterCustomerLogin = '';
+  afterCustomerLoginUrl = '';
 }
 
 function logoutCustomer() {
   localStorage.removeItem('bms_customer_login');
   updateCustomerBar();
   closeModal();
+  if (CURRENT_PAGE === 'products') {
+    document.body.classList.add('product-locked');
+    openCustomerLogin('products');
+  }
   showToast('Customer logged out');
 }
 
@@ -2285,6 +2487,7 @@ function renderMaterials(materials) {
       </div>
     </div>`;
   }).join('');
+  revealDynamicElements('#materialsGrid .mat-card');
 }
 
 // CART
