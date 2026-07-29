@@ -118,14 +118,14 @@ DEFAULT_MATERIALS = [
     ("UltraTech Cement", "Cement", 430.00, "bag", 500, "https://images.unsplash.com/photo-1773394089934-3e29f2a3d6a9?auto=format&fit=crop&w=900&q=80", "UltraTech 50kg cement bag."),
     ("Chettinad Cement", "Cement", 390.00, "bag", 500, "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80", "Chettinad 50kg cement bag."),
     ("Semman Red Soil", "Soil", 35.00, "cft", 1000, "https://commons.wikimedia.org/wiki/Special:FilePath/A%20red%20soil%20crop%20field.JPG?width=900", "Semman red soil for garden, plants and filling work."),
-    ("JCB Rental", "Rental", 1500.00, "hour", 10, "https://commons.wikimedia.org/wiki/Special:FilePath/JCB-%20Backhoe%20loader-2.jpg?width=900", "JCB 3DX / backhoe rental for digging, site clearing, trench work and earth moving. Transport and diesel terms may vary by site."),
+    ("JCB Rental", "Rental", 1500.00, "hour", 10, "https://tse1.mm.bing.net/th/id/OIP.AlKceuOLC2bpO_ssIzf_ewHaEU?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", "JCB 3DX / backhoe rental for digging, site clearing, trench work and earth moving. Transport and diesel terms may vary by site."),
     ("Tractor Rental", "Rental", 900.00, "hour", 10, "https://commons.wikimedia.org/wiki/Special:FilePath/Tractor.JPG?width=900", "Tractor rental for soil shifting, material movement, levelling and small site support work. Final rate may vary by distance and load."),
 ]
 
 RENTAL_IMAGE_UPDATES = {
     "JCB Rental": (
         "https://commons.wikimedia.org/wiki/Special:FilePath/2023-02-13%20-%20JCB%20JS220LC%20hydraulic%20excavator%20-%2001.jpg?width=900",
-        "https://commons.wikimedia.org/wiki/Special:FilePath/JCB-%20Backhoe%20loader-2.jpg?width=900",
+        "https://tse1.mm.bing.net/th/id/OIP.AlKceuOLC2bpO_ssIzf_ewHaEU?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
         "JCB 3DX / backhoe rental for digging, site clearing, trench work and earth moving. Transport and diesel terms may vary by site.",
     ),
     "Tractor Rental": (
@@ -154,6 +154,16 @@ def seed_materials(cur):
                  AND (image_url=%s OR image_url IS NULL OR image_url='')""",
             (new_url, description, name, old_url),
         )
+    cur.execute(
+        """UPDATE materials
+           SET image_url=%s, description=%s
+           WHERE LOWER(name)=LOWER(%s)""",
+        (
+            "https://tse1.mm.bing.net/th/id/OIP.AlKceuOLC2bpO_ssIzf_ewHaEU?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+            "JCB 3DX / backhoe rental for digging, site clearing, trench work and earth moving. Transport and diesel terms may vary by site.",
+            "JCB Rental",
+        ),
+    )
 
 def init_db():
     conn = get_db()
