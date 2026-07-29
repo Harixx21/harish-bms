@@ -119,7 +119,7 @@ DEFAULT_MATERIALS = [
     ("Chettinad Cement", "Cement", 390.00, "bag", 500, "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80", "Chettinad 50kg cement bag."),
     ("Semman Red Soil", "Soil", 35.00, "cft", 1000, "https://commons.wikimedia.org/wiki/Special:FilePath/A%20red%20soil%20crop%20field.JPG?width=900", "Semman red soil for garden, plants and filling work."),
     ("JCB Rental", "Rental", 1500.00, "hour", 10, "https://tse1.mm.bing.net/th/id/OIP.AlKceuOLC2bpO_ssIzf_ewHaEU?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", "JCB 3DX / backhoe rental for digging, site clearing, trench work and earth moving. Transport and diesel terms may vary by site."),
-    ("Tractor Rental", "Rental", 900.00, "hour", 10, "https://tse3.mm.bing.net/th/id/OIP.gNwEcJLuVZjbaY17V8hJpQAAAA?r=0&rs=1&pid=ImgDetMain&o=7&rm=3", "Tractor rental for soil shifting, material movement, levelling and small site support work. Final rate may vary by distance and load."),
+    ("Tractor Rental", "Rental", 900.00, "hour", 10, "https://agriculturepost.com/wp-content/uploads/2021/09/TAFE-launches-Massey-Ferguson-7235-tractor-for-Bihar-Jharkhand-and-Haryana.jpg", "Tractor rental for soil shifting, material movement, levelling and small site support work. Final rate may vary by distance and load."),
 ]
 
 RENTAL_IMAGE_UPDATES = {
@@ -130,7 +130,7 @@ RENTAL_IMAGE_UPDATES = {
     ),
     "Tractor Rental": (
         "https://commons.wikimedia.org/wiki/Special:FilePath/Tractor%20Mount%20Trencher.JPG?width=900",
-        "https://tse3.mm.bing.net/th/id/OIP.gNwEcJLuVZjbaY17V8hJpQAAAA?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+        "https://agriculturepost.com/wp-content/uploads/2021/09/TAFE-launches-Massey-Ferguson-7235-tractor-for-Bihar-Jharkhand-and-Haryana.jpg",
         "Tractor rental for soil shifting, material movement, levelling and small site support work. Final rate may vary by distance and load.",
     ),
 }
@@ -169,7 +169,7 @@ def seed_materials(cur):
            SET image_url=%s, description=%s
            WHERE LOWER(name)=LOWER(%s)""",
         (
-            "https://tse3.mm.bing.net/th/id/OIP.gNwEcJLuVZjbaY17V8hJpQAAAA?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+            "https://agriculturepost.com/wp-content/uploads/2021/09/TAFE-launches-Massey-Ferguson-7235-tractor-for-Bihar-Jharkhand-and-Haryana.jpg",
             "Tractor rental for soil shifting, material movement, levelling and small site support work. Final rate may vary by distance and load.",
             "Tractor Rental",
         ),
