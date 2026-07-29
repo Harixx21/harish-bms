@@ -139,15 +139,6 @@ body::before {
 .mat-card.reveal-on-scroll {
   transition:opacity .68s ease, transform .68s ease, filter .68s ease, box-shadow .24s ease, border-color .24s ease;
 }
-.product-locked #products,
-.product-locked .section-title,
-.product-locked .section-subtitle,
-.product-locked #materialsGrid {
-  filter:blur(8px);
-  opacity:.22;
-  pointer-events:none;
-  user-select:none;
-}
 .lock-message {
   width:min(calc(100% - 28px),760px);
   margin:28px auto;
@@ -159,7 +150,6 @@ body::before {
   box-shadow:0 18px 44px rgba(37,24,17,.22);
   display:none;
 }
-.product-locked .lock-message { display:block; }
 .lock-message h3 { font-size:24px;font-weight:950;margin-bottom:8px; }
 .lock-message p { color:#ffe6bd;font-weight:800;font-size:13px;line-height:1.55; }
 .lock-message button {
@@ -2388,6 +2378,10 @@ function setCustomerLogin(customer) {
 
 function openCustomerLogin(nextAction='checkout') {
   afterCustomerLogin = nextAction;
+  document.body.classList.remove('product-locked');
+  document.getElementById('cartDrawer').classList.remove('open');
+  document.getElementById('checkoutModal').classList.remove('open');
+  document.getElementById('trackModal').classList.remove('open');
   const saved = getCustomerLogin();
   if (saved) {
     document.getElementById('loginName').value = saved.name || '';
@@ -2600,6 +2594,8 @@ function renderCartItems() {
 // CHECKOUT
 function openCheckout() {
   if (cart.length === 0) { showToast('Cart is empty'); return; }
+  document.body.classList.remove('product-locked');
+  document.getElementById('cartDrawer').classList.remove('open');
   if (!getCustomerLogin()) {
     openCustomerLogin('checkout');
     return;
