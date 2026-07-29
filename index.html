@@ -1311,6 +1311,26 @@ body::before {
 @keyframes popIn { 0%{transform:scale(0)} 80%{transform:scale(1.1)} 100%{transform:scale(1)} }
 .success-screen h2 { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
 .success-screen p { color: var(--text-light); font-size: 14px; }
+.order-status {
+  display:none;
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:800;
+  line-height:1.4;
+}
+.order-status.show { display:block; }
+.order-status.error {
+  color:#8f1f19;
+  background:#fff0ed;
+  border:1px solid #f3c2ba;
+}
+.order-status.info {
+  color:#6d4313;
+  background:#fff6df;
+  border:1px solid #efd39a;
+}
 .order-num-badge {
   background: var(--bg); border: 2px dashed var(--primary);
   border-radius: 12px; padding: 12px 20px; margin: 16px 0;
@@ -2032,6 +2052,7 @@ body::before {
       <button class="place-order-btn" id="placeOrderBtn" onclick="placeOrder()">
         <i class="fa fa-check-circle"></i> PLACE ORDER
       </button>
+      <div class="order-status" id="orderStatus"></div>
       <button onclick="closeModal()" style="width:100%;margin-top:10px;padding:12px;background:none;border:2px solid var(--border);border-radius:14px;font-size:14px;cursor:pointer;color:var(--text-light)">Cancel</button>
     </div>
     <div class="success-screen" id="successScreen">
@@ -2161,8 +2182,9 @@ async function postJson(path, payload) {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(payload)
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`);
+      return body;
     } catch (e) {
       lastError = e;
     }
@@ -2583,9 +2605,11 @@ function openCheckout() {
   btn.disabled = false;
   btn.innerHTML = '<i class="fa fa-check-circle"></i> PLACE ORDER';
   isOrdering = false;
+  setOrderStatus('');
   fillCheckoutFromLogin();
   document.getElementById('checkoutModal').classList.add('open');
   document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
 
 function updateMap() {
@@ -2612,6 +2636,7 @@ async function placeOrder() {
   const btn = document.getElementById('placeOrderBtn');
   btn.disabled = true;
   btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Placing Order...';
+  setOrderStatus('Order save pannitu irukku. Please wait...', 'info');
 
   try {
     const data = await postJson('/api/order', {
@@ -2629,18 +2654,34 @@ async function placeOrder() {
       document.getElementById('orderNumDisplay').textContent = data.order_number;
       document.getElementById('checkoutForm').style.display = 'none';
       document.getElementById('successScreen').style.display = 'block';
+      const modalBox = document.querySelector('#checkoutModal .modal-box');
+      if (modalBox) modalBox.scrollTop = 0;
+      document.getElementById('checkoutModal').classList.add('open');
+      document.getElementById('overlay').classList.add('open');
+      showToast('Order placed successfully');
     } else {
-      showToast('Error: ' + (data.error || 'Try again'));
+      const msg = data.error || 'Try again';
+      setOrderStatus(msg, 'error');
+      showToast('Error: ' + msg);
       btn.disabled = false;
       btn.innerHTML = '<i class="fa fa-check-circle"></i> PLACE ORDER';
       isOrdering = false;
     }
   } catch(e) {
-    showToast('Connection error. Try again.');
+    const msg = e.message || 'Connection error. Try again.';
+    setOrderStatus(msg, 'error');
+    showToast(msg);
     btn.disabled = false;
     btn.innerHTML = '<i class="fa fa-check-circle"></i> PLACE ORDER';
     isOrdering = false;
   }
+}
+
+function setOrderStatus(message, type='info') {
+  const status = document.getElementById('orderStatus');
+  if (!status) return;
+  status.textContent = message || '';
+  status.className = message ? `order-status show ${type}` : 'order-status';
 }
 
 // FIX: Done button — clear cart, close modal, reset everything
