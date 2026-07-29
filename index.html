@@ -2205,7 +2205,7 @@ function setupPageTransitions() {
     link.addEventListener('click', event => {
       const targetUrl = link.href;
       const targetPath = new URL(targetUrl).pathname;
-      if (link.dataset.requiresCustomer === 'true') {
+      if (link.dataset.requiresCustomer === 'true' && !getCustomerLogin()) {
         event.preventDefault();
         afterCustomerLoginUrl = targetUrl;
         openCustomerLogin('products');
