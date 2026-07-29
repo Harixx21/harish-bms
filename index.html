@@ -3,17 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% set page_path = '' if page == 'home' else page %}
+{% set page_url = 'https://harish-bms.vercel.app/' ~ page_path %}
+{% if page == 'about' %}
+<title>About KRG BMS | Building Materials Supplier in Dindigul</title>
+{% elif page == 'products' %}
+<title>KRG BMS Products | Aggregates, Sand, Bricks and Cement</title>
+{% elif page == 'contact' %}
+<title>Contact KRG BMS | Dindigul Building Materials Yard</title>
+{% else %}
 <title>KRG BMS | Building Materials Supplier in Dindigul</title>
+{% endif %}
 <meta name="description" content="KRG BMS supplies aggregates, M-Sand, P-Sand, bricks, hollow blocks, cement and red soil in Dindigul with direct site delivery and order tracking.">
 <meta name="keywords" content="KRG BMS, building materials Dindigul, blue metal aggregate Dindigul, M Sand Dindigul, P Sand Dindigul, bricks Dindigul, cement supplier Dindigul">
 <meta name="robots" content="index, follow">
 <meta name="author" content="KRG BMS">
-<link rel="canonical" href="https://harish-bms.vercel.app/">
+<link rel="canonical" href="{{ page_url }}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="KRG BMS">
 <meta property="og:title" content="KRG BMS | Building Materials Supplier in Dindigul">
 <meta property="og:description" content="Order aggregates, sand, bricks, blocks, cement and red soil from KRG BMS in Dindigul.">
-<meta property="og:url" content="https://harish-bms.vercel.app/">
+<meta property="og:url" content="{{ page_url }}">
 <meta property="og:image" content="https://harish-bms.vercel.app/static/krg-materials-hero.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">
@@ -193,6 +203,11 @@ body {
 .nav-links a:hover {
   background:rgba(255,255,255,0.12);
   border-color:rgba(255,230,180,0.18);
+}
+.nav-links a.active {
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  color:white;
+  border-color:transparent;
 }
 .admin-btn {
   background: rgba(255,255,255,0.12);
@@ -837,10 +852,10 @@ body {
     </div>
   </div>
   <nav class="nav-links" aria-label="Main navigation">
-    <a href="#home">Home</a>
-    <a href="#about">About</a>
-    <a href="#products">Products</a>
-    <a href="#contact">Contact</a>
+    <a class="{{ 'active' if page == 'home' else '' }}" href="/">Home</a>
+    <a class="{{ 'active' if page == 'about' else '' }}" href="/about">About</a>
+    <a class="{{ 'active' if page == 'products' else '' }}" href="/products">Products</a>
+    <a class="{{ 'active' if page == 'contact' else '' }}" href="/contact">Contact</a>
   </nav>
   <div class="search-bar">
     <input type="text" placeholder="Search materials..." id="searchInput" oninput="handleSearch()">
@@ -848,6 +863,7 @@ body {
   </div>
 </div>
 
+{% if page == 'home' %}
 <!-- HERO WITH FULL BG IMAGE -->
 <section class="hero" id="home">
   <div class="hero-bg"></div>
@@ -855,7 +871,7 @@ body {
     <h2>Strong Materials.<br>Site Ready Delivery.</h2>
     <p>Premium building materials from KRG BMS - aggregates, sand, bricks, blocks, cement and soil delivered around Dindigul.</p>
     <div class="hero-actions">
-      <button class="hero-cta" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})"><i class="fa fa-bag-shopping"></i> Shop Materials</button>
+      <a class="hero-cta" href="/products"><i class="fa fa-bag-shopping"></i> Shop Materials</a>
       <button class="hero-cta secondary" onclick="openTrack()"><i class="fa fa-location-dot"></i> Track Order</button>
     </div>
     <div class="hero-line"><i class="fa fa-shield"></i> Fresh stock, clear rates, direct site delivery</div>
@@ -881,7 +897,9 @@ body {
   <div class="trust-item"><strong>Easy Order</strong><span>cart to tracking</span></div>
   <div class="trust-item"><strong>Owner Update</strong><span>admin status control</span></div>
 </div>
+{% endif %}
 
+{% if page == 'about' %}
 <!-- ABOUT -->
 <section class="about-section" id="about">
   <div class="about-copy">
@@ -902,7 +920,9 @@ body {
     </div>
   </div>
 </section>
+{% endif %}
 
+{% if page == 'products' %}
 <!-- CATEGORIES -->
 <section class="shop-band" id="products">
   <div class="shop-intro">
@@ -921,7 +941,9 @@ body {
 <div class="materials-grid" id="materialsGrid">
   <div class="loading"><div class="spinner"></div>Loading materials...</div>
 </div>
+{% endif %}
 
+{% if page == 'contact' %}
 <section class="store-location" id="contact">
   <div class="store-location-panel">
     <div class="store-map">
@@ -959,6 +981,7 @@ body {
     </div>
   </div>
 </section>
+{% endif %}
 
 <!-- CART OVERLAY + DRAWER -->
 <div class="overlay" id="overlay" onclick="closeAll()"></div>
@@ -1127,8 +1150,13 @@ async function postJson(path, payload) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadCategories();
-  loadMaterials();
+  if (document.getElementById('materialsGrid')) {
+    const initialSearch = new URLSearchParams(window.location.search).get('search') || '';
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.value = initialSearch;
+    loadCategories();
+    loadMaterials('', initialSearch);
+  }
   updateCartBadge();
 });
 
@@ -1137,6 +1165,7 @@ async function loadCategories() {
     const data = await fetchJson('/api/categories');
     if (!data.success) return;
     const container = document.getElementById('categories');
+    if (!container) return;
     const catIcons = {
       'Aggregate': '◆',
       'Sand': '≈',
@@ -1158,6 +1187,10 @@ async function loadCategories() {
 
 async function loadMaterials(cat='', search='') {
   const grid = document.getElementById('materialsGrid');
+  if (!grid) {
+    window.location.href = `/products${search ? `?search=${encodeURIComponent(search)}` : ''}`;
+    return;
+  }
   grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
   try {
     const data = await fetchJson(`/api/materials?category=${encodeURIComponent(cat)}&search=${encodeURIComponent(search)}`);
@@ -1175,6 +1208,7 @@ async function loadMaterials(cat='', search='') {
 
 function renderMaterials(materials) {
   const grid = document.getElementById('materialsGrid');
+  if (!grid) return;
   if (!materials.length) {
     grid.innerHTML = '<div class="loading" style="grid-column:1/-1">No materials found</div>';
     return;

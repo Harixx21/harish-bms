@@ -296,7 +296,19 @@ def prepare_database():
 
 @app.route("/")
 def index():
-    return render_template("customer/index.html")
+    return render_template("customer/index.html", page="home")
+
+@app.route("/about")
+def about():
+    return render_template("customer/index.html", page="about")
+
+@app.route("/products")
+def products():
+    return render_template("customer/index.html", page="products")
+
+@app.route("/contact")
+def contact():
+    return render_template("customer/index.html", page="contact")
 
 @app.route("/robots.txt")
 def robots_txt():
@@ -310,14 +322,24 @@ Sitemap: {SITE_URL}/sitemap.xml
 @app.route("/sitemap.xml")
 def sitemap_xml():
     today = datetime.utcnow().strftime("%Y-%m-%d")
+    pages = [
+        ("/", "1.0", "daily"),
+        ("/about", "0.8", "monthly"),
+        ("/products", "0.9", "daily"),
+        ("/contact", "0.8", "monthly"),
+    ]
+    urls = "\n".join(
+        f"""  <url>
+    <loc>{SITE_URL}{path}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>{changefreq}</changefreq>
+    <priority>{priority}</priority>
+  </url>"""
+        for path, priority, changefreq in pages
+    )
     body = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>{SITE_URL}/</loc>
-    <lastmod>{today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
+{urls}
 </urlset>
 """
     return Response(body, mimetype="application/xml")
