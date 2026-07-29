@@ -1,50 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
-  <title id="title">KRG BMS Lorry Logo</title>
-  <desc id="desc">Premium construction supply lorry logo with KRG written on the vehicle.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 220" role="img" aria-labelledby="title desc">
+  <title id="title">KRG Building Materials Logo</title>
+  <desc id="desc">Vector logo with KRG text and an orange construction lorry.</desc>
   <defs>
-    <linearGradient id="sky" x1="14" y1="8" x2="114" y2="120" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#ffe6a2"/>
-      <stop offset="0.45" stop-color="#c84b24"/>
-      <stop offset="1" stop-color="#152f2d"/>
+    <linearGradient id="orange" x1="270" y1="72" x2="465" y2="154" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff6a00"/>
+      <stop offset="1" stop-color="#e64700"/>
     </linearGradient>
-    <linearGradient id="truck" x1="24" y1="44" x2="108" y2="90" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#f7b23f"/>
-      <stop offset="0.55" stop-color="#c33419"/>
-      <stop offset="1" stop-color="#762010"/>
+    <linearGradient id="steel" x1="88" y1="62" x2="330" y2="118" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#787b7d"/>
+      <stop offset="1" stop-color="#4f5557"/>
     </linearGradient>
-    <linearGradient id="gold" x1="24" y1="26" x2="104" y2="108" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#fff7ce"/>
-      <stop offset="0.48" stop-color="#d99b27"/>
-      <stop offset="1" stop-color="#7d4215"/>
-    </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="7" stdDeviation="6" flood-color="#1d120c" flood-opacity="0.35"/>
-    </filter>
   </defs>
 
-  <rect x="8" y="8" width="112" height="112" rx="24" fill="url(#sky)"/>
-  <rect x="16" y="16" width="96" height="96" rx="19" fill="#fff4d8" opacity="0.14"/>
-  <path d="M22 92h84" stroke="#fff1ba" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
-
-  <g filter="url(#shadow)">
-    <path d="M24 54h53c5 0 9 4 9 9v22H24V54Z" fill="url(#truck)"/>
-    <path d="M86 63h9l11 13v9H86V63Z" fill="#b83318"/>
-    <path d="M91 67h5l6 8H91v-8Z" fill="#cfe9ef"/>
-    <path d="M30 47h42l7 7H26l4-7Z" fill="url(#gold)"/>
-    <path d="M31 61h42v17H31V61Z" fill="#fff7d6" opacity="0.18"/>
-    <text x="52" y="75" text-anchor="middle"
-          font-family="Arial Black, Arial, Helvetica, sans-serif"
-          font-size="22" font-weight="900" fill="#fff7d6" letter-spacing="1.4">KRG</text>
-    <path d="M33 84h68" stroke="#251811" stroke-width="4" stroke-linecap="round" opacity="0.35"/>
-    <circle cx="39" cy="88" r="11" fill="#251811"/>
-    <circle cx="39" cy="88" r="5" fill="#d99b27"/>
-    <circle cx="90" cy="88" r="11" fill="#251811"/>
-    <circle cx="90" cy="88" r="5" fill="#d99b27"/>
-    <path d="M24 54l8-14h43l10 14H24Z" fill="#213c3a"/>
-    <path d="M36 43h13m8 0h13" stroke="#d7edf1" stroke-width="4" stroke-linecap="round"/>
+  <rect width="520" height="220" rx="18" fill="#46585c"/>
+  <g opacity="0.9">
+    <path d="M95 80h224v16H105L95 80Z" fill="url(#steel)"/>
+    <path d="M82 86l12 24h225V96H101l-19-10Z" fill="#666b6d"/>
+    <path d="M319 72h10v70h-10z" fill="#6d7072"/>
+    <path d="M275 136h55" stroke="#686e70" stroke-width="9" stroke-linecap="square"/>
   </g>
 
-  <text x="64" y="108" text-anchor="middle"
-        font-family="Arial, Helvetica, sans-serif"
-        font-size="10" font-weight="900" fill="#fff1ba" letter-spacing="2.6">BMS</text>
+  <text x="105" y="138"
+        font-family="Arial Black, Arial, Helvetica, sans-serif"
+        font-size="60" font-weight="900" fill="#ffffff" letter-spacing="-2">KRG</text>
+
+  <g>
+    <path d="M338 75h38c24 0 46 4 66 12l13 17c12 1 18 6 20 18l-24 7v65h-31c-5-18-18-27-38-27h-44V75Z" fill="url(#orange)"/>
+    <path d="M374 112h52l11 51h-64c-6 0-11-5-11-11v-29c0-6 5-11 12-11Z" fill="#46585c"/>
+    <path d="M387 116h36l9 39h-38c-5 0-8-3-8-8v-31Z" fill="#46585c"/>
+    <path d="M365 84h60" stroke="#46585c" stroke-width="7" stroke-linecap="round"/>
+    <path d="M338 161h92c9 0 17 5 22 13l7 13H338v-26Z" fill="#e64700"/>
+    <path d="M337 161h-42c-14 0-27 8-34 20l-8 14h84v-34Z" fill="#e64700"/>
+    <path d="M465 141l27 11v30l-27-10v-31Z" fill="#f15a09"/>
+    <rect x="462" y="181" width="17" height="14" fill="#f15a09"/>
+    <rect x="305" y="172" width="14" height="28" rx="2" fill="#46585c"/>
+    <rect x="342" y="172" width="14" height="28" rx="2" fill="#46585c"/>
+    <circle cx="288" cy="193" r="28" fill="#f15a09"/>
+    <circle cx="288" cy="193" r="16" fill="#46585c"/>
+    <circle cx="288" cy="193" r="9" fill="#f15a09"/>
+    <circle cx="406" cy="193" r="28" fill="#f15a09"/>
+    <circle cx="406" cy="193" r="16" fill="#46585c"/>
+    <circle cx="406" cy="193" r="9" fill="#f15a09"/>
+  </g>
+
+  <text x="260" y="204" text-anchor="middle"
+        font-family="Arial Black, Arial, Helvetica, sans-serif"
+        font-size="30" font-weight="900" fill="#ffffff" letter-spacing="4">KRG BUILDING MATERIALS</text>
 </svg>
