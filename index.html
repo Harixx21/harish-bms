@@ -192,19 +192,28 @@ body::before {
   align-items:center;
   justify-content:center;
   gap:8px;
-  padding:0 16px 12px;
+  padding:14px 16px;
+  margin:0 12px 12px;
+  border-radius:12px;
+  background:
+    linear-gradient(90deg,rgba(37,24,17,0.82),rgba(37,24,17,0.58),rgba(37,24,17,0.82)),
+    url('/static/krg-vehicle-yard-clean.png') center 58%/cover no-repeat;
+  border:1px solid rgba(255,230,180,0.16);
+  box-shadow:0 12px 30px rgba(0,0,0,0.24);
 }
 .nav-links a {
-  color:#fff3d8;
+  color:#fff7df;
   text-decoration:none;
   font-size:13px;
   font-weight:900;
   padding:8px 12px;
   border-radius:8px;
   border:1px solid transparent;
+  text-shadow:0 2px 5px rgba(0,0,0,0.55);
+  background:rgba(0,0,0,0.12);
 }
 .nav-links a:hover {
-  background:rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.18);
   border-color:rgba(255,230,180,0.18);
 }
 .nav-links a.active {
@@ -777,7 +786,7 @@ body::before {
   .header-top { padding: 10px 12px; }
   .logo { gap: 8px; padding-right: 0; }
   .logo-icon { width: 150px; height: 60px; border-radius: 0; }
-  .nav-links { justify-content:flex-start; overflow-x:auto; padding:0 12px 10px; }
+  .nav-links { justify-content:flex-start; overflow-x:auto; padding:10px 12px; margin:0 10px 10px; background-position:center; }
   .nav-links a { flex-shrink:0; font-size:12px; padding:7px 10px; }
   .hero-content h2 { font-size: 26px; }
   .hero-location { align-items:flex-start; flex-direction:column; }
