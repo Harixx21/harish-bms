@@ -138,16 +138,7 @@ body::before {
   100% { transform: translateX(180%) skewX(-14deg); opacity: 0; }
 }
 .page-loader {
-  position:fixed;
-  inset:0;
-  z-index:7000;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  background:
-    linear-gradient(135deg,rgba(37,24,17,.94),rgba(125,32,19,.88)),
-    url('https://5.imimg.com/data5/AN/FV/MY-28487226/building-construstion-material-1000x1000.jpg') center/cover no-repeat;
-  transition:opacity .45s ease, visibility .45s ease;
+  display:none !important;
 }
 .loader-mark {
   position:relative;
@@ -364,7 +355,7 @@ body::before {
 }
 .search-bar input::placeholder { color: rgba(255,255,255,0.5); }
 .track-btn {
-  background: linear-gradient(135deg, #166949, #2a8c63); border: none; color: white;
+  background: linear-gradient(135deg, var(--primary), var(--accent)); border: none; color: white;
   padding: 10px 16px; border-radius: 8px; font-size: 13px;
   font-weight: 600; cursor: pointer; white-space: nowrap;
 }
@@ -375,7 +366,7 @@ body::before {
   min-height: 390px;
   display: flex; align-items: center; justify-content: center;
   overflow: hidden;
-  background: var(--secondary);
+  background: #251811;
 }
 .hero-bg {
   position: absolute; inset: 0;
@@ -1937,14 +1928,6 @@ body::before {
 </style>
 </head>
 <body data-page="{{ page }}">
-<div class="page-loader" id="pageLoader" aria-hidden="true">
-  <div class="loader-mark">
-    <img src="/static/logo-krg-bms-main.png" alt="">
-    <div class="loader-krg">KRG</div>
-    <div class="loader-tag">Building Material</div>
-  </div>
-</div>
-
 <!-- HEADER -->
 <div class="header">
   <div class="announcement"><i class="fa fa-truck-fast"></i> Dindigul site delivery - materials supply, JCB rental and tractor rental</div>
