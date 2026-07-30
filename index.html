@@ -933,6 +933,22 @@ body::before {
   font-weight:900;
   cursor:pointer;
 }
+.contact-admin-link {
+  width:min(100%, 340px);
+  margin:12px auto 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  text-decoration:none;
+  color:white;
+  background:linear-gradient(135deg,#251811,#7d2013);
+  border-radius:10px;
+  padding:12px 14px;
+  font-size:13px;
+  font-weight:950;
+  box-shadow:0 12px 28px rgba(37,24,17,0.18);
+}
 .location-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
 .location-link {
   display:inline-flex; align-items:center; gap:6px; padding:8px 10px;
@@ -1991,6 +2007,9 @@ body::before {
         <textarea class="wide" placeholder="Message" aria-label="Message"></textarea>
         <button type="submit">CONTACT US</button>
       </form>
+      {% if page == 'contact' %}
+      <a class="contact-admin-link" href="/admin"><i class="fa fa-user-shield"></i> Admin Login</a>
+      {% endif %}
     </div>
   </div>
 </section>
