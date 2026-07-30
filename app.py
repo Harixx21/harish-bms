@@ -20,6 +20,7 @@ CORS(app)
 SITE_URL = os.environ.get("SITE_URL", "https://harish-bms.vercel.app").rstrip("/")
 OWNER_EMAIL = os.environ.get("OWNER_EMAIL", "rameshgandi@gmail.com").strip().lower()
 OWNER_PASSWORD = os.environ.get("OWNER_PASSWORD", "123456")
+STAFF_PASSWORD = os.environ.get("STAFF_PASSWORD", "098765")
 
 # ─── DB CONFIG ───────────────────────────────────────────
 def get_database_url():
@@ -145,6 +146,40 @@ def notify_admin_login_attempt(attempt_email):
         smtp.login(smtp_user, smtp_pass)
         smtp.send_message(msg)
     return True
+
+def notify_staff_login_request(staff_email, state="requested"):
+    smtp_user = os.environ.get("SMTP_USER") or os.environ.get("GMAIL_USER")
+    smtp_pass = os.environ.get("SMTP_PASS") or os.environ.get("GMAIL_APP_PASSWORD")
+    smtp_host = os.environ.get("SMTP_HOST", "smtp.gmail.com")
+    smtp_port = int(os.environ.get("SMTP_PORT", "587"))
+    if not smtp_user or not smtp_pass:
+        return False
+    ip = request.headers.get("x-forwarded-for", request.remote_addr or "unknown")
+    ua = request.headers.get("user-agent", "unknown")
+    msg = EmailMessage()
+    msg["Subject"] = "KRG BMS employee admin approval needed"
+    msg["From"] = smtp_user
+    msg["To"] = OWNER_EMAIL
+    msg.set_content(
+        "Employee/driver admin login needs owner approval.\n\n"
+        f"Email: {staff_email or 'empty'}\n"
+        f"State: {state}\n"
+        f"Approve from: {SITE_URL}/admin\n"
+        f"IP: {ip}\n"
+        f"User agent: {ua}\n"
+        f"Time: {datetime.utcnow().isoformat()} UTC\n"
+    )
+    with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as smtp:
+        smtp.starttls()
+        smtp.login(smtp_user, smtp_pass)
+        smtp.send_message(msg)
+    return True
+
+def is_owner_admin():
+    return session.get("admin") and session.get("admin_role") == "owner"
+
+def is_any_admin():
+    return bool(session.get("admin"))
 
 def ensure_db():
     global DB_READY
@@ -298,6 +333,15 @@ def init_db():
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL
         )""")
+        cur.execute("""CREATE TABLE IF NOT EXISTS staff_users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            approved INTEGER DEFAULT 0,
+            requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            approved_at TIMESTAMP,
+            last_login TIMESTAMP
+        )""")
         cur.execute("DELETE FROM admin WHERE username!=%s", (OWNER_EMAIL,))
         cur.execute("SELECT id FROM admin WHERE username=%s", (OWNER_EMAIL,))
         if cur.fetchone():
@@ -384,6 +428,17 @@ def init_db():
             id SERIAL PRIMARY KEY,
             username VARCHAR(50) UNIQUE NOT NULL,
             password VARCHAR(64) NOT NULL
+        )
+    """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS staff_users (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR(120) UNIQUE NOT NULL,
+            password VARCHAR(64) NOT NULL,
+            approved SMALLINT DEFAULT 0,
+            requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            approved_at TIMESTAMP,
+            last_login TIMESTAMP
         )
     """)
 
@@ -774,7 +829,7 @@ def update_customer_profile():
 
 @app.route("/admin")
 def admin_login_page():
-    if session.get("admin"):
+    if is_any_admin():
         return redirect("/admin/dashboard")
     return render_template("admin/login.html")
 
@@ -787,7 +842,59 @@ def admin_login():
         if email == OWNER_EMAIL and password == OWNER_PASSWORD:
             session["admin"] = True
             session["admin_user"] = OWNER_EMAIL
-            return jsonify({"success": True})
+            session["admin_role"] = "owner"
+            return jsonify({"success": True, "role": "owner"})
+        if email and password == STAFF_PASSWORD:
+            conn = get_db()
+            cur = conn.cursor(cursor_factory=RealDictCursor)
+            cur.execute("SELECT * FROM staff_users WHERE email=%s", (email,))
+            staff = cur.fetchone()
+            notified = False
+            if not staff:
+                cur.execute(
+                    "INSERT INTO staff_users (email, password, approved) VALUES (%s,%s,0)",
+                    (email, hash_pw(STAFF_PASSWORD)),
+                )
+                conn.commit()
+                try:
+                    notified = notify_staff_login_request(email, "new request")
+                except Exception:
+                    notified = False
+                cur.close(); conn.close()
+                return jsonify({
+                    "success": False,
+                    "pending": True,
+                    "notified": notified,
+                    "error": "Owner approval pending. Owner approve pannina appuram login open aagum.",
+                }), 403
+            if int(staff["approved"] or 0) != 1:
+                cur.execute(
+                    "UPDATE staff_users SET password=%s, requested_at=CURRENT_TIMESTAMP WHERE email=%s",
+                    (hash_pw(STAFF_PASSWORD), email),
+                )
+                conn.commit()
+                try:
+                    notified = notify_staff_login_request(email, "pending approval")
+                except Exception:
+                    notified = False
+                cur.close(); conn.close()
+                return jsonify({
+                    "success": False,
+                    "pending": True,
+                    "notified": notified,
+                    "error": "Owner approval pending. Owner approve pannina appuram login open aagum.",
+                }), 403
+            cur.execute("UPDATE staff_users SET last_login=CURRENT_TIMESTAMP WHERE email=%s", (email,))
+            conn.commit()
+            cur.close(); conn.close()
+            session["admin"] = True
+            session["admin_user"] = email
+            session["admin_role"] = "staff"
+            try:
+                notify_staff_login_request(email, "approved login")
+            except Exception:
+                pass
+            return jsonify({"success": True, "role": "staff"})
         notified = False
         try:
             notified = notify_admin_login_attempt(email)
@@ -808,13 +915,17 @@ def admin_logout():
 
 @app.route("/admin/dashboard")
 def admin_dashboard():
-    if not session.get("admin"):
+    if not is_any_admin():
         return redirect("/admin")
-    return render_template("admin/dashboard.html")
+    return render_template(
+        "admin/dashboard.html",
+        admin_role=session.get("admin_role", "staff"),
+        admin_user=session.get("admin_user", ""),
+    )
 
 @app.route("/api/admin/stats")
 def admin_stats():
-    if not session.get("admin"):
+    if not is_any_admin():
         return jsonify({"error": "Unauthorized"}), 401
     try:
         conn = get_db()
@@ -860,7 +971,7 @@ def admin_stats():
 
 @app.route("/api/admin/orders")
 def admin_orders():
-    if not session.get("admin"):
+    if not is_any_admin():
         return jsonify({"error": "Unauthorized"}), 401
     try:
         conn = get_db()
@@ -905,8 +1016,10 @@ def admin_orders():
 
 @app.route("/api/admin/order/status", methods=["PUT"])
 def update_order_status():
-    if not session.get("admin"):
+    if not is_any_admin():
         return jsonify({"error": "Unauthorized"}), 401
+    if not is_owner_admin():
+        return jsonify({"success": False, "error": "Read only staff login. Owner mattum status change panna mudiyum."}), 403
     try:
         data = request.json
         conn = get_db()
@@ -921,7 +1034,7 @@ def update_order_status():
 
 @app.route("/api/admin/materials")
 def admin_materials():
-    if not session.get("admin"):
+    if not is_any_admin():
         return jsonify({"error": "Unauthorized"}), 401
     try:
         conn = get_db()
@@ -937,8 +1050,10 @@ def admin_materials():
 
 @app.route("/api/admin/material", methods=["POST"])
 def add_material():
-    if not session.get("admin"):
+    if not is_any_admin():
         return jsonify({"error": "Unauthorized"}), 401
+    if not is_owner_admin():
+        return jsonify({"success": False, "error": "Owner mattum material add panna mudiyum."}), 403
     try:
         data = request.json
         conn = get_db()
@@ -960,8 +1075,10 @@ def add_material():
 
 @app.route("/api/admin/material/<int:mid>", methods=["PUT"])
 def update_material(mid):
-    if not session.get("admin"):
+    if not is_any_admin():
         return jsonify({"error": "Unauthorized"}), 401
+    if not is_owner_admin():
+        return jsonify({"success": False, "error": "Owner mattum material edit panna mudiyum."}), 403
     try:
         data = request.json
         conn = get_db()
@@ -981,8 +1098,10 @@ def update_material(mid):
 
 @app.route("/api/admin/material/<int:mid>", methods=["DELETE"])
 def delete_material(mid):
-    if not session.get("admin"):
+    if not is_any_admin():
         return jsonify({"error": "Unauthorized"}), 401
+    if not is_owner_admin():
+        return jsonify({"success": False, "error": "Owner mattum material hide panna mudiyum."}), 403
     try:
         conn = get_db()
         cur = conn.cursor()
@@ -993,9 +1112,53 @@ def delete_material(mid):
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
+@app.route("/api/admin/staff")
+def admin_staff_users():
+    if not is_owner_admin():
+        return jsonify({"success": False, "error": "Owner only"}), 403
+    try:
+        conn = get_db()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute("""SELECT id, email, approved, requested_at, approved_at, last_login
+                       FROM staff_users ORDER BY approved ASC, requested_at DESC""")
+        staff = cur.fetchall()
+        for row in staff:
+            row["requested_at"] = str(row["requested_at"]) if row["requested_at"] else ""
+            row["approved_at"] = str(row["approved_at"]) if row["approved_at"] else ""
+            row["last_login"] = str(row["last_login"]) if row["last_login"] else ""
+        cur.close(); conn.close()
+        return jsonify({"success": True, "data": staff})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/admin/staff/<int:staff_id>", methods=["PUT", "DELETE"])
+def admin_staff_action(staff_id):
+    if not is_owner_admin():
+        return jsonify({"success": False, "error": "Owner only"}), 403
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        if request.method == "DELETE":
+            cur.execute("DELETE FROM staff_users WHERE id=%s", (staff_id,))
+        else:
+            data = request.json or {}
+            approved = 1 if data.get("approved") else 0
+            if approved:
+                cur.execute(
+                    "UPDATE staff_users SET approved=1, approved_at=CURRENT_TIMESTAMP WHERE id=%s",
+                    (staff_id,),
+                )
+            else:
+                cur.execute("UPDATE staff_users SET approved=0, approved_at=NULL WHERE id=%s", (staff_id,))
+        conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 @app.route("/api/admin/customers")
 def admin_customers():
-    if not session.get("admin"):
+    if not is_any_admin():
         return jsonify({"error": "Unauthorized"}), 401
     try:
         conn = get_db()

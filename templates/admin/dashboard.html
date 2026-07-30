@@ -168,6 +168,15 @@ tr:hover td { background:#fafafa; }
 .action-pill.process { color:#7b1fa2;border-color:#d8b7e6; }
 .action-pill.delivery { color:var(--success);border-color:#bde6d2; }
 .action-pill.reject { color:var(--danger);border-color:#f3c2bd; }
+.readonly-pill {
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px dashed #cbd5d1;background:#f8faf9;color:var(--muted);
+  border-radius:999px;padding:6px 9px;font-size:12px;font-weight:800;margin-top:8px;
+}
+.is-staff .owner-only { display:none !important; }
+.is-staff .action-pill,.is-staff .status-select {
+  opacity:.58;cursor:not-allowed;background:#f4f4f4;color:#7b8585;border-color:#d8dddd;
+}
 .material-thumb { width:52px;height:42px;object-fit:cover;border-radius:8px;margin-right:10px;vertical-align:middle;border:1px solid var(--border); }
 .material-name-cell { display:flex;align-items:center;min-width:220px; }
 .ops-grid { display:grid;grid-template-columns:1.4fr .9fr;gap:20px;align-items:start; }
@@ -238,9 +247,17 @@ tr:hover td { background:#fafafa; }
   background:#fff7ed;color:#8a4a12;font-size:13px;font-weight:700;display:none;
 }
 .db-alert.ok { border-color:#bde6d2;background:#effaf4;color:#116b45; }
+.staff-panel { padding:16px 20px; }
+.staff-row {
+  display:grid;grid-template-columns:1.4fr .7fr .8fr auto;gap:12px;align-items:center;
+  padding:12px 0;border-top:1px solid var(--border);
+}
+.staff-email { font-weight:800;color:var(--text); }
+.staff-meta { font-size:12px;color:var(--muted); }
+@media(max-width:768px) { .staff-row { grid-template-columns:1fr; } }
 </style>
 </head>
-<body>
+<body class="{{ 'is-staff' if admin_role != 'owner' else 'is-owner' }}">
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
@@ -258,8 +275,12 @@ tr:hover td { background:#fafafa; }
       <i class="fa fa-box"></i> Orders
       <span class="nav-badge" id="pendingBadge">0</span>
     </div>
-    <div class="nav-item" onclick="showPage('materials')"><i class="fa fa-cubes"></i> Materials</div>
-    <div class="nav-item" onclick="showPage('customers')"><i class="fa fa-users"></i> Customers</div>
+    <div class="nav-item owner-only" onclick="showPage('materials')"><i class="fa fa-cubes"></i> Materials</div>
+    <div class="nav-item owner-only" onclick="showPage('customers')"><i class="fa fa-users"></i> Customers</div>
+    <div class="nav-item owner-only" onclick="showPage('staff')">
+      <i class="fa fa-user-check"></i> Staff Approval
+      <span class="nav-badge" id="staffBadge">0</span>
+    </div>
   </div>
   <div class="nav-section">
     <div class="nav-label">Store</div>
@@ -276,7 +297,7 @@ tr:hover td { background:#fafafa; }
       <h1 id="pageTitle">Dashboard</h1>
     </div>
     <div class="topbar-right">
-      <span class="admin-tag">👤 Admin</span>
+      <span class="admin-tag"><i class="fa fa-user-shield"></i> {{ 'Owner' if admin_role == 'owner' else 'Employee Read Only' }}</span>
       <button class="logout-btn" onclick="window.location='/admin/logout'">Logout</button>
     </div>
   </div>
@@ -377,6 +398,18 @@ tr:hover td { background:#fafafa; }
       </div>
     </div>
   </div>
+
+  <!-- STAFF APPROVAL PAGE -->
+  <div class="page owner-only" id="page-staff">
+    <div class="card">
+      <div class="card-header">
+        <h3><i class="fa fa-user-check"></i> Employee / Driver Login Approval</h3>
+      </div>
+      <div class="staff-panel" id="staffList">
+        <div class="loading"><div class="spinner"></div>Loading staff requests...</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- MATERIAL MODAL -->
@@ -452,6 +485,9 @@ tr:hover td { background:#fafafa; }
 let ordersData = [];
 let materialsData = [];
 let currentOrderFilter = '';
+const ADMIN_ROLE = "{{ admin_role }}";
+const ADMIN_USER = "{{ admin_user }}";
+const IS_OWNER = ADMIN_ROLE === 'owner';
 
 async function checkDatabaseHealth() {
   try {
@@ -472,16 +508,19 @@ async function checkDatabaseHealth() {
 
 // ── NAVIGATION ──────────────────────────────────────────
 function showPage(page) {
+  if (!IS_OWNER && !['dashboard','orders'].includes(page)) page = 'orders';
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
-  document.querySelector(`[onclick="showPage('${page}')"]`).classList.add('active');
+  const nav = document.querySelector(`[onclick="showPage('${page}')"]`);
+  if (nav) nav.classList.add('active');
   document.getElementById('pageTitle').textContent =
-    {dashboard:'Dashboard',orders:'Orders',materials:'Materials',customers:'Customers'}[page];
+    {dashboard:'Dashboard',orders:'Orders',materials:'Materials',customers:'Customers',staff:'Staff Approval'}[page];
   document.getElementById('sidebar').classList.remove('open');
   if(page==='orders') loadOrders();
   else if(page==='materials') loadMaterials();
   else if(page==='customers') loadCustomers();
+  else if(page==='staff') loadStaffUsers();
 }
 
 // ── DASHBOARD ───────────────────────────────────────────
@@ -555,17 +594,18 @@ function renderOrders(orders) {
         <td style="font-size:12px;color:var(--muted)">${new Date(o.created_at).toLocaleDateString('en-IN')}</td>
         <td>${statusBadge(o.status)}</td>
         <td>
-          <select onchange="updateStatus(${o.id},this.value)" style="padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer">
+          <select class="status-select" ${IS_OWNER ? '' : 'disabled'} onchange="updateStatus(${o.id},this.value)" style="padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer">
             ${['pending','confirmed','processing','out_for_delivery','delivered','rejected'].map(s=>
               `<option value="${s}" ${s===o.status?'selected':''}>${statusLabel(s)}</option>`
             ).join('')}
           </select>
           <button class="btn btn-outline btn-sm" style="margin-left:4px" onclick="openOrderDetail(${o.id})"><i class="fa fa-eye"></i></button>
           <div class="quick-actions">
-            <button class="action-pill confirm" onclick="updateStatus(${o.id},'confirmed')">Confirm</button>
-            <button class="action-pill process" onclick="updateStatus(${o.id},'processing')">Process</button>
-            <button class="action-pill delivery" onclick="updateStatus(${o.id},'out_for_delivery')">Delivery</button>
-            <button class="action-pill reject" onclick="updateStatus(${o.id},'rejected')">Reject</button>
+            <button class="action-pill confirm" ${IS_OWNER ? '' : 'disabled'} onclick="updateStatus(${o.id},'confirmed')">Confirm</button>
+            <button class="action-pill process" ${IS_OWNER ? '' : 'disabled'} onclick="updateStatus(${o.id},'processing')">Process</button>
+            <button class="action-pill delivery" ${IS_OWNER ? '' : 'disabled'} onclick="updateStatus(${o.id},'out_for_delivery')">Delivery</button>
+            <button class="action-pill reject" ${IS_OWNER ? '' : 'disabled'} onclick="updateStatus(${o.id},'rejected')">Reject</button>
+            ${IS_OWNER ? '' : '<span class="readonly-pill"><i class="fa fa-lock"></i> Read only</span>'}
           </div>
         </td>
       </tr>`).join('')
@@ -587,6 +627,10 @@ function activateAllOrdersFilter() {
 }
 
 async function updateStatus(orderId, status) {
+  if (!IS_OWNER) {
+    showToast('Employee login read only. Owner mattum status change panna mudiyum.');
+    return;
+  }
   try {
     const res = await fetch('/api/admin/order/status', {
       method:'PUT',
@@ -757,6 +801,61 @@ async function loadCustomers() {
 }
 
 // ── UTILS ───────────────────────────────────────────────
+async function loadStaffUsers() {
+  if (!IS_OWNER) return;
+  try {
+    const res = await fetch('/api/admin/staff');
+    const d = await res.json();
+    if(!d.success) return;
+    const pending = d.data.filter(s => parseInt(s.approved || 0) !== 1).length;
+    const badge = document.getElementById('staffBadge');
+    if (badge) {
+      badge.textContent = pending;
+      badge.style.display = pending ? 'inline-block' : 'none';
+    }
+    document.getElementById('staffList').innerHTML = d.data.length ? d.data.map(s => `
+      <div class="staff-row">
+        <div>
+          <div class="staff-email">${s.email}</div>
+          <div class="staff-meta">Requested: ${s.requested_at || '-'} ${s.last_login ? ` | Last login: ${s.last_login}` : ''}</div>
+        </div>
+        <div>${parseInt(s.approved || 0) === 1 ? '<span class="badge badge-delivered">Approved</span>' : '<span class="badge badge-pending">Pending</span>'}</div>
+        <div class="staff-meta">${s.approved_at ? `Approved: ${s.approved_at}` : 'Waiting for owner allow'}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${parseInt(s.approved || 0) === 1
+            ? `<button class="btn btn-warning btn-sm" onclick="setStaffApproval(${s.id}, false)">Block</button>`
+            : `<button class="btn btn-success btn-sm" onclick="setStaffApproval(${s.id}, true)">Allow</button>`}
+          <button class="btn btn-danger btn-sm" onclick="deleteStaff(${s.id})">Delete</button>
+        </div>
+      </div>
+    `).join('') : '<div style="padding:20px;color:var(--muted);text-align:center">No employee login requests yet</div>';
+  } catch(e) { console.error(e); }
+}
+
+async function setStaffApproval(id, approved) {
+  if (!IS_OWNER) return;
+  const res = await fetch(`/api/admin/staff/${id}`, {
+    method:'PUT',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({approved})
+  });
+  const d = await res.json();
+  if (d.success) {
+    showToast(approved ? 'Employee allowed' : 'Employee blocked');
+    loadStaffUsers();
+  } else showToast('Error: '+d.error);
+}
+
+async function deleteStaff(id) {
+  if (!IS_OWNER || !confirm('Delete this employee login request?')) return;
+  const res = await fetch(`/api/admin/staff/${id}`, {method:'DELETE'});
+  const d = await res.json();
+  if (d.success) {
+    showToast('Employee login removed');
+    loadStaffUsers();
+  } else showToast('Error: '+d.error);
+}
+
 function statusBadge(s) {
   const map = {
     pending:'badge-pending',confirmed:'badge-confirmed',processing:'badge-processing',
@@ -787,6 +886,7 @@ function showToast(msg) {
 // ── INIT ────────────────────────────────────────────────
 checkDatabaseHealth();
 loadDashboard();
+if (IS_OWNER) loadStaffUsers();
 </script>
 </body>
 </html>

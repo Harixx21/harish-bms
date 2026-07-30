@@ -131,19 +131,41 @@ body::before {
   filter:drop-shadow(0 20px 42px rgba(0,0,0,.52));
 }
 .loader-krg {
-  font-family:Impact, Haettenschweiler, 'Arial Black', sans-serif;
-  font-size:clamp(42px, 11vw, 86px);
-  line-height:.9;
+  position:relative;
+  font-family:'Trebuchet MS', 'Segoe UI', sans-serif;
+  font-size:clamp(44px, 12vw, 92px);
+  line-height:1;
   font-weight:900;
-  letter-spacing:3px;
-  color:#f97316;
-  background:linear-gradient(180deg,#fff7ed 0%,#ffb347 34%,#f97316 58%,#431407 100%);
+  letter-spacing:8px;
+  padding-left:8px;
+  color:#fff7ed;
+  background:linear-gradient(90deg,#ffffff 0%,#ffd08a 22%,#f97316 48%,#ffffff 72%,#ff8a1d 100%);
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  text-shadow:0 8px 0 rgba(67,20,7,.42), 0 18px 36px rgba(0,0,0,.5);
-  -webkit-text-stroke:1px rgba(255,255,255,.72);
-  transform:skewX(-7deg);
+  text-shadow:0 18px 36px rgba(0,0,0,.54);
+  -webkit-text-stroke:1px rgba(255,236,208,.42);
+}
+.loader-krg::before,
+.loader-krg::after {
+  content:"";
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  border-radius:999px;
+}
+.loader-krg::before {
+  bottom:-9px;
+  width:82%;
+  height:4px;
+  background:linear-gradient(90deg,transparent,#f97316,#ffd08a,transparent);
+  box-shadow:0 0 18px rgba(249,115,22,.72);
+}
+.loader-krg::after {
+  bottom:-16px;
+  width:44%;
+  height:2px;
+  background:rgba(255,247,237,.72);
 }
 .loader-tag {
   margin-top:-3px;

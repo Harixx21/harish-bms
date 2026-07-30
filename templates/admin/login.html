@@ -34,6 +34,11 @@ body {
 .login-icon img { width:100%; height:100%; display:block; object-fit:contain; }
 .login-card h1 { text-align:center; font-size:24px; font-weight:800; color:#2c3e50; margin-bottom:4px; }
 .login-card p { text-align:center; color:#7f8c8d; font-size:14px; margin-bottom:28px; }
+.login-note {
+  background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;
+  border-radius:14px;padding:12px;margin-bottom:18px;font-size:13px;line-height:1.45;
+}
+.login-note strong { display:block;color:#431407;margin-bottom:3px; }
 .form-group { margin-bottom:16px; }
 .form-group label { display:block; font-size:12px; font-weight:700; color:#7f8c8d; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
 .form-group input {
@@ -60,11 +65,15 @@ body {
 <body>
 <div class="login-card">
   <div class="login-icon"><img src="/static/logo-krg-bms-main.png" alt="KRG BMS logo"></div>
-  <h1>Owner Login</h1>
-  <p>KRG BMS - Owner Admin Panel</p>
+  <h1>Admin Login</h1>
+  <p>KRG BMS - Owner / Employee Access</p>
+  <div class="login-note">
+    <strong>Owner:</strong> full admin control.
+    <strong>Employee / Driver:</strong> email + password 098765. Owner approve pannina appuram orders track panna mudiyum.
+  </div>
   <div class="form-group">
-    <label>Owner Email</label>
-    <input type="email" id="email" placeholder="rameshgandi@gmail.com" autocomplete="username">
+    <label>Email</label>
+    <input type="email" id="email" placeholder="owner or employee email" autocomplete="username">
   </div>
   <div class="form-group">
     <label>Password</label>
@@ -97,9 +106,9 @@ async function login() {
     const data = await res.json();
     if (data.success) { window.location.href = '/admin/dashboard'; }
     else {
-      err.textContent = data.notified
-        ? 'Invalid login. Owner has been notified.'
-        : (data.error || 'Invalid credentials');
+      err.textContent = data.pending
+        ? (data.notified ? 'Approval request sent to owner. Owner approve pannina appuram login pannunga.' : data.error)
+        : (data.notified ? 'Invalid login. Owner has been notified.' : (data.error || 'Invalid credentials'));
       err.style.display = 'block';
       btn.innerHTML = '<i class="fa fa-sign-in-alt"></i> Login';
       btn.disabled = false;
