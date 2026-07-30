@@ -1341,6 +1341,28 @@ body::before {
 }
 .payment-option input { width:auto; margin-top:3px; }
 .payment-option span { display:block; color:var(--text-light); font-size:11px; font-weight:700; margin-top:2px; }
+.online-pay-box {
+  background:linear-gradient(135deg,#fff7ed,#ecfeff);
+  border:2px solid rgba(234,88,12,.35);
+  border-radius:14px;
+  padding:13px;
+  text-align:left;
+  color:#43210b;
+  box-shadow:0 10px 26px rgba(124,45,18,.12);
+}
+.online-pay-box strong { display:block; font-size:14px; margin-bottom:5px; }
+.online-pay-box span { display:block; font-size:12px; font-weight:800; color:#7c2d12; margin-top:4px; }
+.online-pay-actions { display:flex; gap:8px; margin-top:11px; }
+.online-pay-actions button {
+  border:0;
+  border-radius:11px;
+  padding:11px 12px;
+  font-weight:900;
+  cursor:pointer;
+  flex:1;
+}
+.online-pay-primary { background:linear-gradient(135deg,#0f766e,#14b8a6); color:#fff; }
+.online-pay-secondary { background:linear-gradient(135deg,#ea580c,#f97316); color:#fff; }
 @media(max-width:520px) { .payment-options { grid-template-columns:1fr; } }
 
 /* PLACE ORDER BUTTON - BIG & BOLD */
@@ -2232,6 +2254,10 @@ let allMaterials = [];
 let currentCat = '';
 let isOrdering = false; // FIX: prevent double submit
 let lastOrderNumber = localStorage.getItem('bms_last_order') || '';
+const UPI_PAYEE = '9944748140@upi';
+const UPI_PHONE = '9944748140';
+const UPI_PAYEE_NAME = 'KRG BMS';
+let onlinePaymentConfirmed = false;
 if (lastOrderNumber &&
     localStorage.getItem('bms_cart') &&
     localStorage.getItem('bms_cart_order_cleared') !== lastOrderNumber) {
@@ -2730,6 +2756,9 @@ function openCheckout() {
   document.getElementById('successScreen').style.display = 'none';
   setPlaceOrderButtons(false, '<i class="fa fa-check-circle"></i> PLACE ORDER & TRACK');
   isOrdering = false;
+  onlinePaymentConfirmed = false;
+  const codPayment = document.querySelector('input[name="paymentMethod"][value="cod"]');
+  if (codPayment) codPayment.checked = true;
   setOrderStatus('');
   fillCheckoutFromLogin();
   document.getElementById('checkoutModal').classList.add('open');
@@ -2754,11 +2783,17 @@ async function placeOrder() {
   const phone = document.getElementById('custPhone').value.trim();
   const address = document.getElementById('custAddress').value.trim();
   const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'cod';
+  const total = cart.reduce((s,c) => s+c.price*c.qty, 0);
 
   if (!name) { showToast('Enter your name'); return; }
   if (!phone || phone.length < 10) { showToast('Enter valid phone number'); return; }
   if (!address) { showToast('Enter delivery address'); return; }
   if (cart.length === 0) { showToast('Cart is empty'); return; }
+  if (paymentMethod === 'online' && !onlinePaymentConfirmed) {
+    showOnlinePaymentPrompt(total);
+    showToast('GPay payment mudichitu Payment Done click pannunga', 'info');
+    return;
+  }
 
   isOrdering = true;
   setPlaceOrderButtons(true, '<i class="fa fa-spinner fa-spin"></i> Placing Order...');
@@ -2771,7 +2806,7 @@ async function placeOrder() {
       address,
       lat: null, lng: null,
       payment_method: paymentMethod,
-      notes: document.getElementById('custNotes').value,
+      notes: buildOrderNotes(paymentMethod),
       items: cart.map(c => ({id: c.id, name: c.name, price: c.price, qty: c.qty, unit: c.unit}))
     });
     if (data.success) {
@@ -2804,6 +2839,55 @@ async function placeOrder() {
     setPlaceOrderButtons(false, '<i class="fa fa-check-circle"></i> PLACE ORDER & TRACK');
     isOrdering = false;
   }
+}
+
+function buildOrderNotes(paymentMethod) {
+  const notes = document.getElementById('custNotes').value.trim();
+  if (paymentMethod !== 'online') return notes;
+  const payNote = `Online payment selected. Customer marked payment done to ${UPI_PHONE}.`;
+  return notes ? `${notes}\n${payNote}` : payNote;
+}
+
+function buildUpiLink(amount) {
+  const params = new URLSearchParams({
+    pa: UPI_PAYEE,
+    pn: UPI_PAYEE_NAME,
+    am: amount.toFixed(2),
+    cu: 'INR',
+    tn: 'KRG BMS material order'
+  });
+  return `upi://pay?${params.toString()}`;
+}
+
+function showOnlinePaymentPrompt(amount) {
+  const status = document.getElementById('orderStatus');
+  if (!status) return;
+  status.className = 'order-status show info';
+  status.innerHTML = `
+    <div class="online-pay-box">
+      <strong>Online Payment - GPay / UPI</strong>
+      Pay <b>Rs ${amount.toFixed(0)}</b> to <b>${UPI_PHONE}</b>, then come back and confirm.
+      <span>Payment Done click pannina appuram than order save aagum.</span>
+      <div class="online-pay-actions">
+        <button class="online-pay-primary" type="button" onclick="openGPayPayment()">
+          <i class="fa fa-mobile-screen"></i> Open GPay
+        </button>
+        <button class="online-pay-secondary" type="button" onclick="confirmOnlinePaymentAndOrder()">
+          <i class="fa fa-check-circle"></i> Payment Done
+        </button>
+      </div>
+    </div>`;
+}
+
+function openGPayPayment() {
+  const total = cart.reduce((s,c) => s+c.price*c.qty, 0);
+  window.location.href = buildUpiLink(total);
+}
+
+function confirmOnlinePaymentAndOrder() {
+  onlinePaymentConfirmed = true;
+  setOrderStatus('Payment confirmed. Order save pannitu irukku...', 'info');
+  placeOrder();
 }
 
 function setPlaceOrderButtons(disabled, html) {
