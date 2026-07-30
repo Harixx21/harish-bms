@@ -170,7 +170,7 @@ body::before {
 }
 .header.header-hidden { transform: translateY(-100%); }
 .announcement {
-  display:flex;
+  display:none;
   align-items:center;
   justify-content:center;
   gap:9px;
@@ -181,14 +181,7 @@ body::before {
   font-weight:900;
   text-align:center;
 }
-.header-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 42px;
-  min-height: 132px;
-  background:linear-gradient(180deg,rgba(37,24,17,0.42),rgba(37,24,17,0.18));
-}
+.header-top { display:none; }
 .logo {
   display: flex; align-items: center; gap: 12px;
   padding: 0;
@@ -197,7 +190,7 @@ body::before {
   border: 0;
 }
 .logo-icon {
-  width: min(390px, 46vw); height: 118px;
+  width: 104px; height: 54px;
   border-radius: 0;
   display: flex; align-items: center; justify-content: center;
   overflow: hidden;
@@ -212,7 +205,7 @@ body::before {
   display: block;
   object-fit: contain;
   border-radius: 0;
-  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.35));
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
 }
 .cart-btn {
   position: relative;
@@ -276,16 +269,24 @@ body::before {
 .nav-links {
   display:flex;
   align-items:center;
-  justify-content:center;
+  justify-content:space-between;
   gap:8px;
-  padding:14px 16px;
-  margin:0 12px 12px;
+  padding:8px 12px;
+  margin:0 12px 8px;
   border-radius:12px;
   background:
     linear-gradient(90deg,rgba(37,24,17,0.82),rgba(37,24,17,0.58),rgba(37,24,17,0.82)),
     url('/static/krg-vehicle-yard-clean.png') center 58%/cover no-repeat;
   border:1px solid rgba(255,230,180,0.16);
   box-shadow:0 12px 30px rgba(0,0,0,0.24);
+}
+.nav-menu {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  flex:1;
+  min-width:0;
 }
 .nav-links a {
   color:#fff7df;
@@ -311,8 +312,8 @@ body::before {
   background: rgba(0,0,0,0.28);
   border: 1px solid rgba(255,255,255,0.24);
   color: white;
-  height: 44px;
-  padding: 0 12px;
+  height: 38px;
+  padding: 0 10px;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 800;
@@ -930,10 +931,9 @@ body::before {
 }
 .location-link.secondary { background:#fff7ed; color:var(--primary); border:1px solid #f0c08b; }
 @media(max-width:420px) {
-  .header-top { padding: 10px 12px; }
   .logo { gap: 8px; padding-right: 0; }
-  .logo-icon { width: 190px; height: 76px; border-radius: 0; padding:0; }
-  .nav-links { justify-content:flex-start; overflow-x:auto; padding:10px 12px; margin:0 10px 10px; background-position:center; }
+  .logo-icon { width: 78px; height: 42px; border-radius: 0; padding:0; }
+  .nav-links { justify-content:flex-start; overflow-x:auto; padding:8px 9px; margin:0 8px 8px; background-position:center; }
   .nav-links a { flex-shrink:0; font-size:12px; padding:7px 10px; }
   .hero-content h2 { font-size: 26px; }
   .hero-location { align-items:flex-start; flex-direction:column; }
@@ -1388,14 +1388,9 @@ body::before {
     padding: 7px 10px;
     line-height: 1.3;
   }
-  .header-top {
-    min-height: auto;
-    padding: 8px 10px;
-    gap: 8px;
-  }
   .logo-icon {
-    width: min(52vw, 190px);
-    height: 68px;
+    width: 82px;
+    height: 44px;
   }
   .header-actions {
     gap: 6px;
@@ -1419,16 +1414,19 @@ body::before {
     gap: 7px;
     scrollbar-width: none;
   }
+  .nav-menu {
+    flex:0 0 auto;
+  }
   .nav-links::-webkit-scrollbar,
   .categories::-webkit-scrollbar {
     display: none;
   }
   .nav-links a {
     flex: 0 0 auto;
-    min-width: 76px;
+    min-width: auto;
     text-align: center;
     font-size: 12px;
-    padding: 8px 10px;
+    padding: 8px 9px;
   }
   .search-bar {
     padding: 0 10px 10px;
@@ -1580,8 +1578,8 @@ body::before {
 
 @media(max-width: 380px) {
   .logo-icon {
-    width: 150px;
-    height: 58px;
+    width: 72px;
+    height: 38px;
   }
   .admin-btn {
     width: 38px;
@@ -1608,9 +1606,15 @@ body::before {
 <!-- HEADER -->
 <div class="header">
   <div class="announcement"><i class="fa fa-truck-fast"></i> Dindigul site delivery - materials supply, JCB rental and tractor rental</div>
-  <div class="header-top">
+  <nav class="nav-links" aria-label="Main navigation">
     <div class="logo">
       <div class="logo-icon"><img src="/static/logo-krg-bms-main.png" alt="KRG BMS logo"></div>
+    </div>
+    <div class="nav-menu">
+      <a class="{{ 'active' if page == 'home' else '' }}" href="/">Home</a>
+      <a class="{{ 'active' if page == 'about' else '' }}" href="/about">About</a>
+      <a class="{{ 'active' if page == 'products' else '' }}" href="/products">Products</a>
+      <a class="{{ 'active' if page == 'contact' else '' }}" href="/contact">Contact</a>
     </div>
     <div class="header-actions">
       <a class="admin-btn" href="/admin"><i class="fa fa-lock"></i> Login</a>
@@ -1619,12 +1623,6 @@ body::before {
         <span class="cart-badge" id="cartBadge">0</span>
       </button>
     </div>
-  </div>
-  <nav class="nav-links" aria-label="Main navigation">
-    <a class="{{ 'active' if page == 'home' else '' }}" href="/">Home</a>
-    <a class="{{ 'active' if page == 'about' else '' }}" href="/about">About</a>
-    <a class="{{ 'active' if page == 'products' else '' }}" href="/products">Products</a>
-    <a class="{{ 'active' if page == 'contact' else '' }}" href="/contact">Contact</a>
   </nav>
   <div class="search-bar">
     <input type="text" placeholder="Search materials..." id="searchInput" oninput="handleSearch()">
