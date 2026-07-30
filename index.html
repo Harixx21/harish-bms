@@ -141,7 +141,7 @@ body::before {
   position:fixed;
   inset:0;
   z-index:7000;
-  display:flex;
+  display:none;
   align-items:center;
   justify-content:center;
   background:
@@ -2562,7 +2562,6 @@ async function postJson(path, payload) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  setupLogoLoader();
   setupScrollEffects();
   if (document.getElementById('materialsGrid')) {
     const initialSearch = new URLSearchParams(window.location.search).get('search') || '';
@@ -2577,22 +2576,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setupLogoLoader() {
-  const loader = document.getElementById('pageLoader');
-  if (!loader) return;
-  setTimeout(() => loader.classList.add('done'), 850);
+  return;
 }
 
 function showPageLoader() {
-  const loader = document.getElementById('pageLoader');
-  if (loader) {
-    loader.classList.remove('done');
-    loader.classList.add('show');
-  }
+  return;
 }
 
 function navigateWithEffect(url) {
-  showPageLoader();
-  setTimeout(() => { window.location.href = url; }, 180);
+  window.location.href = url;
 }
 
 function setupPageTransitions() {
