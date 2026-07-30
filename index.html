@@ -115,18 +115,52 @@ body::before {
     url('https://5.imimg.com/data5/AN/FV/MY-28487226/building-construstion-material-1000x1000.jpg') center/cover no-repeat;
   transition:opacity .45s ease, visibility .45s ease;
 }
+.loader-mark {
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  animation:loaderPop 1.05s ease infinite alternate;
+}
+.loader-mark img {
+  width:min(58vw, 260px);
+  height:auto;
+  display:block;
+  filter:drop-shadow(0 20px 42px rgba(0,0,0,.52));
+}
+.loader-krg {
+  font-family:Impact, Haettenschweiler, 'Arial Black', sans-serif;
+  font-size:clamp(42px, 11vw, 86px);
+  line-height:.9;
+  font-weight:900;
+  letter-spacing:3px;
+  color:#f97316;
+  background:linear-gradient(180deg,#fff7ed 0%,#ffb347 34%,#f97316 58%,#431407 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 8px 0 rgba(67,20,7,.42), 0 18px 36px rgba(0,0,0,.5);
+  -webkit-text-stroke:1px rgba(255,255,255,.72);
+  transform:skewX(-7deg);
+}
+.loader-tag {
+  margin-top:-3px;
+  padding:5px 13px;
+  border-radius:999px;
+  background:rgba(255,247,237,.12);
+  border:1px solid rgba(255,255,255,.24);
+  color:#fff7ed;
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:1.8px;
+  text-transform:uppercase;
+}
 .page-loader.done {
   opacity:0;
   visibility:hidden;
   pointer-events:none;
-}
-.page-loader::before {
-  content:"";
-  width:min(58vw, 260px);
-  height:150px;
-  background:url('/static/logo-krg-bms-main.png') center/contain no-repeat;
-  filter:drop-shadow(0 20px 42px rgba(0,0,0,.52));
-  animation:loaderPop 1.05s ease infinite alternate;
 }
 .page-loader::after {
   content:"";
@@ -1710,7 +1744,13 @@ body::before {
 </style>
 </head>
 <body data-page="{{ page }}">
-<div class="page-loader" id="pageLoader" aria-hidden="true"></div>
+<div class="page-loader" id="pageLoader" aria-hidden="true">
+  <div class="loader-mark">
+    <img src="/static/logo-krg-bms-main.png" alt="">
+    <div class="loader-krg">KRG</div>
+    <div class="loader-tag">Building Material</div>
+  </div>
+</div>
 
 <!-- HEADER -->
 <div class="header">
