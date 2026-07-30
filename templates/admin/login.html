@@ -61,14 +61,14 @@ body {
 <div class="login-card">
   <div class="login-icon"><img src="/static/logo-krg-bms-main.png" alt="KRG BMS logo"></div>
   <h1>Owner Login</h1>
-  <p>KRG BMS - Admin Panel</p>
+  <p>KRG BMS - Owner Admin Panel</p>
   <div class="form-group">
-    <label>Username</label>
-    <input type="text" id="username" placeholder="admin" value="admin">
+    <label>Owner Email</label>
+    <input type="email" id="email" placeholder="rameshgandi@gmail.com" autocomplete="username">
   </div>
   <div class="form-group">
     <label>Password</label>
-    <input type="password" id="password" placeholder="••••••••" value="admin123" onkeydown="if(event.key==='Enter')login()">
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()">
   </div>
   <button class="login-btn" onclick="login()" id="loginBtn">
     <i class="fa fa-sign-in-alt"></i> Login
@@ -90,14 +90,16 @@ async function login() {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
         password: document.getElementById('password').value
       })
     });
     const data = await res.json();
     if (data.success) { window.location.href = '/admin/dashboard'; }
     else {
-      err.textContent = data.error || 'Invalid credentials';
+      err.textContent = data.notified
+        ? 'Invalid login. Owner has been notified.'
+        : (data.error || 'Invalid credentials');
       err.style.display = 'block';
       btn.innerHTML = '<i class="fa fa-sign-in-alt"></i> Login';
       btn.disabled = false;

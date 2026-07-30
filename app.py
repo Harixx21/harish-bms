@@ -18,6 +18,8 @@ app.secret_key = os.environ.get("SECRET_KEY", "bms_secret_key_2024")
 CORS(app)
 
 SITE_URL = os.environ.get("SITE_URL", "https://harish-bms.vercel.app").rstrip("/")
+OWNER_EMAIL = os.environ.get("OWNER_EMAIL", "rameshgandi@gmail.com").strip().lower()
+OWNER_PASSWORD = os.environ.get("OWNER_PASSWORD", "123456")
 
 # ─── DB CONFIG ───────────────────────────────────────────
 def get_database_url():
@@ -112,6 +114,32 @@ def send_otp_email(email, otp):
     msg["From"] = smtp_user
     msg["To"] = email
     msg.set_content(f"Your KRG BMS login OTP is {otp}. It is valid for 10 minutes.")
+    with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as smtp:
+        smtp.starttls()
+        smtp.login(smtp_user, smtp_pass)
+        smtp.send_message(msg)
+    return True
+
+def notify_admin_login_attempt(attempt_email):
+    smtp_user = os.environ.get("SMTP_USER") or os.environ.get("GMAIL_USER")
+    smtp_pass = os.environ.get("SMTP_PASS") or os.environ.get("GMAIL_APP_PASSWORD")
+    smtp_host = os.environ.get("SMTP_HOST", "smtp.gmail.com")
+    smtp_port = int(os.environ.get("SMTP_PORT", "587"))
+    if not smtp_user or not smtp_pass:
+        return False
+    ip = request.headers.get("x-forwarded-for", request.remote_addr or "unknown")
+    ua = request.headers.get("user-agent", "unknown")
+    msg = EmailMessage()
+    msg["Subject"] = "KRG BMS admin login attempt"
+    msg["From"] = smtp_user
+    msg["To"] = OWNER_EMAIL
+    msg.set_content(
+        "A failed admin login attempt happened.\n\n"
+        f"Attempt email: {attempt_email or 'empty'}\n"
+        f"IP: {ip}\n"
+        f"User agent: {ua}\n"
+        f"Time: {datetime.utcnow().isoformat()} UTC\n"
+    )
     with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as smtp:
         smtp.starttls()
         smtp.login(smtp_user, smtp_pass)
@@ -270,9 +298,12 @@ def init_db():
             username TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL
         )""")
-        cur.execute("SELECT id FROM admin WHERE username='admin'")
-        if not cur.fetchone():
-            cur.execute("INSERT INTO admin (username, password) VALUES (?, ?)", ("admin", hash_pw("admin123")))
+        cur.execute("DELETE FROM admin WHERE username!=%s", (OWNER_EMAIL,))
+        cur.execute("SELECT id FROM admin WHERE username=%s", (OWNER_EMAIL,))
+        if cur.fetchone():
+            cur.execute("UPDATE admin SET password=%s WHERE username=%s", (hash_pw(OWNER_PASSWORD), OWNER_EMAIL))
+        else:
+            cur.execute("INSERT INTO admin (username, password) VALUES (%s, %s)", (OWNER_EMAIL, hash_pw(OWNER_PASSWORD)))
         seed_materials(cur)
         conn.commit()
         cur.close()
@@ -356,11 +387,14 @@ def init_db():
         )
     """)
 
-    # Default admin
-    cur.execute("SELECT id FROM admin WHERE username='admin'")
-    if not cur.fetchone():
-        cur.execute("INSERT INTO admin (username, password) VALUES ('admin', %s)",
-                    (hash_pw("admin123"),))
+    # Owner admin only
+    cur.execute("DELETE FROM admin WHERE username!=%s", (OWNER_EMAIL,))
+    cur.execute("SELECT id FROM admin WHERE username=%s", (OWNER_EMAIL,))
+    if cur.fetchone():
+        cur.execute("UPDATE admin SET password=%s WHERE username=%s", (hash_pw(OWNER_PASSWORD), OWNER_EMAIL))
+    else:
+        cur.execute("INSERT INTO admin (username, password) VALUES (%s, %s)",
+                    (OWNER_EMAIL, hash_pw(OWNER_PASSWORD)))
     seed_materials(cur)
     conn.commit()
     cur.close()
@@ -747,18 +781,23 @@ def admin_login_page():
 @app.route("/admin/login", methods=["POST"])
 def admin_login():
     try:
-        data = request.json
-        conn = get_db()
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("SELECT * FROM admin WHERE username=%s AND password=%s",
-                    (data["username"], hash_pw(data["password"])))
-        admin = cur.fetchone()
-        cur.close(); conn.close()
-        if admin:
+        data = request.json or {}
+        email = (data.get("email") or data.get("username") or "").strip().lower()
+        password = data.get("password") or ""
+        if email == OWNER_EMAIL and password == OWNER_PASSWORD:
             session["admin"] = True
-            session["admin_user"] = admin["username"]
+            session["admin_user"] = OWNER_EMAIL
             return jsonify({"success": True})
-        return jsonify({"success": False, "error": "Invalid credentials"}), 401
+        notified = False
+        try:
+            notified = notify_admin_login_attempt(email)
+        except Exception:
+            notified = False
+        return jsonify({
+            "success": False,
+            "error": "Only owner can login",
+            "notified": notified,
+        }), 401
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
