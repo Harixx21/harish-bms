@@ -335,13 +335,23 @@ body::before {
   position: relative;
   z-index: 2;
   text-align: center;
-  padding: 42px 20px 54px;
+  padding: 36px 20px 50px;
   width: 100%;
 }
+.hero-brand {
+  color:#fff8e9;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(78px, 15vw, 168px);
+  line-height:.78;
+  font-weight:950;
+  letter-spacing:4px;
+  text-shadow:0 8px 28px rgba(0,0,0,.62), 0 2px 0 rgba(217,155,39,.55);
+}
 .hero-content h2 {
-  color: white; font-size: 42px; font-weight: 950;
+  color: white; font-size: 24px; font-weight: 950;
   text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  line-height:1.05;
+  line-height:1.12;
+  margin-top:16px;
 }
 .hero-content p {
   color: rgba(255,255,255,0.94); font-size: 15px; margin: 10px auto 0;
@@ -935,7 +945,8 @@ body::before {
   .logo-icon { width: 78px; height: 42px; border-radius: 0; padding:0; }
   .nav-links { justify-content:flex-start; overflow-x:auto; padding:8px 9px; margin:0 8px 8px; background-position:center; }
   .nav-links a { flex-shrink:0; font-size:12px; padding:7px 10px; }
-  .hero-content h2 { font-size: 26px; }
+  .hero-brand { font-size: clamp(62px, 22vw, 96px); letter-spacing:2px; }
+  .hero-content h2 { font-size: 20px; }
   .hero-location { align-items:flex-start; flex-direction:column; }
   .trust-strip { grid-template-columns: 1fr; text-align: left; }
   .trust-item { text-align: left; padding: 2px 4px; }
@@ -1446,8 +1457,11 @@ body::before {
   .hero-content {
     padding: 34px 14px 48px;
   }
+  .hero-brand {
+    font-size: clamp(66px, 23vw, 104px);
+  }
   .hero-content h2 {
-    font-size: 29px;
+    font-size: 20px;
   }
   .hero-content p {
     font-size: 13px;
@@ -1635,7 +1649,8 @@ body::before {
 <section class="hero" id="home">
   <div class="hero-bg"></div>
   <div class="hero-content">
-    <h2>Strong Materials.<br>Site Ready Delivery.</h2>
+    <div class="hero-brand">KRG</div>
+    <h2>Strong Materials. Site Ready Delivery.</h2>
     <p>Premium building materials and site vehicle rental from KRG BMS - aggregates, sand, bricks, blocks, cement, soil, JCB and tractor support around Dindigul.</p>
     <div class="hero-actions">
       <a class="hero-cta" href="/products"><i class="fa fa-bag-shopping"></i> Shop Materials</a>
