@@ -1549,8 +1549,14 @@ body::before {
   width:min(calc(100% - 28px),420px);
   text-align:center;
   box-shadow:0 18px 40px rgba(0,0,0,0.28);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  min-height:0;
+  max-height:96px;
+  overflow:hidden;
 }
-.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.show { display:flex; transform: translateX(-50%) translateY(0); }
 .toast i { margin-right:8px; }
 .toast span { vertical-align:middle; }
 .toast.success { background:linear-gradient(135deg,var(--primary),var(--accent)); }
@@ -1992,10 +1998,12 @@ body::before {
     flex-shrink:0;
   }
   .toast {
+    top:auto;
     bottom:max(18px, env(safe-area-inset-bottom));
     width:calc(100% - 24px);
     max-width:420px;
     white-space:normal;
+    max-height:92px;
   }
 }
 </style>
