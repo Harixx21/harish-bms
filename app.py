@@ -4,6 +4,10 @@ import sqlite3
 import hashlib
 import os
 import tempfile
+import random
+import smtplib
+import time
+from email.message import EmailMessage
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from datetime import datetime
 
@@ -95,6 +99,24 @@ class AppSqliteConnection(sqlite3.Connection):
 
 def hash_pw(pw):
     return hashlib.sha256(pw.encode()).hexdigest()
+
+def send_otp_email(email, otp):
+    smtp_user = os.environ.get("SMTP_USER") or os.environ.get("GMAIL_USER")
+    smtp_pass = os.environ.get("SMTP_PASS") or os.environ.get("GMAIL_APP_PASSWORD")
+    smtp_host = os.environ.get("SMTP_HOST", "smtp.gmail.com")
+    smtp_port = int(os.environ.get("SMTP_PORT", "587"))
+    if not smtp_user or not smtp_pass:
+        return False
+    msg = EmailMessage()
+    msg["Subject"] = "KRG BMS Customer Login OTP"
+    msg["From"] = smtp_user
+    msg["To"] = email
+    msg.set_content(f"Your KRG BMS login OTP is {otp}. It is valid for 10 minutes.")
+    with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as smtp:
+        smtp.starttls()
+        smtp.login(smtp_user, smtp_pass)
+        smtp.send_message(msg)
+    return True
 
 def ensure_db():
     global DB_READY
@@ -224,11 +246,16 @@ def init_db():
             lat REAL,
             lng REAL,
             total_amount REAL,
+            payment_method TEXT DEFAULT 'cod',
             status TEXT DEFAULT 'pending',
             notes TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )""")
+        try:
+            cur.execute("ALTER TABLE orders ADD COLUMN payment_method TEXT DEFAULT 'cod'")
+        except Exception:
+            pass
         cur.execute("""CREATE TABLE IF NOT EXISTS order_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             order_id INTEGER NOT NULL,
@@ -294,6 +321,7 @@ def init_db():
             lat DECIMAL(10,8),
             lng DECIMAL(11,8),
             total_amount DECIMAL(10,2),
+            payment_method VARCHAR(30) DEFAULT 'cod',
             status VARCHAR(20) DEFAULT 'pending',
             notes TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -301,6 +329,10 @@ def init_db():
             FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE SET NULL
         )
     """)
+    try:
+        cur.execute("ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_method VARCHAR(30) DEFAULT 'cod'")
+    except Exception:
+        pass
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS order_items (
@@ -485,15 +517,18 @@ def place_order():
                 "price": price,
             })
         total = sum(item["price"] * item["qty"] for item in order_items)
+        payment_method = (data.get("payment_method") or "cod").strip().lower()
+        if payment_method not in ("cod", "online"):
+            payment_method = "cod"
 
         cur.execute("""INSERT INTO orders
             (order_number, customer_id, customer_name, customer_phone,
-                delivery_address, lat, lng, total_amount, notes)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                delivery_address, lat, lng, total_amount, payment_method, notes)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                         RETURNING id""",
                             (order_num, customer_id, data["name"], data["phone"],
                                  data["address"], data.get("lat"), data.get("lng"),
-                                     total, data.get("notes","")))
+                                     total, payment_method, data.get("notes","")))
 
         order_id = cur.fetchone()["id"]
 
@@ -578,8 +613,11 @@ def customer_profile():
     try:
         data = request.json or {}
         phone = (data.get("phone") or "").strip()
+        email = (data.get("email") or "").strip().lower()
         if not phone:
             return jsonify({"success": False, "error": "Phone number required"}), 400
+        if email and session.get("customer_email_verified") != email:
+            return jsonify({"success": False, "error": "Email OTP verification required"}), 403
 
         conn = get_db()
         cur = conn.cursor(cursor_factory=RealDictCursor)
@@ -630,6 +668,42 @@ def customer_profile():
         return jsonify({"success": True, "customer": customer, "orders": orders})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/customer/send-otp", methods=["POST"])
+def customer_send_otp():
+    try:
+        data = request.json or {}
+        email = (data.get("email") or "").strip().lower()
+        if "@" not in email or "." not in email:
+            return jsonify({"success": False, "error": "Valid email required"}), 400
+        otp = f"{random.randint(100000, 999999)}"
+        session["customer_otp"] = hash_pw(otp)
+        session["customer_otp_email"] = email
+        session["customer_otp_expires"] = int(time.time()) + 600
+        sent = send_otp_email(email, otp)
+        response = {"success": True, "sent": sent}
+        if not sent:
+            response["dev_otp"] = otp
+            response["warning"] = "Email service not configured. Set SMTP_USER and SMTP_PASS to send Gmail OTP."
+        return jsonify(response)
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/customer/verify-otp", methods=["POST"])
+def customer_verify_otp():
+    data = request.json or {}
+    email = (data.get("email") or "").strip().lower()
+    otp = (data.get("otp") or "").strip()
+    if not email or not otp:
+        return jsonify({"success": False, "error": "Email and OTP required"}), 400
+    if session.get("customer_otp_email") != email:
+        return jsonify({"success": False, "error": "OTP email mismatch"}), 400
+    if int(time.time()) > int(session.get("customer_otp_expires") or 0):
+        return jsonify({"success": False, "error": "OTP expired"}), 400
+    if session.get("customer_otp") != hash_pw(otp):
+        return jsonify({"success": False, "error": "Invalid OTP"}), 400
+    session["customer_email_verified"] = email
+    return jsonify({"success": True})
 
 @app.route("/api/customer/profile", methods=["PUT"])
 def update_customer_profile():

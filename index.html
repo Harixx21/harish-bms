@@ -1291,6 +1291,27 @@ body::before {
 }
 .order-summary-mini h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
 .order-summary-mini .item-row { display: flex; justify-content: space-between; font-size: 13px; padding: 3px 0; }
+.payment-options {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin:0 0 14px;
+}
+.payment-option {
+  border:2px solid var(--border);
+  border-radius:12px;
+  padding:11px;
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  cursor:pointer;
+  background:#fffdf8;
+  font-size:13px;
+  font-weight:850;
+}
+.payment-option input { width:auto; margin-top:3px; }
+.payment-option span { display:block; color:var(--text-light); font-size:11px; font-weight:700; margin-top:2px; }
+@media(max-width:520px) { .payment-options { grid-template-columns:1fr; } }
 
 /* PLACE ORDER BUTTON - BIG & BOLD */
 .place-order-btn {
@@ -2051,6 +2072,16 @@ body::before {
           <span>Total</span><span style="color:var(--primary)" id="orderSummaryTotal"></span>
         </div>
       </div>
+      <div class="payment-options">
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="cod" checked>
+          <div>Cash on Delivery<span>Material receive pannumbothu payment</span></div>
+        </label>
+        <label class="payment-option">
+          <input type="radio" name="paymentMethod" value="online">
+          <div>Online Payment<span>UPI / bank transfer confirmation</span></div>
+        </label>
+      </div>
       <button class="place-order-btn place-order-submit top-place-order" id="placeOrderBtn" type="button" onclick="placeOrder()">
         <i class="fa fa-check-circle"></i> PLACE ORDER & TRACK
       </button>
@@ -2669,6 +2700,7 @@ async function placeOrder() {
   const name = document.getElementById('custName').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
   const address = document.getElementById('custAddress').value.trim();
+  const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value || 'cod';
 
   if (!name) { showToast('Enter your name'); return; }
   if (!phone || phone.length < 10) { showToast('Enter valid phone number'); return; }
@@ -2685,6 +2717,7 @@ async function placeOrder() {
       email: document.getElementById('custEmail').value,
       address,
       lat: null, lng: null,
+      payment_method: paymentMethod,
       notes: document.getElementById('custNotes').value,
       items: cart.map(c => ({id: c.id, name: c.name, price: c.price, qty: c.qty, unit: c.unit}))
     });
@@ -2840,7 +2873,8 @@ async function trackOrder() {
           </div>
         </div>
         <div style="font-size:13px;color:var(--text-light);margin-bottom:4px">📅 ${new Date(order.created_at).toLocaleDateString('en-IN')}</div>
-        <div style="font-size:14px;font-weight:700;color:var(--primary);margin-bottom:12px">Total: ₹${parseFloat(order.total_amount).toFixed(0)}</div>
+        <div style="font-size:14px;font-weight:700;color:var(--primary);margin-bottom:4px">Total: ₹${parseFloat(order.total_amount).toFixed(0)}</div>
+        <div style="font-size:12px;color:var(--text-light);font-weight:800;margin-bottom:12px">Payment: ${order.payment_method === 'online' ? 'Online Payment' : 'Cash on Delivery'}</div>
         <div class="track-items">${itemsHtml}</div>
         <div class="status-timeline">${stepsHtml}</div>
         <button class="track-refresh" onclick="trackOrder()"><i class="fa fa-rotate"></i> Refresh Status</button>

@@ -194,10 +194,15 @@ button {
   <div class="grid">
     <div class="card">
       <h1>Customer Login</h1>
-      <p class="hint">Phone number enter pannunga. Neenga kudutha details, previous orders, products and status ellam view pannalam.</p>
+      <p class="hint">Email OTP verify pannitu phone number-la customer details and previous orders view pannalam.</p>
+      <label>Email</label>
+      <input id="loginEmail" type="email" placeholder="your@gmail.com">
+      <button class="primary" onclick="sendOtp()"><i class="fa fa-envelope"></i> Send OTP</button>
+      <label>OTP</label>
+      <input id="loginOtp" type="text" placeholder="6 digit OTP">
       <label>Phone Number</label>
       <input id="loginPhone" type="tel" placeholder="+91 9944748140">
-      <button class="primary" onclick="loadProfile()"><i class="fa fa-right-to-bracket"></i> Login</button>
+      <button class="primary" onclick="verifyAndLogin()"><i class="fa fa-right-to-bracket"></i> Verify & Login</button>
       <div class="message" id="loginMsg"></div>
     </div>
 
@@ -235,9 +240,12 @@ button {
 
 <script>
 let currentPhone = localStorage.getItem('bms_customer_phone') || '';
+let currentEmail = localStorage.getItem('bms_customer_email') || '';
 if (currentPhone) {
   document.getElementById('loginPhone').value = currentPhone;
-  loadProfile();
+}
+if (currentEmail) {
+  document.getElementById('loginEmail').value = currentEmail;
 }
 
 function msg(id, text, type='ok') {
@@ -248,13 +256,14 @@ function msg(id, text, type='ok') {
 
 async function loadProfile() {
   const phone = document.getElementById('loginPhone').value.trim();
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
   if (!phone) { msg('loginMsg', 'Phone number required', 'error'); return; }
   msg('loginMsg', 'Loading...', 'ok');
   try {
     const res = await fetch('/api/customer/profile', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({phone})
+      body: JSON.stringify({phone, email})
     });
     const data = await res.json();
     if (!data.success) {
@@ -262,8 +271,56 @@ async function loadProfile() {
       return;
     }
     localStorage.setItem('bms_customer_phone', phone);
+    localStorage.setItem('bms_customer_email', email);
     renderProfile(data.customer, data.orders || []);
     msg('loginMsg', 'Login success', 'ok');
+  } catch(e) {
+    msg('loginMsg', 'Connection error', 'error');
+  }
+}
+
+async function sendOtp() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  if (!email) { msg('loginMsg', 'Email required', 'error'); return; }
+  msg('loginMsg', 'Sending OTP...', 'ok');
+  try {
+    const res = await fetch('/api/customer/send-otp', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email})
+    });
+    const data = await res.json();
+    if (!data.success) {
+      msg('loginMsg', data.error || 'OTP send failed', 'error');
+      return;
+    }
+    if (data.sent) {
+      msg('loginMsg', 'OTP sent to your email', 'ok');
+    } else {
+      msg('loginMsg', `Email not configured. Test OTP: ${data.dev_otp}`, 'ok');
+    }
+  } catch(e) {
+    msg('loginMsg', 'Connection error', 'error');
+  }
+}
+
+async function verifyAndLogin() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const otp = document.getElementById('loginOtp').value.trim();
+  if (!email || !otp) { msg('loginMsg', 'Email and OTP required', 'error'); return; }
+  msg('loginMsg', 'Verifying OTP...', 'ok');
+  try {
+    const res = await fetch('/api/customer/verify-otp', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({email, otp})
+    });
+    const data = await res.json();
+    if (!data.success) {
+      msg('loginMsg', data.error || 'OTP verification failed', 'error');
+      return;
+    }
+    loadProfile();
   } catch(e) {
     msg('loginMsg', 'Connection error', 'error');
   }
@@ -308,6 +365,7 @@ function renderOrders(orders) {
         <div class="status">${(order.status || 'pending').replaceAll('_',' ')}</div>
       </div>
       <div class="items">${items || 'No items'}</div>
+      <div class="date">Payment: ${order.payment_method === 'online' ? 'Online Payment' : 'Cash on Delivery'}</div>
       <div class="total">Total: Rs ${Math.round(Number(order.total_amount || 0)).toLocaleString('en-IN')}</div>
     </div>`;
   }).join('');
@@ -348,6 +406,7 @@ async function saveProfile() {
 
 function logoutCustomer() {
   localStorage.removeItem('bms_customer_phone');
+  localStorage.removeItem('bms_customer_email');
   document.getElementById('profileCard').classList.add('hidden');
   document.getElementById('ordersCard').classList.add('hidden');
   msg('loginMsg', 'Logged out', 'ok');
