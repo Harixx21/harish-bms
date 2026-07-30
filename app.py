@@ -8,7 +8,11 @@ import random
 import smtplib
 import time
 from email.message import EmailMessage
+from html import escape
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from urllib.request import Request, urlopen
+from urllib.error import URLError, HTTPError
+import base64
 from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -21,6 +25,9 @@ SITE_URL = os.environ.get("SITE_URL", "https://harish-bms.vercel.app").rstrip("/
 OWNER_EMAIL = os.environ.get("OWNER_EMAIL", "rameshgandi@gmail.com").strip().lower()
 OWNER_PASSWORD = os.environ.get("OWNER_PASSWORD", "123456")
 STAFF_PASSWORD = os.environ.get("STAFF_PASSWORD", "098765")
+TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "").strip()
+TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "").strip()
+TWILIO_FROM_NUMBER = os.environ.get("TWILIO_FROM_NUMBER", "").strip()
 
 # ─── DB CONFIG ───────────────────────────────────────────
 def get_database_url():
@@ -180,6 +187,60 @@ def is_owner_admin():
 
 def is_any_admin():
     return bool(session.get("admin"))
+
+def normalize_indian_phone(phone):
+    digits = "".join(ch for ch in str(phone or "") if ch.isdigit())
+    if digits.startswith("91") and len(digits) == 12:
+        return f"+{digits}"
+    if len(digits) == 10:
+        return f"+91{digits}"
+    if str(phone or "").strip().startswith("+"):
+        return str(phone).strip()
+    return phone
+
+def twiml_response(xml):
+    return Response(xml, mimetype="text/xml")
+
+def append_order_note(cur, order_number, note):
+    if USE_POSTGRES:
+        cur.execute(
+            """UPDATE orders
+               SET notes=CONCAT(COALESCE(notes,''), %s), updated_at=CURRENT_TIMESTAMP
+               WHERE order_number=%s""",
+            (f"\n{note}", order_number),
+        )
+    else:
+        cur.execute(
+            """UPDATE orders
+               SET notes=COALESCE(notes,'') || %s, updated_at=CURRENT_TIMESTAMP
+               WHERE order_number=%s""",
+            (f"\n{note}", order_number),
+        )
+
+def start_order_verification_call(order_number, phone):
+    if not (TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN and TWILIO_FROM_NUMBER):
+        return {"started": False, "reason": "twilio_env_missing"}
+    to_phone = normalize_indian_phone(phone)
+    call_url = f"{SITE_URL}/api/voice/order/{order_number}"
+    status_url = f"{SITE_URL}/api/voice/status/{order_number}"
+    form = urlencode({
+        "To": to_phone,
+        "From": TWILIO_FROM_NUMBER,
+        "Url": call_url,
+        "StatusCallback": status_url,
+        "StatusCallbackEvent": "initiated ringing answered completed",
+        "StatusCallbackMethod": "POST",
+    }).encode()
+    api_url = f"https://api.twilio.com/2010-04-01/Accounts/{TWILIO_ACCOUNT_SID}/Calls.json"
+    auth = base64.b64encode(f"{TWILIO_ACCOUNT_SID}:{TWILIO_AUTH_TOKEN}".encode()).decode()
+    req = Request(api_url, data=form, method="POST")
+    req.add_header("Authorization", f"Basic {auth}")
+    req.add_header("Content-Type", "application/x-www-form-urlencoded")
+    try:
+        with urlopen(req, timeout=15) as res:
+            return {"started": True, "response": res.read().decode("utf-8", "ignore")[:500]}
+    except (HTTPError, URLError, TimeoutError) as exc:
+        return {"started": False, "reason": str(exc)}
 
 def ensure_db():
     global DB_READY
@@ -591,7 +652,7 @@ def place_order():
                          data["address"], data.get("lat"), data.get("lng")))
             customer_id = cur.fetchone()["id"]
         # Generate order number
-        order_num = f"BMS{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        order_num = f"BMS{datetime.now().strftime('%Y%m%d%H%M%S')}{random.randint(100,999)}"
 
         # Calculate total with explicit casts because browser/DB JSON values can arrive as strings.
         order_items = []
@@ -640,12 +701,75 @@ def place_order():
             if cur.rowcount == 0:
                 raise Exception(f"Insufficient stock for material ID {item['id']}")
 
+        append_order_note(cur, order_num, "Auto call verification requested. Customer should press 1 to confirm or 2 to cancel.")
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({"success": True, "order_number": order_num, "total": float(total)})
+        call_result = start_order_verification_call(order_num, data["phone"])
+        return jsonify({
+            "success": True,
+            "order_number": order_num,
+            "total": float(total),
+            "verification_call": call_result,
+        })
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/voice/order/<order_number>", methods=["GET", "POST"])
+def voice_order_prompt(order_number):
+    safe_order = escape(order_number)
+    return twiml_response(f"""<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Gather input="dtmf" numDigits="1" timeout="8" action="/api/voice/order/{safe_order}/verify" method="POST">
+    <Say language="en-IN" voice="alice">K R G B M S order verification. Your order number is {safe_order}. To confirm this order, press 1. To cancel this order, press 2.</Say>
+    <Pause length="1"/>
+    <Say language="en-IN" voice="alice">Press 1 to confirm. Press 2 to cancel.</Say>
+  </Gather>
+  <Say language="en-IN" voice="alice">No input received. Your order is still pending. K R G B M S will contact you shortly.</Say>
+</Response>""")
+
+@app.route("/api/voice/order/<order_number>/verify", methods=["POST"])
+def voice_order_verify(order_number):
+    digit = (request.form.get("Digits") or request.values.get("Digits") or "").strip()
+    if digit not in ("1", "2"):
+        return twiml_response(f"""<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say language="en-IN" voice="alice">Invalid input. Your order is still pending. K R G B M S will call you again.</Say>
+</Response>""")
+    status = "confirmed" if digit == "1" else "cancelled"
+    message = "confirmed" if digit == "1" else "cancelled"
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE orders SET status=%s, updated_at=CURRENT_TIMESTAMP WHERE order_number=%s",
+            (status, order_number),
+        )
+        append_order_note(cur, order_number, f"Customer pressed {digit} in verification call. Order {message}.")
+        conn.commit()
+        cur.close(); conn.close()
+    except Exception:
+        return twiml_response("""<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say language="en-IN" voice="alice">System error. K R G B M S will contact you shortly.</Say>
+</Response>""")
+    return twiml_response(f"""<?xml version="1.0" encoding="UTF-8"?>
+<Response>
+  <Say language="en-IN" voice="alice">Thank you. Your K R G B M S order is {message}.</Say>
+</Response>""")
+
+@app.route("/api/voice/status/<order_number>", methods=["POST"])
+def voice_status_callback(order_number):
+    call_status = request.form.get("CallStatus") or request.values.get("CallStatus") or "unknown"
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        append_order_note(cur, order_number, f"Verification call status: {call_status}.")
+        conn.commit()
+        cur.close(); conn.close()
+    except Exception:
+        pass
+    return ("", 204)
 
 @app.route("/api/order/track", methods=["POST"])
 def track_order():

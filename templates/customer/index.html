@@ -2883,7 +2883,10 @@ async function placeOrder() {
       if (modalBox) modalBox.scrollTop = 0;
       document.getElementById('checkoutModal').classList.add('open');
       document.getElementById('overlay').classList.add('open');
-      const successMessage = `Order placed successfully: ${data.order_number}`;
+      const callText = data.verification_call?.started
+        ? ' Verification call customer phone-ku pogum.'
+        : ' Verification call setup pending; KRG BMS direct-a contact pannuvanga.';
+      const successMessage = `Order placed successfully: ${data.order_number}.${callText}`;
       showToast(successMessage);
       window.alert(successMessage);
       setTimeout(trackPlacedOrder, 250);
