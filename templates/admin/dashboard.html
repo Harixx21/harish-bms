@@ -11,7 +11,7 @@
   --primary:#c45722; --primary-dark:#963b19; --secondary:#12343b;
   --accent:#0f9f78; --bg:#f6f3ec; --card:#fffdf8;
   --text:#172d32; --muted:#6d7c7c; --border:#e4dbca;
-  --success:#11825c; --danger:#c84236; --info:#286fbe; --warning:#ca8b12;
+  --success:#a65f16; --danger:#c84236; --info:#286fbe; --warning:#ca8b12;
   --shadow:0 18px 42px rgba(18,52,59,0.13); --radius:14px;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -126,7 +126,7 @@ textarea:focus-visible {
   display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
 }
 .stat-icon.orange { background:#fff3e0;color:var(--primary); }
-.stat-icon.green  { background:#e8f5e9;color:var(--success); }
+.stat-icon.green  { background:#fff4d8;color:var(--success); }
 .stat-icon.blue   { background:#e3f2fd;color:var(--info); }
 .stat-icon.red    { background:#fde8e8;color:var(--danger); }
 .stat-icon.yellow { background:#fffde7;color:var(--warning); }
@@ -168,10 +168,10 @@ tr:hover td { background:#fafafa; }
 .badge-confirmed  { background:#e3f2fd;color:#1976d2; }
 .badge-processing { background:#f3e5f5;color:#7b1fa2; }
 .badge-delivery   { background:#e8f5e9;color:#2e7d32; }
-.badge-delivered  { background:#e8f5e9;color:#27ae60; }
+.badge-delivered  { background:#fff4d8;color:#a65f16; }
 .badge-cancelled  { background:#fde8e8;color:#e74c3c; }
 .badge-rejected   { background:#fde8e8;color:#a9342d; }
-.badge-instock    { background:#e8f5e9;color:#27ae60; }
+.badge-instock    { background:#fff4d8;color:#a65f16; }
 .badge-lowstock   { background:#fffde7;color:#f57f17; }
 .badge-outstock   { background:#fde8e8;color:#e74c3c; }
 
@@ -191,7 +191,7 @@ tr:hover td { background:#fafafa; }
 .action-pill { border:1px solid var(--border);background:white;color:var(--text);border-radius:999px;padding:6px 9px;font-size:12px;font-weight:700;cursor:pointer; }
 .action-pill.confirm { color:var(--info);border-color:#bfd7f5; }
 .action-pill.process { color:#7b1fa2;border-color:#d8b7e6; }
-.action-pill.delivery { color:var(--success);border-color:#bde6d2; }
+.action-pill.delivery { color:var(--success);border-color:#f1c978; }
 .action-pill.reject { color:var(--danger);border-color:#f3c2bd; }
 .is-staff .owner-only { display:none !important; }
 .material-thumb { width:52px;height:42px;object-fit:cover;border-radius:8px;margin-right:10px;vertical-align:middle;border:1px solid var(--border); }
