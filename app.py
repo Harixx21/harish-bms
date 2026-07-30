@@ -363,6 +363,10 @@ def products():
 def contact():
     return render_template("customer/index.html", page="contact")
 
+@app.route("/login")
+def customer_login_page():
+    return render_template("customer/login.html")
+
 @app.route("/robots.txt")
 def robots_txt():
     body = f"""User-agent: *
@@ -569,6 +573,97 @@ def track_order():
         return jsonify({"success": False, "error": str(e)}), 500
 
 # ─── ADMIN ROUTES ────────────────────────────────────────
+@app.route("/api/customer/profile", methods=["POST"])
+def customer_profile():
+    try:
+        data = request.json or {}
+        phone = (data.get("phone") or "").strip()
+        if not phone:
+            return jsonify({"success": False, "error": "Phone number required"}), 400
+
+        conn = get_db()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute("SELECT * FROM customers WHERE phone=%s", (phone,))
+        customer = cur.fetchone()
+        if not customer:
+            cur.close(); conn.close()
+            return jsonify({"success": False, "error": "No customer found for this phone"}), 404
+
+        if USE_POSTGRES:
+            cur.execute("""SELECT o.*, STRING_AGG(
+                oi.material_name || '|' || oi.quantity::text || '|' || oi.unit || '|' || oi.price::text,
+                ';;'
+              ) as items_raw
+              FROM orders o
+              LEFT JOIN order_items oi ON o.id=oi.order_id
+              WHERE o.customer_phone=%s
+              GROUP BY o.id
+              ORDER BY o.created_at DESC
+              LIMIT 30""", (phone,))
+        else:
+            cur.execute("""SELECT o.*, GROUP_CONCAT(
+                oi.material_name || '|' || oi.quantity || '|' || oi.unit || '|' || oi.price,
+                ';;'
+              ) as items_raw
+              FROM orders o
+              LEFT JOIN order_items oi ON o.id=oi.order_id
+              WHERE o.customer_phone=%s
+              GROUP BY o.id
+              ORDER BY o.created_at DESC
+              LIMIT 30""", (phone,))
+        orders = cur.fetchall()
+        for o in orders:
+            o["created_at"] = str(o["created_at"])
+            o["updated_at"] = str(o["updated_at"])
+            o["total_amount"] = float(o["total_amount"] or 0)
+            items = []
+            if o["items_raw"]:
+                for item_str in o["items_raw"].split(";;"):
+                    parts = item_str.split("|")
+                    if len(parts) == 4:
+                        items.append({"name": parts[0], "qty": parts[1], "unit": parts[2], "price": parts[3]})
+            o["items"] = items
+            del o["items_raw"]
+
+        customer["created_at"] = str(customer["created_at"])
+        cur.close(); conn.close()
+        return jsonify({"success": True, "customer": customer, "orders": orders})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/customer/profile", methods=["PUT"])
+def update_customer_profile():
+    try:
+        data = request.json or {}
+        cid = data.get("id")
+        name = (data.get("name") or "").strip()
+        phone = (data.get("phone") or "").strip()
+        email = (data.get("email") or "").strip()
+        address = (data.get("address") or "").strip()
+        if not cid:
+            return jsonify({"success": False, "error": "Customer id required"}), 400
+        if not name or not phone or not address:
+            return jsonify({"success": False, "error": "Name, phone and address required"}), 400
+
+        conn = get_db()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute("""UPDATE customers
+                      SET name=%s, phone=%s, email=%s, address=%s
+                      WHERE id=%s""", (name, phone, email, address, cid))
+        if cur.rowcount == 0:
+            conn.rollback()
+            cur.close(); conn.close()
+            return jsonify({"success": False, "error": "Customer not found"}), 404
+        cur.execute("""UPDATE orders
+                      SET customer_name=%s, customer_phone=%s, delivery_address=%s,
+                          updated_at=CURRENT_TIMESTAMP
+                      WHERE customer_id=%s""", (name, phone, address, cid))
+        conn.commit()
+        cur.close(); conn.close()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 @app.route("/admin")
 def admin_login_page():
     if session.get("admin"):

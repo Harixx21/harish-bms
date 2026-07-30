@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Login - KRG BMS</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Segoe UI', sans-serif;
+  min-height:100vh;
+  background:
+    linear-gradient(135deg,rgba(37,24,17,.82),rgba(125,32,19,.72)),
+    url('https://5.imimg.com/data5/AN/FV/MY-28487226/building-construstion-material-1000x1000.jpg') center/cover fixed no-repeat;
+  color:#2f241c;
+  padding:18px;
+}
+.page {
+  width:min(1120px,100%);
+  margin:0 auto;
+}
+.topbar {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:16px;
+}
+.brand {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:white;
+  font-weight:900;
+}
+.brand img { width:92px; height:50px; object-fit:contain; filter:drop-shadow(0 8px 18px rgba(0,0,0,.35)); }
+.back {
+  color:white;
+  text-decoration:none;
+  font-weight:800;
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:10px;
+  padding:10px 12px;
+  background:rgba(0,0,0,.22);
+}
+.grid {
+  display:grid;
+  grid-template-columns:360px 1fr;
+  gap:16px;
+  align-items:start;
+}
+.card {
+  background:rgba(255,255,255,.96);
+  border:1px solid rgba(255,230,180,.42);
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 20px 55px rgba(0,0,0,.22);
+}
+h1 { font-size:25px; color:#251811; margin-bottom:6px; }
+.hint { color:#7e6b5a; font-size:13px; line-height:1.45; font-weight:700; margin-bottom:16px; }
+label { display:block; font-size:11px; font-weight:900; color:#8b5a24; text-transform:uppercase; margin:12px 0 6px; }
+input, textarea {
+  width:100%;
+  border:2px solid #ecd9b8;
+  border-radius:10px;
+  padding:12px 13px;
+  font-size:14px;
+  outline:none;
+  font-family:inherit;
+}
+textarea { min-height:86px; resize:vertical; }
+input:focus, textarea:focus { border-color:#b83318; }
+button {
+  border:0;
+  border-radius:11px;
+  padding:12px 14px;
+  font-weight:900;
+  cursor:pointer;
+}
+.primary {
+  width:100%;
+  color:white;
+  margin-top:14px;
+  background:linear-gradient(135deg,#b83318,#d99b27);
+}
+.save {
+  color:white;
+  background:linear-gradient(135deg,#166949,#2a8c63);
+}
+.profile-actions {
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+}
+.profile-actions button { flex:1; }
+.ghost { background:#fff7e8; color:#7d2013; border:1px solid #ecd9b8; }
+.summary {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:14px;
+}
+.stat {
+  background:#fff7e8;
+  border:1px solid #ecd9b8;
+  border-radius:10px;
+  padding:12px;
+}
+.stat strong { display:block; font-size:20px; color:#b83318; }
+.stat span { font-size:12px; color:#7e6b5a; font-weight:800; }
+.orders {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.order {
+  border:1px solid #ecd9b8;
+  border-radius:12px;
+  padding:14px;
+  background:#fffdf8;
+}
+.order-head {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  margin-bottom:8px;
+}
+.order-no { font-weight:950; color:#251811; }
+.date { color:#7e6b5a; font-size:12px; font-weight:700; margin-top:3px; }
+.status {
+  color:white;
+  background:#b83318;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:11px;
+  font-weight:900;
+  text-transform:capitalize;
+}
+.items {
+  border-top:1px solid #ecd9b8;
+  border-bottom:1px solid #ecd9b8;
+  padding:8px 0;
+  margin:8px 0;
+}
+.item {
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:5px 0;
+  font-size:13px;
+}
+.total { text-align:right; font-weight:950; color:#b83318; }
+.empty {
+  text-align:center;
+  padding:36px 18px;
+  color:#7e6b5a;
+  font-weight:800;
+}
+.message {
+  display:none;
+  margin-top:12px;
+  padding:10px 12px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:800;
+}
+.message.show { display:block; }
+.message.error { background:#fff0ed; color:#8f1f19; border:1px solid #f3c2ba; }
+.message.ok { background:#eefaf4; color:#166949; border:1px solid #bfe9d1; }
+.hidden { display:none; }
+@media(max-width:820px) {
+  body { padding:12px; }
+  .grid { grid-template-columns:1fr; }
+  .summary { grid-template-columns:1fr; }
+  .topbar { align-items:flex-start; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <div class="brand">
+      <img src="/static/logo-krg-bms-main.png" alt="KRG BMS logo">
+      <div>
+        <div>KRG BMS</div>
+        <small>Customer Login</small>
+      </div>
+    </div>
+    <a class="back" href="/"><i class="fa fa-arrow-left"></i> Store</a>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h1>Customer Login</h1>
+      <p class="hint">Phone number enter pannunga. Neenga kudutha details, previous orders, products and status ellam view pannalam.</p>
+      <label>Phone Number</label>
+      <input id="loginPhone" type="tel" placeholder="+91 9944748140">
+      <button class="primary" onclick="loadProfile()"><i class="fa fa-right-to-bracket"></i> Login</button>
+      <div class="message" id="loginMsg"></div>
+    </div>
+
+    <div class="card hidden" id="profileCard">
+      <h1>My Details</h1>
+      <p class="hint">Customer details edit pannitu save pannalam. Phone change pannina future tracking athu phone-la varum.</p>
+      <input type="hidden" id="custId">
+      <label>Name</label>
+      <input id="custName" type="text">
+      <label>Phone</label>
+      <input id="custPhone" type="tel">
+      <label>Email</label>
+      <input id="custEmail" type="email">
+      <label>Address</label>
+      <textarea id="custAddress"></textarea>
+      <div class="profile-actions">
+        <button class="save" onclick="saveProfile()"><i class="fa fa-save"></i> Save</button>
+        <button class="ghost" onclick="logoutCustomer()"><i class="fa fa-sign-out"></i> Logout</button>
+      </div>
+      <div class="message" id="profileMsg"></div>
+    </div>
+  </div>
+
+  <div class="card hidden" id="ordersCard" style="margin-top:16px">
+    <h1>My Orders</h1>
+    <p class="hint">Neenga enna vanguninga, eppo vanguninga, status enna nu inga theriyum.</p>
+    <div class="summary">
+      <div class="stat"><strong id="orderCount">0</strong><span>Total Orders</span></div>
+      <div class="stat"><strong id="orderTotal">Rs 0</strong><span>Total Purchase</span></div>
+      <div class="stat"><strong id="lastStatus">-</strong><span>Latest Status</span></div>
+    </div>
+    <div class="orders" id="ordersList"></div>
+  </div>
+</div>
+
+<script>
+let currentPhone = localStorage.getItem('bms_customer_phone') || '';
+if (currentPhone) {
+  document.getElementById('loginPhone').value = currentPhone;
+  loadProfile();
+}
+
+function msg(id, text, type='ok') {
+  const el = document.getElementById(id);
+  el.textContent = text || '';
+  el.className = text ? `message show ${type}` : 'message';
+}
+
+async function loadProfile() {
+  const phone = document.getElementById('loginPhone').value.trim();
+  if (!phone) { msg('loginMsg', 'Phone number required', 'error'); return; }
+  msg('loginMsg', 'Loading...', 'ok');
+  try {
+    const res = await fetch('/api/customer/profile', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({phone})
+    });
+    const data = await res.json();
+    if (!data.success) {
+      msg('loginMsg', data.error || 'No customer found', 'error');
+      return;
+    }
+    localStorage.setItem('bms_customer_phone', phone);
+    renderProfile(data.customer, data.orders || []);
+    msg('loginMsg', 'Login success', 'ok');
+  } catch(e) {
+    msg('loginMsg', 'Connection error', 'error');
+  }
+}
+
+function renderProfile(customer, orders) {
+  document.getElementById('profileCard').classList.remove('hidden');
+  document.getElementById('ordersCard').classList.remove('hidden');
+  document.getElementById('custId').value = customer.id || '';
+  document.getElementById('custName').value = customer.name || '';
+  document.getElementById('custPhone').value = customer.phone || '';
+  document.getElementById('custEmail').value = customer.email || '';
+  document.getElementById('custAddress').value = customer.address || '';
+  renderOrders(orders);
+}
+
+function renderOrders(orders) {
+  const list = document.getElementById('ordersList');
+  document.getElementById('orderCount').textContent = orders.length;
+  const total = orders.reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
+  document.getElementById('orderTotal').textContent = `Rs ${Math.round(total).toLocaleString('en-IN')}`;
+  document.getElementById('lastStatus').textContent = orders[0]?.status || '-';
+  if (!orders.length) {
+    list.innerHTML = '<div class="empty">No orders found for this phone.</div>';
+    return;
+  }
+  list.innerHTML = orders.map(order => {
+    const items = (order.items || []).map(item => {
+      const qty = Number(item.qty || 0);
+      const price = Number(item.price || 0);
+      return `<div class="item">
+        <span><strong>${item.name}</strong><br>${qty} ${item.unit}</span>
+        <span>Rs ${Math.round(qty * price).toLocaleString('en-IN')}</span>
+      </div>`;
+    }).join('');
+    return `<div class="order">
+      <div class="order-head">
+        <div>
+          <div class="order-no">${order.order_number}</div>
+          <div class="date">${new Date(order.created_at).toLocaleString('en-IN')}</div>
+        </div>
+        <div class="status">${(order.status || 'pending').replaceAll('_',' ')}</div>
+      </div>
+      <div class="items">${items || 'No items'}</div>
+      <div class="total">Total: Rs ${Math.round(Number(order.total_amount || 0)).toLocaleString('en-IN')}</div>
+    </div>`;
+  }).join('');
+}
+
+async function saveProfile() {
+  const payload = {
+    id: document.getElementById('custId').value,
+    name: document.getElementById('custName').value.trim(),
+    phone: document.getElementById('custPhone').value.trim(),
+    email: document.getElementById('custEmail').value.trim(),
+    address: document.getElementById('custAddress').value.trim()
+  };
+  if (!payload.name || !payload.phone || !payload.address) {
+    msg('profileMsg', 'Name, phone and address required', 'error');
+    return;
+  }
+  msg('profileMsg', 'Saving...', 'ok');
+  try {
+    const res = await fetch('/api/customer/profile', {
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!data.success) {
+      msg('profileMsg', data.error || 'Save failed', 'error');
+      return;
+    }
+    localStorage.setItem('bms_customer_phone', payload.phone);
+    document.getElementById('loginPhone').value = payload.phone;
+    msg('profileMsg', 'Details saved', 'ok');
+    loadProfile();
+  } catch(e) {
+    msg('profileMsg', 'Connection error', 'error');
+  }
+}
+
+function logoutCustomer() {
+  localStorage.removeItem('bms_customer_phone');
+  document.getElementById('profileCard').classList.add('hidden');
+  document.getElementById('ordersCard').classList.add('hidden');
+  msg('loginMsg', 'Logged out', 'ok');
+}
+</script>
+</body>
+</html>
