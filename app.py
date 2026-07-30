@@ -35,6 +35,8 @@ def get_database_url():
     for name in ("POSTGRES_URL", "NEON_DATABASE_URL", "POSTGRES_URL_NON_POOLING", "DATABASE_URL"):
         value = os.getenv(name)
         if value:
+            if name == "DATABASE_URL" and "render.com" in value.lower():
+                continue
             return value, name
     return None, None
 
