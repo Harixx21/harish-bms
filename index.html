@@ -1628,25 +1628,32 @@ body::before {
     font-size: 12px;
   }
   .hero {
-    min-height: 360px;
-    align-items:flex-end;
+    min-height: 0;
+    display:block;
     background:#251811;
+    border-radius:0 0 18px 18px;
   }
   .hero-bg {
-    background-image:url('/static/krg-materials-hero.jpg');
+    position:relative;
+    height:220px;
+    background-image:url('/static/krg-vehicle-yard-clean.png');
     background-position:center center;
-    filter:brightness(0.62) saturate(1.03) contrast(1.04);
+    background-size:cover;
+    filter:brightness(0.86) saturate(1.03) contrast(1.02);
   }
   .hero-bg::after {
     display:none;
   }
   .hero::after {
-    height:42px;
+    height:34px;
     background:linear-gradient(180deg,rgba(255,248,236,0),var(--bg));
   }
   .hero-content {
-    padding: 34px 14px 48px;
+    padding: 18px 14px 46px;
     text-align:center;
+    opacity:1 !important;
+    transform:none !important;
+    filter:none !important;
   }
   .hero-brand {
     font-size: clamp(66px, 23vw, 104px);
@@ -1656,6 +1663,13 @@ body::before {
   }
   .hero-content p {
     font-size: 13px;
+  }
+  .hero-line,
+  .hero-location,
+  .trust-strip {
+    opacity:1 !important;
+    transform:none !important;
+    filter:none !important;
   }
   .hero-stats {
     gap: 14px;
