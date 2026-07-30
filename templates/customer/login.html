@@ -20,7 +20,24 @@ body {
   overflow-wrap:anywhere;
   -webkit-tap-highlight-color:rgba(184,51,24,0.14);
 }
-button,input,textarea { font:inherit;touch-action:manipulation; }
+button,a,input,textarea {
+  font:inherit;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:rgba(184,51,24,0.16);
+}
+a:focus,
+a:active,
+button:focus,
+button:active {
+  outline:none;
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline:2px solid rgba(217,155,39,0.78);
+  outline-offset:2px;
+}
 .page {
   width:min(1120px,100%);
   margin:0 auto;

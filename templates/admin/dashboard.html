@@ -29,7 +29,24 @@ body {
   -webkit-tap-highlight-color:rgba(196,87,34,0.14);
 }
 button,input,select,textarea { font:inherit; }
-button,a,input,select,textarea { touch-action:manipulation; }
+button,a,input,select,textarea {
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:rgba(196,87,34,0.16);
+}
+a:focus,
+a:active,
+button:focus,
+button:active {
+  outline:none;
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline:2px solid rgba(223,157,53,0.82);
+  outline-offset:2px;
+}
 
 /* SIDEBAR */
 .sidebar {

@@ -9,6 +9,22 @@
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html { width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%; }
+button,a,input {
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:rgba(230,126,34,0.16);
+}
+a:focus,
+a:active,
+button:focus,
+button:active {
+  outline:none;
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline:2px solid rgba(243,156,18,0.8);
+  outline-offset:2px;
+}
 body {
   font-family: 'Segoe UI', sans-serif;
   min-height: 100dvh;
