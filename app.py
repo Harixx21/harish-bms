@@ -1035,8 +1035,6 @@ def admin_orders():
 def update_order_status():
     if not is_any_admin():
         return jsonify({"error": "Unauthorized"}), 401
-    if not is_owner_admin():
-        return jsonify({"success": False, "error": "Read only staff login. Owner mattum status change panna mudiyum."}), 403
     try:
         data = request.json
         conn = get_db()

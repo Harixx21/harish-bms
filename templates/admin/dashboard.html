@@ -168,15 +168,7 @@ tr:hover td { background:#fafafa; }
 .action-pill.process { color:#7b1fa2;border-color:#d8b7e6; }
 .action-pill.delivery { color:var(--success);border-color:#bde6d2; }
 .action-pill.reject { color:var(--danger);border-color:#f3c2bd; }
-.readonly-pill {
-  display:inline-flex;align-items:center;gap:6px;
-  border:1px dashed #cbd5d1;background:#f8faf9;color:var(--muted);
-  border-radius:999px;padding:6px 9px;font-size:12px;font-weight:800;margin-top:8px;
-}
 .is-staff .owner-only { display:none !important; }
-.is-staff .action-pill,.is-staff .status-select {
-  opacity:.58;cursor:not-allowed;background:#f4f4f4;color:#7b8585;border-color:#d8dddd;
-}
 .material-thumb { width:52px;height:42px;object-fit:cover;border-radius:8px;margin-right:10px;vertical-align:middle;border:1px solid var(--border); }
 .material-name-cell { display:flex;align-items:center;min-width:220px; }
 .ops-grid { display:grid;grid-template-columns:1.4fr .9fr;gap:20px;align-items:start; }
@@ -297,7 +289,7 @@ tr:hover td { background:#fafafa; }
       <h1 id="pageTitle">Dashboard</h1>
     </div>
     <div class="topbar-right">
-      <span class="admin-tag"><i class="fa fa-user-shield"></i> {{ 'Owner' if admin_role == 'owner' else 'Employee Read Only' }}</span>
+      <span class="admin-tag"><i class="fa fa-user-shield"></i> {{ 'Owner' if admin_role == 'owner' else 'Employee Orders' }}</span>
       <button class="logout-btn" onclick="window.location='/admin/logout'">Logout</button>
     </div>
   </div>
@@ -594,18 +586,17 @@ function renderOrders(orders) {
         <td style="font-size:12px;color:var(--muted)">${new Date(o.created_at).toLocaleDateString('en-IN')}</td>
         <td>${statusBadge(o.status)}</td>
         <td>
-          <select class="status-select" ${IS_OWNER ? '' : 'disabled'} onchange="updateStatus(${o.id},this.value)" style="padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer">
+          <select class="status-select" onchange="updateStatus(${o.id},this.value)" style="padding:5px 8px;border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer">
             ${['pending','confirmed','processing','out_for_delivery','delivered','rejected'].map(s=>
               `<option value="${s}" ${s===o.status?'selected':''}>${statusLabel(s)}</option>`
             ).join('')}
           </select>
           <button class="btn btn-outline btn-sm" style="margin-left:4px" onclick="openOrderDetail(${o.id})"><i class="fa fa-eye"></i></button>
           <div class="quick-actions">
-            <button class="action-pill confirm" ${IS_OWNER ? '' : 'disabled'} onclick="updateStatus(${o.id},'confirmed')">Confirm</button>
-            <button class="action-pill process" ${IS_OWNER ? '' : 'disabled'} onclick="updateStatus(${o.id},'processing')">Process</button>
-            <button class="action-pill delivery" ${IS_OWNER ? '' : 'disabled'} onclick="updateStatus(${o.id},'out_for_delivery')">Delivery</button>
-            <button class="action-pill reject" ${IS_OWNER ? '' : 'disabled'} onclick="updateStatus(${o.id},'rejected')">Reject</button>
-            ${IS_OWNER ? '' : '<span class="readonly-pill"><i class="fa fa-lock"></i> Read only</span>'}
+            <button class="action-pill confirm" onclick="updateStatus(${o.id},'confirmed')">Confirm</button>
+            <button class="action-pill process" onclick="updateStatus(${o.id},'processing')">Process</button>
+            <button class="action-pill delivery" onclick="updateStatus(${o.id},'out_for_delivery')">Delivery</button>
+            <button class="action-pill reject" onclick="updateStatus(${o.id},'rejected')">Reject</button>
           </div>
         </td>
       </tr>`).join('')
@@ -627,10 +618,6 @@ function activateAllOrdersFilter() {
 }
 
 async function updateStatus(orderId, status) {
-  if (!IS_OWNER) {
-    showToast('Employee login read only. Owner mattum status change panna mudiyum.');
-    return;
-  }
   try {
     const res = await fetch('/api/admin/order/status', {
       method:'PUT',
