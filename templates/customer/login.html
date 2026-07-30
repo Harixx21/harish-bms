@@ -2,20 +2,25 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Customer Login - KRG BMS</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
+html { width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%; }
 body {
   font-family:'Segoe UI', sans-serif;
-  min-height:100vh;
+  min-height:100dvh;
   background:
     linear-gradient(135deg,rgba(37,24,17,.82),rgba(125,32,19,.72)),
     url('https://5.imimg.com/data5/AN/FV/MY-28487226/building-construstion-material-1000x1000.jpg') center/cover fixed no-repeat;
   color:#2f241c;
-  padding:18px;
+  padding:max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+  overflow-x:hidden;
+  overflow-wrap:anywhere;
+  -webkit-tap-highlight-color:rgba(184,51,24,0.14);
 }
+button,input,textarea { font:inherit;touch-action:manipulation; }
 .page {
   width:min(1120px,100%);
   margin:0 auto;
@@ -65,7 +70,7 @@ input, textarea {
   border:2px solid #ecd9b8;
   border-radius:10px;
   padding:12px 13px;
-  font-size:14px;
+  font-size:16px;
   outline:none;
   font-family:inherit;
 }
@@ -175,6 +180,51 @@ button {
   .grid { grid-template-columns:1fr; }
   .summary { grid-template-columns:1fr; }
   .topbar { align-items:flex-start; }
+}
+@media(max-width:520px) {
+  body {
+    background-attachment:scroll;
+  }
+  .topbar {
+    gap:10px;
+  }
+  .brand {
+    min-width:0;
+    gap:8px;
+  }
+  .brand img {
+    width:76px;
+    height:42px;
+  }
+  .brand span {
+    font-size:14px;
+    line-height:1.1;
+  }
+  .back {
+    padding:9px 10px;
+    font-size:13px;
+    white-space:nowrap;
+  }
+  .card {
+    border-radius:12px;
+    padding:15px;
+  }
+  h1 {
+    font-size:22px;
+  }
+  .profile-actions {
+    flex-direction:column;
+  }
+  .order-head,
+  .item {
+    min-width:0;
+  }
+  .order-head {
+    flex-direction:column;
+  }
+  .status {
+    align-self:flex-start;
+  }
 }
 </style>
 </head>

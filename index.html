@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 {% set page_path = '' if page == 'home' else page %}
 {% set page_url = 'https://harish-bms.vercel.app/' ~ page_path %}
 {% if page == 'about' %}
@@ -72,7 +72,12 @@
   --radius: 10px;
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  width:100%;
+  overflow-x:hidden;
+  -webkit-text-size-adjust:100%;
+}
 body {
   font-family: 'Segoe UI', sans-serif;
   background:
@@ -82,7 +87,15 @@ body {
   opacity: 1;
   transform: none;
   animation: none;
+  min-height:100dvh;
+  width:100%;
+  overflow-x:hidden;
+  overflow-wrap:anywhere;
+  -webkit-tap-highlight-color:rgba(184,51,24,0.14);
 }
+img, iframe { max-width:100%; }
+button, input, select, textarea { font:inherit; }
+button, a, input, select, textarea { touch-action:manipulation; }
 body::before {
   content:"";
   position:fixed;
@@ -1761,6 +1774,143 @@ body::before {
   .mat-img,
   .mat-img-placeholder {
     min-height: 142px;
+  }
+}
+
+@media(max-width: 520px) {
+  .header {
+    width:100%;
+  }
+  .nav-links {
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr) auto;
+    align-items:center;
+    gap:7px;
+  }
+  .nav-menu {
+    display:flex;
+    gap:6px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    min-width:0;
+  }
+  .nav-menu::-webkit-scrollbar {
+    display:none;
+  }
+  .nav-menu a {
+    flex:0 0 auto;
+    white-space:nowrap;
+  }
+  .header-actions {
+    min-width:max-content;
+  }
+  .search-bar input,
+  .form-group input,
+  .form-group select,
+  .form-group textarea,
+  .contact-form input,
+  .contact-form textarea {
+    font-size:16px;
+  }
+  .hero-actions {
+    flex-direction:column;
+    align-items:stretch;
+    width:min(100%,300px);
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .hero-cta {
+    justify-content:center;
+    width:100%;
+  }
+  .hero-line {
+    max-width:100%;
+    white-space:normal;
+    text-align:left;
+  }
+  .hero-stats {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+  }
+  .hero-stat .num {
+    font-size:18px;
+  }
+  .hero-stat .lbl {
+    font-size:10px;
+  }
+  .home-product-card,
+  .about-copy,
+  .about-card,
+  .about-panel,
+  .about-feature,
+  .shop-intro,
+  .store-location-panel,
+  .mat-card {
+    border-radius:9px;
+  }
+  .home-product-img {
+    min-height:210px;
+    background-size:cover;
+  }
+  .home-product-card.vehicle .home-product-img {
+    background-size:contain;
+  }
+  .home-product-type {
+    width:auto;
+    max-width:100%;
+    align-self:flex-start;
+  }
+  .home-use,
+  .home-note,
+  .about-point,
+  .about-step,
+  .about-feature,
+  .track-item,
+  .track-head {
+    min-width:0;
+  }
+  .materials-grid {
+    grid-template-columns:1fr;
+  }
+  .mat-card {
+    grid-template-columns:112px minmax(0,1fr);
+  }
+  .mat-top {
+    align-items:flex-start;
+  }
+  .mat-chip {
+    display:none;
+  }
+  .qty-ctrl input {
+    width:42px;
+  }
+  .cart-drawer {
+    max-height:86dvh;
+    border-radius:18px 18px 0 0;
+  }
+  .modal {
+    align-items:flex-end;
+    padding:10px;
+    padding-bottom:max(10px, env(safe-area-inset-bottom));
+  }
+  .modal-box {
+    max-height:88dvh;
+    border-radius:18px;
+    padding:16px 14px 22px;
+  }
+  .modal-title {
+    font-size:18px;
+    line-height:1.2;
+  }
+  .track-head-actions {
+    flex-shrink:0;
+  }
+  .toast {
+    bottom:max(18px, env(safe-area-inset-bottom));
+    width:calc(100% - 24px);
+    max-width:420px;
+    white-space:normal;
   }
 }
 </style>
