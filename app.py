@@ -54,6 +54,13 @@ USE_POSTGRES = bool(DATABASE_URL)
 DB_PATH = os.environ.get("SQLITE_DB_PATH", os.path.join(tempfile.gettempdir(), "harish_bms.db"))
 DB_READY = False
 
+@app.after_request
+def add_no_cache_headers(response):
+    if response.content_type and "text/html" in response.content_type:
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+    return response
+
 if USE_POSTGRES:
     import psycopg2
     from psycopg2.extras import RealDictCursor
