@@ -2319,6 +2319,7 @@ let lastOrderNumber = localStorage.getItem('bms_last_order') || '';
 const UPI_PAYEE = '9944748140@upi';
 const UPI_PHONE = '9944748140';
 const UPI_PAYEE_NAME = 'KRG BMS';
+const MIN_ORDER_AMOUNT = 1000;
 let onlinePaymentConfirmed = false;
 if (lastOrderNumber &&
     localStorage.getItem('bms_cart') &&
@@ -2796,12 +2797,33 @@ function renderCartItems() {
     </div>`).join('');
   document.getElementById('cartSubtotal').textContent = `₹${total.toFixed(0)}`;
   document.getElementById('cartTotal').textContent = `₹${total.toFixed(0)}`;
+  const remaining = Math.max(0, MIN_ORDER_AMOUNT - total);
+  const checkoutBtn = summary.querySelector('.checkout-btn');
+  let minNote = document.getElementById('cartMinimumNote');
+  if (!minNote) {
+    minNote = document.createElement('div');
+    minNote.id = 'cartMinimumNote';
+    minNote.style.cssText = 'margin:10px 0 0;padding:10px;border-radius:12px;background:#fff7ed;color:#8a4a12;font-size:12px;font-weight:800;line-height:1.35';
+    summary.insertBefore(minNote, checkoutBtn);
+  }
+  minNote.textContent = total < MIN_ORDER_AMOUNT
+    ? `Minimum order Rs ${MIN_ORDER_AMOUNT}. Delivery-ku innum Rs ${remaining.toFixed(0)} add pannunga.`
+    : 'Minimum order reached. Delivery order place pannalam.';
+  minNote.style.background = total < MIN_ORDER_AMOUNT ? '#fff7ed' : '#effaf4';
+  minNote.style.color = total < MIN_ORDER_AMOUNT ? '#8a4a12' : '#116b45';
   summary.style.display = 'block';
 }
 
 // CHECKOUT
 function openCheckout() {
   if (cart.length === 0) { showToast('Cart is empty'); return; }
+  const total = cart.reduce((s,c) => s+c.price*c.qty, 0);
+  if (total < MIN_ORDER_AMOUNT) {
+    const remaining = MIN_ORDER_AMOUNT - total;
+    showToast(`Minimum order Rs ${MIN_ORDER_AMOUNT}. Innum Rs ${remaining.toFixed(0)} add pannunga.`, 'warning');
+    renderCartItems();
+    return;
+  }
   document.body.classList.remove('product-locked');
   document.getElementById('cartDrawer').classList.remove('open');
   if (!getCustomerLogin()) {
@@ -2809,7 +2831,6 @@ function openCheckout() {
     return;
   }
   closeAll();
-  const total = cart.reduce((s,c) => s+c.price*c.qty, 0);
   document.getElementById('orderSummaryItems').innerHTML = cart.map(c =>
     `<div class="item-row"><span>${c.name} ×${c.qty}</span><span>₹${(c.price*c.qty).toFixed(0)}</span></div>`
   ).join('');
@@ -2851,6 +2872,12 @@ async function placeOrder() {
   if (!phone || phone.length < 10) { showToast('Enter valid phone number'); return; }
   if (!address) { showToast('Enter delivery address'); return; }
   if (cart.length === 0) { showToast('Cart is empty'); return; }
+  if (total < MIN_ORDER_AMOUNT) {
+    const remaining = MIN_ORDER_AMOUNT - total;
+    setOrderStatus(`Minimum order Rs ${MIN_ORDER_AMOUNT}. Innum Rs ${remaining.toFixed(0)} add pannunga.`, 'error');
+    showToast(`Minimum order Rs ${MIN_ORDER_AMOUNT}.`, 'warning');
+    return;
+  }
   if (paymentMethod === 'online' && !onlinePaymentConfirmed) {
     showOnlinePaymentPrompt(total);
     showToast('GPay payment mudichitu Payment Done click pannunga', 'info');

@@ -28,6 +28,7 @@ STAFF_PASSWORD = os.environ.get("STAFF_PASSWORD", "098765")
 TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "").strip()
 TWILIO_AUTH_TOKEN = os.environ.get("TWILIO_AUTH_TOKEN", "").strip()
 TWILIO_FROM_NUMBER = os.environ.get("TWILIO_FROM_NUMBER", "").strip()
+MIN_ORDER_AMOUNT = float(os.environ.get("MIN_ORDER_AMOUNT", "1000"))
 
 # ─── DB CONFIG ───────────────────────────────────────────
 def get_database_url():
@@ -667,6 +668,12 @@ def place_order():
                 "price": price,
             })
         total = sum(item["price"] * item["qty"] for item in order_items)
+        if total < MIN_ORDER_AMOUNT:
+            return jsonify({
+                "success": False,
+                "error": f"Minimum order amount is ₹{MIN_ORDER_AMOUNT:.0f}. Delivery-ku order total increase pannunga.",
+                "minimum_order_amount": MIN_ORDER_AMOUNT,
+            }), 400
         payment_method = (data.get("payment_method") or "cod").strip().lower()
         if payment_method not in ("cod", "online"):
             payment_method = "cod"
