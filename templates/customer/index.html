@@ -55,16 +55,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 :root {
-  --primary: #b83318;
-  --primary-dark: #7d2013;
-  --secondary: #1f2f2b;
-  --accent: #d99b27;
-  --bg: #fff8ec;
+  --primary: #24383b;
+  --primary-dark: #132326;
+  --secondary: #263f44;
+  --accent: #c99a42;
+  --bg: #f5f0e7;
   --card-bg: #ffffff;
   --text: #2f241c;
   --text-light: #7e6b5a;
   --border: #ecd9b8;
-  --success: #a65f16;
+  --success: #8f6b24;
   --danger: #b92b24;
   --cream: #fff3d8;
   --ink: #251811;
@@ -81,7 +81,7 @@ html {
 body {
   font-family: 'Segoe UI', sans-serif;
   background:
-    linear-gradient(180deg, rgba(255,248,236,0.86), rgba(255,248,236,0.94) 42%, rgba(246,239,226,0.96)),
+    linear-gradient(180deg, rgba(245,240,231,0.88), rgba(245,240,231,0.96) 44%, rgba(238,232,221,0.98)),
     url('/static/krg-materials-hero.jpg') center top / cover fixed no-repeat;
   color: var(--text);
   opacity: 1;
@@ -124,9 +124,7 @@ body::before {
   pointer-events:none;
   z-index:-1;
   background:
-    radial-gradient(circle at 12% 12%, rgba(217,155,39,0.22), transparent 28%),
-    radial-gradient(circle at 88% 26%, rgba(184,51,24,0.16), transparent 30%),
-    linear-gradient(180deg, rgba(255,248,236,0.30), rgba(255,248,236,0.72));
+    linear-gradient(180deg, rgba(245,240,231,0.12), rgba(245,240,231,0.72));
 }
 @keyframes pageOpen {
   from { opacity: 0; transform: translateY(18px) scale(.99); filter: blur(8px); }
@@ -164,7 +162,7 @@ body::before {
   letter-spacing:8px;
   padding-left:8px;
   color:#fff7ed;
-  background:linear-gradient(90deg,#ffffff 0%,#ffd08a 22%,#f97316 48%,#ffffff 72%,#ff8a1d 100%);
+  background:linear-gradient(90deg,#ffffff 0%,#e9d5a1 22%,#c99a42 48%,#ffffff 72%,#d8b35e 100%);
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
@@ -183,7 +181,7 @@ body::before {
   bottom:-9px;
   width:82%;
   height:4px;
-  background:linear-gradient(90deg,transparent,#f97316,#ffd08a,transparent);
+  background:linear-gradient(90deg,transparent,#c99a42,#e9d5a1,transparent);
   box-shadow:0 0 18px rgba(249,115,22,.72);
 }
 .loader-krg::after {
@@ -268,7 +266,7 @@ body::before {
 /* HEADER */
 .header {
   background:
-    linear-gradient(90deg,rgba(37,24,17,0.90),rgba(37,24,17,0.68),rgba(37,24,17,0.90)),
+    linear-gradient(90deg,rgba(16,28,31,0.94),rgba(21,37,40,0.78),rgba(16,28,31,0.94)),
     url('https://5.imimg.com/data5/AN/FV/MY-28487226/building-construstion-material-1000x1000.jpg') center 48%/cover no-repeat;
   backdrop-filter: blur(12px);
   padding: 0;
@@ -320,7 +318,7 @@ body::before {
 }
 .cart-btn {
   position: relative;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
+  background: linear-gradient(135deg, var(--primary), #405f64);
   border: none;
   color: white;
   width: 44px; height: 44px;
@@ -355,7 +353,7 @@ body::before {
 }
 .search-bar input::placeholder { color: rgba(255,255,255,0.5); }
 .track-btn {
-  background: linear-gradient(135deg, var(--primary), var(--accent)); border: none; color: white;
+  background: linear-gradient(135deg, var(--primary), #405f64); border: none; color: white;
   padding: 10px 16px; border-radius: 8px; font-size: 13px;
   font-weight: 600; cursor: pointer; white-space: nowrap;
 }
@@ -363,18 +361,26 @@ body::before {
 /* HERO - FULL BACKGROUND IMAGE */
 .hero {
   position: relative;
-  min-height: 390px;
-  display: flex; align-items: center; justify-content: center;
+  min-height: 520px;
+  display: flex; align-items: center; justify-content: flex-start;
   overflow: hidden;
-  background: #251811;
+  background: #101c1f;
 }
 .hero-bg {
   position: absolute; inset: 0;
-  background-image: url('/static/krg-vehicle-yard-clean.png');
+  background-image: url('/static/krg-materials-hero.jpg');
   background-size: cover;
-  background-position: center 48%;
+  background-position: center center;
   background-repeat: no-repeat;
-  filter: brightness(0.54) saturate(1.08) contrast(1.05);
+  filter: brightness(0.72) saturate(1.02) contrast(1.05);
+}
+.hero-bg::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,rgba(8,17,19,0.90) 0%,rgba(8,17,19,0.66) 43%,rgba(8,17,19,0.18) 76%),
+    linear-gradient(180deg,rgba(8,17,19,0.18),rgba(8,17,19,0.54));
 }
 .header-actions { display:flex;align-items:center;gap:8px; }
 .nav-links {
@@ -386,7 +392,7 @@ body::before {
   margin:0 12px 8px;
   border-radius:12px;
   background:
-    linear-gradient(90deg,rgba(37,24,17,0.82),rgba(37,24,17,0.58),rgba(37,24,17,0.82)),
+    linear-gradient(90deg,rgba(16,28,31,0.86),rgba(16,28,31,0.62),rgba(16,28,31,0.86)),
     url('https://5.imimg.com/data5/AN/FV/MY-28487226/building-construstion-material-1000x1000.jpg') center 58%/cover no-repeat;
   border:1px solid rgba(255,230,180,0.16);
   box-shadow:0 12px 30px rgba(0,0,0,0.24);
@@ -415,7 +421,7 @@ body::before {
   border-color:rgba(255,230,180,0.18);
 }
 .nav-links a.active {
-  background:linear-gradient(135deg,var(--primary),var(--accent));
+  background:linear-gradient(135deg,#f4d08a,#c99a42);
   color:white;
   border-color:transparent;
 }
@@ -439,39 +445,40 @@ body::before {
 .hero::after {
   content: "";
   position: absolute; inset: auto 0 0 0; height: 96px;
-  background: linear-gradient(180deg, rgba(255,248,236,0), var(--bg));
+  background: linear-gradient(180deg, rgba(245,240,231,0), var(--bg));
   z-index: 1;
 }
 .hero-content {
   position: relative;
   z-index: 2;
-  text-align: center;
-  padding: 36px 20px 50px;
-  width: 100%;
+  text-align: left;
+  padding: 48px 20px 76px;
+  width: min(100%, 1120px);
+  margin: 0 auto;
 }
 .hero-brand {
-  color:#fff8e9;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(78px, 15vw, 168px);
-  line-height:.78;
-  font-weight:950;
-  letter-spacing:4px;
-  text-shadow:0 8px 28px rgba(0,0,0,.62), 0 2px 0 rgba(217,155,39,.55);
+  width: min(290px, 72vw);
+  min-height: 112px;
+  background: url('/static/logo-krg-bms-main.png') left center / contain no-repeat;
+  filter: drop-shadow(0 18px 30px rgba(0,0,0,.44));
+  text-indent: -9999px;
+  overflow: hidden;
 }
 .hero-content h2 {
-  color: white; font-size: 24px; font-weight: 950;
+  color: white; font-size: clamp(28px, 5vw, 56px); font-weight: 950;
   text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  line-height:1.12;
-  margin-top:16px;
+  line-height:1.04;
+  margin-top:18px;
+  max-width: 720px;
 }
 .hero-content p {
-  color: rgba(255,255,255,0.94); font-size: 15px; margin: 10px auto 0;
-  max-width: 680px;
+  color: rgba(255,255,255,0.92); font-size: 16px; margin: 13px 0 0;
+  max-width: 620px;
   text-shadow: 0 1px 4px rgba(0,0,0,0.5);
 }
 .hero-actions {
   display:flex;
-  justify-content:center;
+  justify-content:flex-start;
   gap:10px;
   flex-wrap:wrap;
   margin-top:18px;
@@ -484,15 +491,15 @@ body::before {
   align-items:center;
   gap:8px;
   color:white;
-  background:linear-gradient(135deg,var(--primary),var(--accent));
+  background:linear-gradient(135deg,#203539,#48656a);
   font-size:13px;
   font-weight:950;
   text-decoration:none;
   cursor:pointer;
-  box-shadow:0 12px 28px rgba(184,51,24,0.28);
+  box-shadow:0 12px 28px rgba(6,16,19,0.28);
 }
 .hero-cta.secondary {
-  background:rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.10);
   border:1px solid rgba(255,255,255,0.24);
   box-shadow:none;
 }
@@ -503,7 +510,7 @@ body::before {
   margin-top: 16px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.10);
   border: 1px solid rgba(255,255,255,0.2);
   color: #fff6dd;
   font-size: 12px;
@@ -511,24 +518,24 @@ body::before {
   backdrop-filter: blur(8px);
 }
 .hero-stats {
-  display: flex; justify-content: center; gap: 28px; margin-top: 20px;
+  display: flex; justify-content: flex-start; gap: 28px; margin-top: 22px;
 }
-.hero-stat { text-align: center; }
+.hero-stat { text-align: left; }
 .hero-stat .num {
-  color: #f3c464; font-size: 22px; font-weight: 900;
+  color: #e9c777; font-size: 24px; font-weight: 900;
   text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 .hero-stat .lbl { color: rgba(255,255,255,0.85); font-size: 11px; }
 .hero-location {
-  margin: 18px auto 0;
-  width: min(92%, 520px);
+  margin: 22px 0 0;
+  width: min(100%, 560px);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 10px 12px;
   border-radius: 10px;
-  background: rgba(37,24,17,0.72);
+  background: rgba(12,25,28,0.78);
   border: 1px solid rgba(255,255,255,0.22);
   color: white;
   backdrop-filter: blur(10px);
@@ -540,7 +547,7 @@ body::before {
   flex-shrink: 0;
   display:inline-flex;align-items:center;gap:6px;
   padding:8px 10px;border-radius:8px;
-  background:linear-gradient(135deg,var(--primary),var(--accent));
+  background:linear-gradient(135deg,#f2ce82,#c99a42);
   color:white;text-decoration:none;font-size:12px;font-weight:900;
 }
 .trust-strip {
@@ -592,9 +599,9 @@ body::before {
 }
 .home-product-card {
   background:
-    linear-gradient(90deg,rgba(37,24,17,0.90),rgba(37,24,17,0.72),rgba(255,248,236,0.92)),
+    linear-gradient(90deg,rgba(16,28,31,0.88),rgba(16,28,31,0.62),rgba(245,240,231,0.94)),
     var(--bg-img) center/cover no-repeat;
-  border:1px solid rgba(184,51,24,0.12);
+  border:1px solid rgba(38,63,68,0.14);
   border-radius:10px;
   overflow:hidden;
   box-shadow:0 22px 56px rgba(82,45,18,0.18);
@@ -623,7 +630,7 @@ body::before {
   display:flex;
   flex-direction:column;
   justify-content:center;
-  background:rgba(255,247,232,0.96);
+  background:rgba(255,253,248,0.96);
   margin:14px 14px 14px 0;
   border-radius:9px;
   border:1px solid rgba(255,255,255,0.68);
@@ -656,9 +663,9 @@ body::before {
   display:inline-flex;
   align-items:center;
   gap:6px;
-  color:var(--primary);
-  background:#fff3d8;
-  border:1px solid #efd59d;
+  color:#203539;
+  background:#f5ead3;
+  border:1px solid #dfc38e;
   border-radius:999px;
   padding:5px 9px;
   font-size:11px;
@@ -694,7 +701,7 @@ body::before {
 }
 .home-use strong {
   display:block;
-  color:var(--primary);
+  color:#24383b;
   font-size:11px;
   font-weight:950;
   text-transform:uppercase;
@@ -1053,7 +1060,7 @@ body::before {
   gap:8px;
   text-decoration:none;
   color:white;
-  background:linear-gradient(135deg,#251811,#7d2013);
+  background:linear-gradient(135deg,#132326,#405f64);
   border-radius:10px;
   padding:12px 14px;
   font-size:13px;
@@ -1443,7 +1450,7 @@ body::before {
   flex:1;
 }
 .online-pay-primary { background:linear-gradient(135deg,var(--primary),var(--accent)); color:#fff; }
-.online-pay-secondary { background:linear-gradient(135deg,#ea580c,#f97316); color:#fff; }
+.online-pay-secondary { background:linear-gradient(135deg,#6f7f82,#405f64); color:#fff; }
 @media(max-width:520px) { .payment-options { grid-template-columns:1fr; } }
 
 /* PLACE ORDER BUTTON - BIG & BOLD */
@@ -1552,7 +1559,7 @@ body::before {
 .toast span { vertical-align:middle; }
 .toast.success { background:linear-gradient(135deg,var(--primary),var(--accent)); }
 .toast.error { background:linear-gradient(135deg,#8f1f19,#d9442f); }
-.toast.warning { background:linear-gradient(135deg,#9a6414,#d99b27); color:#fff9e8; }
+.toast.warning { background:linear-gradient(135deg,#80601f,#c99a42); color:#fff9e8; }
 .toast.info { background:linear-gradient(135deg,#1f4b64,#3d7d96); }
 
 /* LOADING */
@@ -1628,13 +1635,25 @@ body::before {
     font-size: 12px;
   }
   .hero {
-    min-height: 340px;
+    min-height: 560px;
+    align-items:flex-end;
+  }
+  .hero-bg {
+    background-position:center top;
+    filter:brightness(0.78) saturate(1.02) contrast(1.04);
+  }
+  .hero-bg::after {
+    background:
+      linear-gradient(180deg,rgba(8,17,19,0.10) 0%,rgba(8,17,19,0.28) 32%,rgba(8,17,19,0.92) 100%);
   }
   .hero-content {
-    padding: 34px 14px 48px;
+    padding: 210px 14px 48px;
+    text-align:center;
   }
   .hero-brand {
-    font-size: clamp(66px, 23vw, 104px);
+    width:min(250px, 76vw);
+    min-height:94px;
+    margin:0 auto;
   }
   .hero-content h2 {
     font-size: 20px;
@@ -1645,9 +1664,13 @@ body::before {
   .hero-stats {
     gap: 14px;
     flex-wrap: wrap;
+    justify-content:center;
   }
+  .hero-stat { text-align:center; }
   .hero-location {
     width: calc(100% - 24px);
+    margin-left:auto;
+    margin-right:auto;
   }
   .trust-strip {
     width: calc(100% - 20px);
@@ -1830,6 +1853,9 @@ body::before {
     width:min(100%,300px);
     margin-left:auto;
     margin-right:auto;
+  }
+  .hero-content {
+    padding-top: 190px;
   }
   .hero-cta {
     justify-content:center;
