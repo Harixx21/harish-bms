@@ -1628,29 +1628,35 @@ body::before {
     font-size: 12px;
   }
   .hero {
-    min-height: 0;
+    min-height: 0 !important;
     display:block;
-    background:#251811;
+    background:#251811 !important;
+    background-image:none !important;
     border-radius:0 0 18px 18px;
   }
   .hero-bg {
     position:relative;
     height:220px;
-    background-image:url('/static/krg-vehicle-yard-clean.png');
-    background-position:center center;
-    background-size:cover;
-    filter:brightness(0.86) saturate(1.03) contrast(1.02);
+    inset:auto !important;
+    width:100%;
+    background:#251811 url('/static/krg-vehicle-yard-clean.png') center center / cover no-repeat !important;
+    filter:none !important;
+    border-radius:0;
   }
+  .hero-bg::before,
   .hero-bg::after {
-    display:none;
+    content:none !important;
+    display:none !important;
   }
   .hero::after {
-    height:34px;
-    background:linear-gradient(180deg,rgba(255,248,236,0),var(--bg));
+    content:none !important;
+    display:none !important;
   }
   .hero-content {
     padding: 18px 14px 46px;
     text-align:center;
+    background:#251811 !important;
+    background-image:none !important;
     opacity:1 !important;
     transform:none !important;
     filter:none !important;
