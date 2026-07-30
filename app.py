@@ -839,11 +839,28 @@ def admin_login():
         data = request.json or {}
         email = (data.get("email") or data.get("username") or "").strip().lower()
         password = data.get("password") or ""
+        login_role = (data.get("role") or "owner").strip().lower()
+        if login_role == "employee" and email == OWNER_EMAIL:
+            return jsonify({
+                "success": False,
+                "error": "Owner email employee login-la use panna mudiyadhu. Owner tab use pannunga.",
+            }), 401
         if email == OWNER_EMAIL and password == OWNER_PASSWORD:
             session["admin"] = True
             session["admin_user"] = OWNER_EMAIL
             session["admin_role"] = "owner"
             return jsonify({"success": True, "role": "owner"})
+        if login_role == "owner":
+            notified = False
+            try:
+                notified = notify_admin_login_attempt(email)
+            except Exception:
+                notified = False
+            return jsonify({
+                "success": False,
+                "error": "Only owner can login",
+                "notified": notified,
+            }), 401
         if email and password == STAFF_PASSWORD:
             conn = get_db()
             cur = conn.cursor(cursor_factory=RealDictCursor)
