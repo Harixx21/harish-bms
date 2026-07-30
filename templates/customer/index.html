@@ -1628,24 +1628,24 @@ body::before {
     font-size: 12px;
   }
   .hero {
-    min-height: 520px;
+    min-height: 360px;
     align-items:flex-end;
     background:#251811;
   }
   .hero-bg {
     background-image:url('/static/krg-materials-hero.jpg');
-    background-position:center top;
-    filter:brightness(0.82) saturate(1.02) contrast(1.02);
+    background-position:center center;
+    filter:brightness(0.62) saturate(1.03) contrast(1.04);
   }
   .hero-bg::after {
-    content:"";
-    position:absolute;
-    inset:0;
-    background:
-      linear-gradient(180deg,rgba(37,24,17,0.08) 0%,rgba(37,24,17,0.35) 42%,rgba(37,24,17,0.92) 100%);
+    display:none;
+  }
+  .hero::after {
+    height:42px;
+    background:linear-gradient(180deg,rgba(255,248,236,0),var(--bg));
   }
   .hero-content {
-    padding: 190px 14px 48px;
+    padding: 34px 14px 48px;
     text-align:center;
   }
   .hero-brand {
