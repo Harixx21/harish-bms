@@ -22,7 +22,7 @@ app.secret_key = os.environ.get("SECRET_KEY", "bms_secret_key_2024")
 CORS(app)
 
 SITE_URL = os.environ.get("SITE_URL", "https://harish-bms.vercel.app").rstrip("/")
-OWNER_EMAIL = os.environ.get("OWNER_EMAIL", "rameshgandi@gmail.com").strip().lower()
+OWNER_EMAIL = os.environ.get("OWNER_EMAIL", "harishkumar05.dgl@gmail.com").strip().lower()
 OWNER_PASSWORD = os.environ.get("OWNER_PASSWORD", "123456")
 STAFF_PASSWORD = os.environ.get("STAFF_PASSWORD", "098765")
 TWILIO_ACCOUNT_SID = os.environ.get("TWILIO_ACCOUNT_SID", "").strip()
