@@ -35,7 +35,7 @@ def get_database_url():
     for name in ("POSTGRES_URL", "NEON_DATABASE_URL", "POSTGRES_URL_NON_POOLING", "DATABASE_URL"):
         value = os.getenv(name)
         if value:
-            if name == "DATABASE_URL" and "render.com" in value.lower():
+            if "render.com" in value.lower() or "dpg-d8t8pt68bjmc73ee0dr0-a" in value.lower():
                 continue
             return value, name
     return None, None
@@ -68,6 +68,13 @@ def get_db():
     conn = sqlite3.connect(DB_PATH, factory=AppSqliteConnection)
     conn.row_factory = sqlite3.Row
     return conn
+
+def fallback_to_sqlite():
+    global DATABASE_URL, DATABASE_SOURCE, USE_POSTGRES, DB_READY
+    DATABASE_URL = None
+    DATABASE_SOURCE = "SQLITE_DB_PATH"
+    USE_POSTGRES = False
+    DB_READY = False
 
 def get_cursor(conn, dict_rows=False):
     if USE_POSTGRES and dict_rows:
@@ -527,6 +534,13 @@ def prepare_database():
         try:
             ensure_db()
         except Exception as e:
+            if USE_POSTGRES:
+                try:
+                    fallback_to_sqlite()
+                    ensure_db()
+                    return None
+                except Exception as fallback_error:
+                    e = fallback_error
             return jsonify({
                 "success": False,
                 "error": f"DB init failed: {e}",
