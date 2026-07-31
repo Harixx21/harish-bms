@@ -2092,6 +2092,138 @@ body::before {
     display:grid;
     grid-template-columns:minmax(0,1fr) auto;
   }
+  body[data-page="about"] .about-section {
+    display:block;
+    width:calc(100% - 24px);
+    margin:16px auto 0;
+  }
+  body[data-page="about"] .about-copy,
+  body[data-page="about"] .about-panel {
+    border-radius:14px;
+    padding:18px;
+    background:rgba(255,255,255,0.96);
+  }
+  body[data-page="about"] .about-copy h3,
+  body[data-page="about"] .about-panel h3,
+  body[data-page="about"] .about-brand-copy h3 {
+    font-size:22px;
+    line-height:1.16;
+  }
+  body[data-page="about"] .about-copy p,
+  body[data-page="about"] .about-panel p,
+  body[data-page="about"] .about-brand-copy p {
+    font-size:13px;
+    line-height:1.55;
+  }
+  body[data-page="about"] .about-points {
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  body[data-page="about"] .about-point {
+    display:block;
+    padding:12px;
+  }
+  body[data-page="about"] .about-point i {
+    margin:0 0 7px;
+    font-size:16px;
+  }
+  body[data-page="about"] .about-card {
+    min-height:260px;
+    margin-top:12px;
+    border-radius:14px;
+  }
+  body[data-page="about"] .about-card-content {
+    padding:16px;
+    background:linear-gradient(180deg,rgba(37,24,17,0),rgba(37,24,17,0.92));
+  }
+  body[data-page="about"] .about-brand-banner {
+    display:block;
+    width:calc(100% - 24px);
+    margin:14px auto 0;
+    padding:14px;
+    border-radius:14px;
+  }
+  body[data-page="about"] .about-brand-logo {
+    min-height:150px;
+    padding:12px;
+    border-radius:12px;
+  }
+  body[data-page="about"] .about-brand-logo img {
+    max-height:132px;
+  }
+  body[data-page="about"] .about-brand-copy {
+    padding:14px 4px 2px;
+  }
+  body[data-page="about"] .about-brand-stats {
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+  }
+  body[data-page="about"] .about-brand-stat {
+    padding:10px 8px;
+    text-align:center;
+  }
+  body[data-page="about"] .about-brand-stat strong {
+    font-size:16px;
+  }
+  body[data-page="about"] .about-long {
+    width:calc(100% - 24px);
+    margin:14px auto 28px;
+    gap:14px;
+  }
+  body[data-page="about"] .about-supply-grid {
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  body[data-page="about"] .about-supply-card {
+    min-height:174px;
+    border-radius:12px;
+  }
+  body[data-page="about"] .about-supply-card div {
+    padding:12px;
+  }
+  body[data-page="about"] .about-supply-card strong {
+    font-size:14px;
+  }
+  body[data-page="about"] .about-supply-card span {
+    font-size:11px;
+  }
+  body[data-page="about"] .about-feature-grid {
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  body[data-page="about"] .about-feature {
+    min-height:220px;
+    border-radius:14px;
+    padding:16px;
+  }
+  body[data-page="about"] .about-process {
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  body[data-page="about"] .about-step {
+    padding:12px;
+    border-radius:12px;
+  }
+  body[data-page="about"] .about-cta {
+    display:block;
+    padding:18px;
+    border-radius:14px;
+    text-align:center;
+  }
+  body[data-page="about"] .about-cta .hero-cta {
+    margin-top:14px;
+    width:100%;
+    justify-content:center;
+  }
+}
+
+@media(max-width: 380px) {
+  body[data-page="about"] .about-points,
+  body[data-page="about"] .about-supply-grid,
+  body[data-page="about"] .about-process,
+  body[data-page="about"] .about-brand-stats {
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
