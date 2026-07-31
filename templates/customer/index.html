@@ -1566,6 +1566,30 @@ body::before {
 
 /* LOADING */
 .loading { text-align: center; padding: 40px; color: var(--text-light); }
+.loading.brand-loading {
+  grid-column:1/-1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-height:220px;
+  padding:34px 18px;
+  color:var(--ink);
+  font-weight:900;
+}
+.loading.brand-loading img {
+  width:min(220px, 70vw);
+  height:auto;
+  display:block;
+  object-fit:contain;
+  filter:drop-shadow(0 12px 24px rgba(37,24,17,0.18));
+}
+.loading.brand-loading span {
+  color:var(--text-light);
+  font-size:13px;
+  font-weight:800;
+}
 .spinner {
   width: 32px; height: 32px; border: 3px solid var(--border);
   border-top-color: var(--primary); border-radius: 50%;
@@ -1808,28 +1832,28 @@ body::before {
     gap: 14px;
   }
   .mat-card {
-    display: grid;
-    grid-template-columns: 118px minmax(0, 1fr);
-    min-height: 150px;
+    display:block;
+    grid-template-columns:none;
+    min-height:0;
   }
   .mat-img,
   .mat-img-placeholder {
-    height: 100%;
-    min-height: 150px;
+    height:168px;
+    min-height:0;
   }
   .mat-body {
-    padding: 11px;
+    padding: 13px;
   }
   .mat-name {
-    min-height: 0;
-    font-size: 14px;
+    min-height: 38px;
+    font-size: 15px;
   }
   .mat-desc {
-    height: auto;
-    max-height: 38px;
+    height: 30px;
+    max-height:none;
   }
   .mat-price {
-    font-size: 17px;
+    font-size: 20px;
   }
   .contact-form {
     width: 100%;
@@ -1860,11 +1884,13 @@ body::before {
     margin: 0;
   }
   .mat-card {
-    grid-template-columns: 104px minmax(0, 1fr);
+    display:block;
+    grid-template-columns:none;
   }
   .mat-img,
   .mat-img-placeholder {
-    min-height: 142px;
+    height:168px;
+    min-height:0;
   }
 }
 
@@ -1965,7 +1991,8 @@ body::before {
     grid-template-columns:1fr;
   }
   .mat-card {
-    grid-template-columns:112px minmax(0,1fr);
+    display:block;
+    grid-template-columns:none;
   }
   .mat-top {
     align-items:flex-start;
@@ -2359,7 +2386,11 @@ body::before {
 <div class="section-title">Available Materials & Rentals</div>
 <div class="section-subtitle">Choose what you need, add quantity or rental hours, and track every order from confirmation to delivery.</div>
 <div class="materials-grid" id="materialsGrid">
-  <div class="loading"><div class="spinner"></div>Loading materials...</div>
+  <div class="loading brand-loading">
+    <img src="/static/logo-krg-bms-main.png" alt="KRG BMS logo">
+    <div>Loading materials...</div>
+    <span>Please wait, live products are loading</span>
+  </div>
 </div>
 <div class="lock-message" id="productsLockMessage">
   <h3>Login to view products</h3>
@@ -2613,7 +2644,12 @@ async function fetchJson(path) {
   let lastError;
   for (const url of urls) {
     try {
-      const res = await fetch(url, {cache: 'no-store'});
+      const sep = url.includes('?') ? '&' : '?';
+      const freshUrl = `${url}${sep}_=${Date.now()}`;
+      const res = await fetch(freshUrl, {
+        cache: 'no-store',
+        headers: {'Cache-Control': 'no-cache'}
+      });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.json();
     } catch (e) {
@@ -2621,6 +2657,14 @@ async function fetchJson(path) {
     }
   }
   throw lastError;
+}
+
+function materialLoadingMarkup(text='Loading materials...') {
+  return `<div class="loading brand-loading">
+    <img src="/static/logo-krg-bms-main.png" alt="KRG BMS logo">
+    <div>${text}</div>
+    <span>Please wait, live products are loading</span>
+  </div>`;
 }
 
 async function postJson(path, payload) {
@@ -2804,18 +2848,16 @@ async function loadMaterials(cat='', search='') {
     navigateWithEffect(url);
     return;
   }
-  grid.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+  grid.innerHTML = materialLoadingMarkup();
   try {
     const data = await fetchJson(`/api/materials?category=${encodeURIComponent(cat)}&search=${encodeURIComponent(search)}`);
     if (!data.success) { grid.innerHTML = '<div class="loading">Failed to load</div>'; return; }
     allMaterials = data.data;
     renderMaterials(allMaterials);
   } catch(e) {
-    allMaterials = FALLBACK_MATERIALS.filter(m =>
-      (!cat || m.category === cat) &&
-      (!search || m.name.toLowerCase().includes(search.toLowerCase()))
-    );
-    renderMaterials(allMaterials);
+    console.error(e);
+    allMaterials = [];
+    grid.innerHTML = '<div class="loading brand-loading"><img src="/static/logo-krg-bms-main.png" alt="KRG BMS logo"><div>Could not load live products</div><span>Refresh pannunga. Old sample data mobile-la show panna maaten.</span></div>';
   }
 }
 
