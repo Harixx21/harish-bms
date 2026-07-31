@@ -2830,6 +2830,16 @@ const FALLBACK_MATERIALS = [
   {id:16,name:'Tractor Rental',category:'Rental',price:900,unit:'hour',stock:10,image_url:'https://agriculturepost.com/wp-content/uploads/2021/09/TAFE-launches-Massey-Ferguson-7235-tractor-for-Bihar-Jharkhand-and-Haryana.jpg',description:'Tractor rental for soil shifting, material movement, levelling and small site support.'}
 ];
 
+async function fetchWithTimeout(url, options={}, timeoutMs=8000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, {...options, signal: controller.signal});
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function fetchJson(path) {
   const urls = window.location.origin === LIVE_API_ORIGIN
     ? [path]
@@ -2839,10 +2849,10 @@ async function fetchJson(path) {
     try {
       const sep = url.includes('?') ? '&' : '?';
       const freshUrl = `${url}${sep}_=${Date.now()}`;
-      const res = await fetch(freshUrl, {
+      const res = await fetchWithTimeout(freshUrl, {
         cache: 'no-store',
         headers: {'Cache-Control': 'no-cache'}
-      });
+      }, 8000);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return await res.json();
     } catch (e) {
@@ -2867,11 +2877,11 @@ async function postJson(path, payload) {
   let lastError;
   for (const url of urls) {
     try {
-      const res = await fetch(url, {
+      const res = await fetchWithTimeout(url, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(payload)
-      });
+      }, 12000);
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.error || `HTTP ${res.status}`);
       return body;
