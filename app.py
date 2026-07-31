@@ -592,8 +592,7 @@ SEO_LANDING_PAGES = {
     ),
 }
 
-@app.route("/<seo_slug>")
-def seo_landing(seo_slug):
+def render_seo_landing(seo_slug):
     seo = SEO_LANDING_PAGES.get(seo_slug)
     if not seo:
         return redirect(url_for("index"))
@@ -604,6 +603,30 @@ def seo_landing(seo_slug):
         seo_title=seo[0],
         seo_description=seo[1],
     )
+
+@app.route("/building-materials-dindigul")
+def building_materials_dindigul():
+    return render_seo_landing("building-materials-dindigul")
+
+@app.route("/dindigul-material-supply")
+def dindigul_material_supply():
+    return render_seo_landing("dindigul-material-supply")
+
+@app.route("/blue-metal-dindigul")
+def blue_metal_dindigul():
+    return render_seo_landing("blue-metal-dindigul")
+
+@app.route("/m-sand-dindigul")
+def m_sand_dindigul():
+    return render_seo_landing("m-sand-dindigul")
+
+@app.route("/bricks-dindigul")
+def bricks_dindigul():
+    return render_seo_landing("bricks-dindigul")
+
+@app.route("/jcb-rental-dindigul")
+def jcb_rental_dindigul():
+    return render_seo_landing("jcb-rental-dindigul")
 
 @app.route("/contact")
 def contact():
