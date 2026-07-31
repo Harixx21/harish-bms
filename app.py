@@ -565,6 +565,46 @@ def about():
 def products():
     return render_template("customer/index.html", page="products")
 
+SEO_LANDING_PAGES = {
+    "building-materials-dindigul": (
+        "KRG BMS | Building Materials Supply in Dindigul",
+        "KRG BMS supplies building materials in Dindigul including blue metal aggregates, M-Sand, P-Sand, bricks, hollow blocks, cement, red soil, JCB rental and tractor rental.",
+    ),
+    "dindigul-material-supply": (
+        "Dindigul Material Supply | KRG BMS Building Materials",
+        "Order Dindigul construction materials from KRG BMS: aggregates, sand, bricks, blocks, cement, red soil and site vehicle rental with local delivery support.",
+    ),
+    "blue-metal-dindigul": (
+        "Blue Metal Aggregate Supplier in Dindigul | KRG BMS",
+        "KRG BMS supplies 12mm, 20mm and 40mm blue metal aggregate in Dindigul for RCC, slab, footing, road base and site filling work.",
+    ),
+    "m-sand-dindigul": (
+        "M Sand and P Sand Supplier in Dindigul | KRG BMS",
+        "KRG BMS supplies M-Sand, P-Sand and waste sand in Dindigul for concrete, plastering, filling and levelling work.",
+    ),
+    "bricks-dindigul": (
+        "Bricks and Fly Ash Bricks Supplier in Dindigul | KRG BMS",
+        "KRG BMS supplies normal bricks, fly ash bricks, broken bricks and hollow blocks in Dindigul for wall, compound and filling work.",
+    ),
+    "jcb-rental-dindigul": (
+        "JCB Rental and Tractor Rental in Dindigul | KRG BMS",
+        "KRG BMS provides JCB rental and tractor rental support in Dindigul for digging, soil shifting, site clearing, levelling and material movement.",
+    ),
+}
+
+@app.route("/<seo_slug>")
+def seo_landing(seo_slug):
+    seo = SEO_LANDING_PAGES.get(seo_slug)
+    if not seo:
+        return redirect(url_for("index"))
+    return render_template(
+        "customer/index.html",
+        page="products",
+        seo_path=seo_slug,
+        seo_title=seo[0],
+        seo_description=seo[1],
+    )
+
 @app.route("/contact")
 def contact():
     return render_template("customer/index.html", page="contact")
@@ -591,6 +631,7 @@ def sitemap_xml():
         ("/products", "0.9", "daily"),
         ("/contact", "0.8", "monthly"),
     ]
+    pages.extend((f"/{slug}", "0.85", "weekly") for slug in SEO_LANDING_PAGES)
     urls = "\n".join(
         f"""  <url>
     <loc>{SITE_URL}{path}</loc>

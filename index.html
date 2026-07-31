@@ -3,26 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-{% set page_path = '' if page == 'home' else page %}
+{% set page_path = seo_path|default('' if page == 'home' else page) %}
 {% set page_url = 'https://harish-bms.vercel.app/' ~ page_path %}
-{% if page == 'about' %}
+{% set meta_title = seo_title|default('') %}
+{% set meta_description = seo_description|default('') %}
+{% if meta_title %}
+<title>{{ meta_title }}</title>
+{% elif page == 'about' %}
 <title>About KRG BMS | Building Materials Supplier in Dindigul</title>
 {% elif page == 'products' %}
-<title>KRG BMS Products | Aggregates, Sand, Bricks and Cement</title>
+<title>KRG BMS Products | Aggregates, M Sand, P Sand, Bricks and Cement in Dindigul</title>
 {% elif page == 'contact' %}
 <title>Contact KRG BMS | Dindigul Building Materials Yard</title>
 {% else %}
-<title>KRG BMS | Building Materials Supplier in Dindigul</title>
+<title>KRG BMS | Building Materials Supplier in Dindigul | M Sand, Bricks, Blue Metal</title>
 {% endif %}
-<meta name="description" content="KRG BMS supplies aggregates, M-Sand, P-Sand, bricks, hollow blocks, cement, red soil and JCB/tractor rental in Dindigul with direct site delivery and order tracking.">
-<meta name="keywords" content="KRG BMS, building materials Dindigul, blue metal aggregate Dindigul, M Sand Dindigul, P Sand Dindigul, bricks Dindigul, cement supplier Dindigul, JCB rental Dindigul, tractor rental Dindigul">
+<meta name="description" content="{{ meta_description or 'KRG BMS supplies building materials in Dindigul: blue metal aggregates, M-Sand, P-Sand, bricks, hollow blocks, cement, red soil, JCB rental and tractor rental with direct site delivery.' }}">
+<meta name="keywords" content="KRG BMS, KRG Building Materials, building materials Dindigul, Dindigul material supply, blue metal Dindigul, aggregate supplier Dindigul, 12mm aggregate Dindigul, 20mm aggregate Dindigul, 40mm aggregate Dindigul, M Sand Dindigul, P Sand Dindigul, bricks Dindigul, fly ash bricks Dindigul, hollow blocks Dindigul, cement supplier Dindigul, JCB rental Dindigul, tractor rental Dindigul">
 <meta name="robots" content="index, follow">
 <meta name="author" content="KRG BMS">
+<meta name="geo.region" content="IN-TN">
+<meta name="geo.placename" content="Dindigul, Tamil Nadu">
+<meta name="business:contact_data:locality" content="Dindigul">
+<meta name="business:contact_data:region" content="Tamil Nadu">
 <link rel="canonical" href="{{ page_url }}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="KRG BMS">
-<meta property="og:title" content="KRG BMS | Building Materials Supplier in Dindigul">
-<meta property="og:description" content="Order aggregates, sand, bricks, blocks, cement and red soil from KRG BMS in Dindigul.">
+<meta property="og:title" content="{{ meta_title or 'KRG BMS | Building Materials Supplier in Dindigul' }}">
+<meta property="og:description" content="{{ meta_description or 'Order aggregates, M-Sand, P-Sand, bricks, blocks, cement, soil, JCB rental and tractor rental from KRG BMS in Dindigul.' }}">
 <meta property="og:url" content="{{ page_url }}">
 <meta property="og:image" content="https://harish-bms.vercel.app/static/krg-materials-hero.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -46,6 +54,19 @@
   },
   "areaServed": ["Dindigul", "Tamil Nadu"],
   "description": "Building materials supplier and vehicle rental support for aggregates, M-Sand, P-Sand, bricks, hollow blocks, cement, red soil, JCB and tractor in Dindigul.",
+  "knowsAbout": ["Building materials supply", "Blue metal aggregate", "M Sand", "P Sand", "Bricks", "Fly ash bricks", "Hollow blocks", "Cement", "JCB rental", "Tractor rental"],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "KRG BMS Dindigul Materials and Rentals",
+    "itemListElement": [
+      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "12mm, 20mm and 40mm Blue Metal Aggregate"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "M-Sand and P-Sand"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Normal Bricks and Fly Ash Bricks"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Hollow Blocks"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "UltraTech and Chettinad Cement"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "JCB Rental and Tractor Rental in Dindigul"}}
+    ]
+  },
   "priceRange": "Rs",
   "sameAs": [
     "https://www.google.com/maps/search/?api=1&query=17%20Bharathipuram%20Rd%2C%20J.J.%20Nagar%2C%20Dindigul%2C%20Tamil%20Nadu%2C%20India"
