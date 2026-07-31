@@ -2264,7 +2264,7 @@ body::before {
       <a class="{{ 'active' if page == 'contact' else '' }}" href="/contact">Contact</a>
     </div>
     <div class="header-actions">
-      <a class="admin-btn" href="/login"><i class="fa fa-user"></i> Login</a>
+      <a class="admin-btn" href="/admin"><i class="fa fa-user-shield"></i> Login</a>
       <button class="cart-btn" onclick="openCart()" title="Open cart">
         <i class="fa fa-shopping-cart"></i>
         <span class="cart-badge" id="cartBadge">0</span>
@@ -2807,7 +2807,7 @@ body::before {
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
-<a class="floating-admin" href="/login"><i class="fa fa-user"></i> Login</a>
+<a class="floating-admin" href="/admin"><i class="fa fa-user-shield"></i> Login</a>
 
 <script>
 let cart = JSON.parse(localStorage.getItem('bms_cart') || '[]');
