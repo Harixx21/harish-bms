@@ -537,6 +537,14 @@ def init_db():
 # ─── CUSTOMER ROUTES ─────────────────────────────────────
 @app.before_request
 def prepare_database():
+    host = (request.host or "").split(":")[0].lower()
+    canonical_host = urlsplit(SITE_URL).netloc.lower()
+    if host.endswith(".onrender.com") and canonical_host and host != canonical_host:
+        target = f"{SITE_URL}{request.path}"
+        if request.query_string:
+            target += f"?{request.query_string.decode('utf-8', errors='ignore')}"
+        return redirect(target, code=308)
+
     if request.path.startswith("/api") or request.path == "/admin/login":
         try:
             ensure_db()
